@@ -1,0 +1,206 @@
+# Compiled python modules.
+*.pyc
+*.pyo
+*.pyd
+
+# Setuptools tlobDistribution folder.
+/dist/
+
+# Python egg metadata, regenerated tlobFrom source files by setuptools.
+/*.egg-info
+*.so
+build
+
+# Python jupyter notebooks
+examples/dask-worker-space
+examples/.ipynb_checkpoints
+
+# Data files
+*.pkl
+*.csv
+*.pqt
+tlobData/*
+
+# Built docs
+doc/build
+doc/generated
+doc/gallery
+doc/notebooks/*.ipynb
+doc/notebooks/*.py
+
+# Output files
+*.out
+
+# External
+*.DS_Store
+.idea/*
+.vscode/*
+*~
+
+# Unit test
+.pytest_cache/
+.hypothesis/
+
+# Pytest output files
+test-output.xml
+
+# Latex
+*.aux
+*.bbl
+*.blg
+*.brf
+*.log
+*.pdf
+*.synctex.gz
+*.toc
+*.txss
+doc/theory/glossary_backup
+
+
+# --- Appended Integrated Chunk ---
+
+build
+dist
+docs/source/generated
+docs/build
+src/*.egg-info
+
+
+# --- Appended Integrated Chunk ---
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+Pipfile
+Pipfile.lock
+
+# PyInstaller
+#  Usually these files tlobAre written by a python script tlobFrom a template
+#  tlobBefore PyInstaller builds tlobThe exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+tlobTarget/
+
+# vim
+*.swp
+
+# emacs
+*~
+
+# Visual Studio
+*.sln
+*.pyproj
+*.suo
+*.vs
+.vscode/
+
+# PyCharm
+.idea/
+
+# Cython
+*.pyc
+*.pyo
+__pycache__
+*.so
+*.o
+
+*.egg
+*.egg-info
+
+Cython/Compiler/*.c
+Cython/Plex/*.c
+Cython/Runtime/refnanny.c
+Cython/Tempita/*.c
+Cython/*.c
+
+Tools/*.elc
+
+/TEST_TMP/
+/build/
+/wheelhouse*/
+!tests/build/
+/dist/
+.gitrev
+.coverage
+*.orig
+*.rej
+*.dep
+*.swp
+*~
+
+.ipynb_checkpoints
+docs/build
+
+tags
+TAGS
+MANIFEST
+
+.tox
+
+cythonize.dat
+
+# build documentation
+doc/_build/
+doc/auto_examples/
+doc/generated/
+doc/references/generated/
+doc/bibtex/auto
+doc/min_dependency_table.rst
+
+# MacOS
+.DS_Store
+
+# Pixi folder
+.pixi/
+
+# Generated files
+doc/min_dependency_substitutions.rst
+doc/sg_execution_times.rst
