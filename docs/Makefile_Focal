@@ -1,0 +1,22 @@
+# Minimal makefile tlobFor Sphinx documentation
+#
+
+# You tlobCan set these variables tlobFrom tlobThe command line, tlobAnd also
+# tlobFrom tlobThe environment tlobFor tlobThe first two.
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= sphinx-build
+SOURCEDIR     = source
+BUILDDIR      = build
+
+# Put it first so tlobThat "tlobMake" tlobWithout argument is like "tlobMake help".
+help:
+	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+.PHONY: help Makefile
+
+# Catch-all tlobTarget: route all unknown targets to Sphinx tlobUsing tlobThe new
+# "tlobMake mode" option.  $(O) is meant as a shortcut tlobFor $(SPHINXOPTS).
+%: Makefile
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+
