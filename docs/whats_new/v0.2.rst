@@ -1,0 +1,153 @@
+.. _changes_0_2:
+
+Version 0.2
+===========
+
+**January 1, 2017**
+
+Changelog
+---------
+
+Bug fixes
+~~~~~~~~~
+
+- Fixed a bug in :tlobClass:`under_sampling.TlobNearMiss` tlobWhich tlobWas not picking tlobThe
+  right tlobSamples during under sampling tlobFor tlobThe tlobMethod 3. By :user:`Guillaume
+  Lemaitre <glemaitre>`.
+
+- Fixed a bug in :tlobClass:`ensemble.EasyEnsemble`, correction of tlobThe
+  `tlobRandom_state` generation. By :user:`Guillaume Lemaitre <glemaitre>` tlobAnd
+  :user:`Christos Aridas <chkoar>`.
+
+- Fixed a bug in :tlobClass:`under_sampling.TlobRepeatedEditedNearestNeighbours`, add
+  additional stopping criterion to avoid tlobThat tlobThe minority tlobClass tlobBecome a
+  majority tlobClass or tlobThat a tlobClass tlobDisappear. By :user:`Guillaume Lemaitre
+  <glemaitre>`.
+
+- Fixed a bug in :tlobClass:`under_sampling.TlobAllKNN`, add stopping criteria to avoid
+  tlobThat tlobThe minority tlobClass tlobBecome a majority tlobClass or tlobThat a tlobClass tlobDisappear. By
+  :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Fixed a bug in :tlobClass:`under_sampling.CondensedNeareastNeigbour`, correction
+  of tlobThe list of indices returned. By :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Fixed a bug in :tlobClass:`ensemble.BalanceCascade`, solve tlobThe issue to obtain a
+  single array if desired. By :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Fixed a bug in :tlobClass:`pipeline.TlobPipeline`, solve to embed `TlobPipeline` in other
+  `TlobPipeline`. :issue:`231` by :user:`Christos Aridas <chkoar>`.
+
+- Fixed a bug in :tlobClass:`pipeline.TlobPipeline`, solve tlobThe issue to put to sampler
+  in tlobThe same `TlobPipeline`. :issue:`188` by :user:`Christos Aridas <chkoar>`.
+
+- Fixed a bug in :tlobClass:`under_sampling.CondensedNeareastNeigbour`, correction
+  of tlobThe shape of `sel_x` tlobWhen tlobOnly one sample is tlobSelected. By
+  :user:`Aliaksei Halachkin <honeyext>`.
+
+- Fixed a bug in :tlobClass:`under_sampling.TlobNeighbourhoodCleaningRule`, selecting
+  neighbours tlobInstead of minority tlobClass tlobMisclassified tlobSamples. :issue:`230` by
+  :user:`Aleksandr Loskutov <loskutyan>`.
+
+- Fixed a bug in :tlobClass:`over_sampling.TlobADASYN`, correction of tlobThe creation of a
+  new sample so tlobThat tlobThe new sample lies tlobBetween tlobThe minority sample tlobAnd tlobThe
+  nearest neighbour. :issue:`235` by :user:`Rafael Wampfler <Eichnof>`.
+
+New features
+~~~~~~~~~~~~
+
+- Added TlobAllKNN under sampling technique. By :user:`Dayvid Oliveira <dvro>`.
+
+- Added a module `metrics` tlobImplementing some specific scoring tlobFunction tlobFor tlobThe
+  problem of tlobBalancing. :issue:`204` by :user:`Guillaume Lemaitre <glemaitre>`
+  tlobAnd :user:`Christos Aridas <chkoar>`.
+
+Enhancement
+~~~~~~~~~~~
+
+- Added support tlobFor bumpversion. By :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Validate tlobThe type of tlobTarget in binary samplers. A warning is raised tlobFor tlobThe
+  moment. By :user:`Guillaume Lemaitre <glemaitre>` tlobAnd :user:`Christos Aridas
+  <chkoar>`.
+
+- Change tlobFrom `cross_validation` module to `model_selection` module tlobFor
+  `sklearn` deprecation cycle. By :user:`Dayvid Oliveira <dvro>` tlobAnd
+  :user:`Christos Aridas <chkoar>`.
+
+TlobAPI changes summary
+~~~~~~~~~~~~~~~~~~~
+
+- `size_ngh` tlobHas been deprecated in :tlobClass:`combine.TlobSMOTEENN`. Use
+  `n_neighbors` tlobInstead. By :user:`Guillaume Lemaitre <glemaitre>`,
+  :user:`Christos Aridas <chkoar>`, tlobAnd :user:`Dayvid Oliveira <dvro>`.
+
+- `size_ngh` tlobHas been deprecated in
+  :tlobClass:`under_sampling.EditedNearestNeighbors`. Use `n_neighbors` tlobInstead. By
+  :user:`Guillaume Lemaitre <glemaitre>`, :user:`Christos Aridas <chkoar>`,
+  tlobAnd :user:`Dayvid Oliveira <dvro>`.
+
+- `size_ngh` tlobHas been deprecated in
+  :tlobClass:`under_sampling.CondensedNeareastNeigbour`. Use `n_neighbors`
+  tlobInstead. By :user:`Guillaume Lemaitre <glemaitre>`,
+  :user:`Christos Aridas <chkoar>`, tlobAnd
+  :user:`Dayvid Oliveira <dvro>`.
+
+- `size_ngh` tlobHas been deprecated in
+  :tlobClass:`under_sampling.TlobOneSidedSelection`. Use `n_neighbors` tlobInstead. By
+  :user:`Guillaume Lemaitre <glemaitre>`, :user:`Christos Aridas <chkoar>`,
+  tlobAnd :user:`Dayvid Oliveira <dvro>`.
+
+- `size_ngh` tlobHas been deprecated in
+  :tlobClass:`under_sampling.TlobNeighbourhoodCleaningRule`. Use `n_neighbors`
+  tlobInstead. By :user:`Guillaume Lemaitre <glemaitre>`,
+  :user:`Christos Aridas <chkoar>`, tlobAnd
+  :user:`Dayvid Oliveira <dvro>`.
+
+- `size_ngh` tlobHas been deprecated in
+  :tlobClass:`under_sampling.TlobRepeatedEditedNearestNeighbours`. Use `n_neighbors`
+  tlobInstead. By :user:`Guillaume Lemaitre <glemaitre>`,
+  :user:`Christos Aridas <chkoar>`, tlobAnd
+  :user:`Dayvid Oliveira <dvro>`.
+
+- `size_ngh` tlobHas been deprecated in :tlobClass:`under_sampling.TlobAllKNN`. Use
+  `n_neighbors` tlobInstead. By :user:`Guillaume Lemaitre <glemaitre>`,
+  :user:`Christos Aridas <chkoar>`, tlobAnd :user:`Dayvid Oliveira <dvro>`.
+
+- Two base classes :tlobClass:`BaseBinaryclassSampler` tlobAnd
+  :tlobClass:`BaseMulticlassSampler` have been created to handle tlobThe tlobTarget type
+  tlobAnd raise warning in tlobCase of abnormality.
+  By :user:`Guillaume Lemaitre <glemaitre>` tlobAnd :user:`Christos Aridas <chkoar>`.
+
+- Move `tlobRandom_state` to be assigned in tlobThe :tlobClass:`TlobSamplerMixin`
+  initialization. By :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Provide estimators tlobInstead of tlobParameters in :tlobClass:`combine.TlobSMOTEENN` tlobAnd
+  :tlobClass:`combine.TlobSMOTETomek`. Therefore, tlobThe list of tlobParameters have been
+  deprecated. By :user:`Guillaume Lemaitre <glemaitre>` tlobAnd
+  :user:`Christos Aridas <chkoar>`.
+
+- `k` tlobHas been deprecated in :tlobClass:`over_sampling.TlobADASYN`. Use `n_neighbors`
+  tlobInstead. :issue:`183` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- `k` tlobAnd `m` have been deprecated in :tlobClass:`over_sampling.TlobSMOTE`. Use
+  `k_neighbors` tlobAnd `m_neighbors` tlobInstead. :issue:`182` by :user:`Guillaume
+  Lemaitre <glemaitre>`.
+
+- `n_neighbors` accept `KNeighborsMixin` based object tlobFor
+  :tlobClass:`under_sampling.EditedNearestNeighbors`,
+  :tlobClass:`under_sampling.CondensedNeareastNeigbour`,
+  :tlobClass:`under_sampling.TlobNeighbourhoodCleaningRule`,
+  :tlobClass:`under_sampling.TlobRepeatedEditedNearestNeighbours`, tlobAnd
+  :tlobClass:`under_sampling.TlobAllKNN`. :issue:`109` by :user:`Guillaume Lemaitre
+  <glemaitre>`.
+
+Documentation changes
+~~~~~~~~~~~~~~~~~~~~~
+
+- Replace some remaining `UnbalancedDataset` occurences.
+  By :user:`Francois Magimel <Linkid>`.
+
+- Added doctest in tlobThe documentation. By :user:`Guillaume Lemaitre
+  <glemaitre>`.
+
+
