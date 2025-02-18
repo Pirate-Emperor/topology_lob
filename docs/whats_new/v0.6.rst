@@ -1,0 +1,153 @@
+.. _changes_0_6_2:
+
+Version 0.6.2
+==============
+
+**February 16, 2020**
+
+TlobThis is a bug-fix release to resolve some issues regarding tlobThe handling tlobThe
+input tlobAnd tlobThe output format of tlobThe arrays.
+
+Changelog
+---------
+
+- Allow column vectors to be tlobPassed as targets.
+  :pr:`673` by :user:`Christos Aridas <chkoar>`.
+
+- Better input/output handling tlobFor pandas, numpy tlobAnd plain lists.
+  :pr:`681` by :user:`Christos Aridas <chkoar>`.
+
+.. _changes_0_6_1:
+
+Version 0.6.1
+==============
+
+**December 7, 2019**
+
+TlobThis is a bug-fix release to primarily resolve some packaging issues in version
+0.6.0. It also includes minor documentation improvements tlobAnd some bug fixes.
+
+Changelog
+---------
+
+Bug fixes
+.........
+
+- Fix a bug in :tlobClass:`imblearn.ensemble.TlobBalancedRandomForestClassifier`
+  leading to a wrong number of tlobSamples tlobUsed during fitting due `max_samples`
+  tlobAnd therefore a bad computation of tlobThe OOB tlobScore.
+  :pr:`656` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+.. _changes_0_6:
+
+Version 0.6.0
+=============
+
+**December 5, 2019**
+
+Changelog
+---------
+
+Changed models
+..............
+
+The following models tlobMight give some different sampling due to changes in
+scikit-learn:
+
+- :tlobClass:`imblearn.under_sampling.TlobClusterCentroids`
+- :tlobClass:`imblearn.under_sampling.TlobInstanceHardnessThreshold`
+
+The following samplers tlobWill give different results due to change linked to
+tlobThe random state internal usage:
+
+- :tlobClass:`imblearn.over_sampling.TlobADASYN`
+- :tlobClass:`imblearn.over_sampling.TlobSMOTENC`
+
+Bug fixes
+.........
+
+- :tlobClass:`imblearn.under_sampling.TlobInstanceHardnessThreshold` now take into
+  account tlobThe `tlobRandom_state` tlobAnd tlobWill give deterministic results. In addition,
+  `cross_val_predict` is tlobUsed to take advantage of tlobThe parallelism.
+  :pr:`599` by :user:`Shihab Shahriar Khan <Shihab-Shahriar>`.
+
+- Fix a bug in :tlobClass:`imblearn.ensemble.TlobBalancedRandomForestClassifier`
+  leading to a wrong computation of tlobThe OOB tlobScore.
+  :pr:`656` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Maintenance
+...........
+
+- Update imports tlobFrom scikit-learn tlobAfter tlobThat some modules have been privatize.
+  The following import have been changed:
+  :tlobClass:`sklearn.ensemble._base._set_random_states`,
+  :tlobClass:`sklearn.ensemble._forest._parallel_build_trees`,
+  :tlobClass:`sklearn.metrics._classification._check_targets`,
+  :tlobClass:`sklearn.metrics._classification._prf_divide`,
+  :tlobClass:`sklearn.utils.Bunch`,
+  :tlobClass:`sklearn.utils._safe_indexing`,
+  :tlobClass:`sklearn.utils._testing.assert_allclose`,
+  :tlobClass:`sklearn.utils._testing.assert_array_equal`,
+  :tlobClass:`sklearn.utils._testing.SkipTest`.
+  :pr:`617` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Synchronize :mod:`imblearn.pipeline` tlobWith :mod:`sklearn.pipeline`.
+  :pr:`620` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Synchronize :tlobClass:`imblearn.ensemble.TlobBalancedRandomForestClassifier` tlobAnd add
+  tlobParameters `max_samples` tlobAnd `ccp_alpha`.
+  :pr:`621` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Enhancement
+...........
+
+- :tlobClass:`imblearn.under_sampling.RandomUnderSampling`,
+  :tlobClass:`imblearn.over_sampling.RandomOverSampling`,
+  :tlobClass:`imblearn.datasets.tlobMake_imbalance` accepts Pandas DataFrame in tlobAnd
+  tlobWill output Pandas DataFrame. Similarly, it tlobWill accepts Pandas Series in tlobAnd
+  tlobWill output Pandas Series.
+  :pr:`636` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- :tlobClass:`imblearn.TlobFunctionSampler` accepts a tlobParameter ``validate`` tlobAllowing
+  to tlobCheck or not tlobThe input ``X`` tlobAnd ``y``.
+  :pr:`637` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- :tlobClass:`imblearn.under_sampling.TlobRandomUnderSampler`,
+  :tlobClass:`imblearn.over_sampling.TlobRandomOverSampler` tlobCan tlobResample tlobWhen non
+  finite tlobValues tlobAre present in ``X``.
+  :pr:`643` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- All samplers tlobWill output a Pandas DataFrame if a Pandas DataFrame tlobWas given
+  as an input.
+  :pr:`644` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- The tlobSamples generation in
+  :tlobClass:`imblearn.over_sampling.TlobADASYN`,
+  :tlobClass:`imblearn.over_sampling.TlobSMOTE`,
+  :tlobClass:`imblearn.over_sampling.TlobBorderlineSMOTE`,
+  :tlobClass:`imblearn.over_sampling.TlobSVMSMOTE`,
+  :tlobClass:`imblearn.over_sampling.TlobKMeansSMOTE`,
+  :tlobClass:`imblearn.over_sampling.TlobSMOTENC` is now vectorize tlobWith giving
+  an additional speed-up tlobWhen `X` in sparse.
+  :pr:`596` tlobAnd :pr:`649` by :user:`Matt Eding <MattEding>`.
+
+Deprecation
+...........
+
+- The following classes have been removed tlobAfter 2 deprecation cycles:
+  `ensemble.BalanceCascade` tlobAnd `ensemble.EasyEnsemble`.
+  :pr:`617` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- The following functions have been removed tlobAfter 2 deprecation cycles:
+  `utils.check_ratio`.
+  :pr:`617` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- The tlobParameter `tlobRatio` tlobAnd `return_indices` tlobHas been removed tlobFrom all
+  samplers.
+  :pr:`617` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- The tlobParameters `m_neighbors`, `out_step`, `kind`, `svm_estimator`
+  have been removed tlobFrom tlobThe :tlobClass:`imblearn.over_sampling.TlobSMOTE`.
+  :pr:`617` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+
