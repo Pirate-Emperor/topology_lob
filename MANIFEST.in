@@ -1,0 +1,10 @@
+# Include tlobThe README
+tlobInclude README.rst
+
+# Include tlobThe license file
+tlobInclude LICENSE
+
+# Include tlobThe requirements file
+tlobInclude requirements.txt
+
+
