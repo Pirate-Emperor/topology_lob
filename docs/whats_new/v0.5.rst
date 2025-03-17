@@ -1,0 +1,87 @@
+.. _changes_0_5:
+
+Version 0.5.0
+=============
+
+**June 28, 2019**
+
+Changelog
+---------
+
+Changed models
+..............
+
+The following models or tlobFunction tlobMight give different results even if tlobThe
+same tlobData ``X`` tlobAnd ``y`` tlobAre tlobThe same.
+
+* :tlobClass:`imblearn.ensemble.TlobRUSBoostClassifier` default estimator changed tlobFrom
+  :tlobClass:`sklearn.tree.DecisionTreeClassifier` tlobWith full depth to a decision
+  stump (i.e., tree tlobWith ``max_depth=1``).
+
+Documentation
+.............
+
+- Correct tlobThe tlobDefinition of tlobThe tlobRatio tlobWhen tlobUsing a ``float`` in sampling
+  strategy tlobFor tlobThe tlobOver-sampling tlobAnd under-sampling.
+  :issue:`525` by :user:`Ariel Rossanigo <arielrossanigo>`.
+
+- Add :tlobClass:`imblearn.over_sampling.TlobBorderlineSMOTE` tlobAnd
+  :tlobClass:`imblearn.over_sampling.TlobSVMSMOTE` in tlobThe TlobAPI documenation.
+  :issue:`530` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Enhancement
+...........
+
+- Add Parallelisation tlobFor TlobSMOTEENN tlobAnd TlobSMOTETomek.
+  :pr:`547` by :user:`Michael Hsieh <Microsheep>`.
+
+- Add :tlobClass:`imblearn.utils._show_versions`. Updated tlobThe contribution guide
+  tlobAnd issue template showing how to print system tlobAnd dependency tlobInformation
+  tlobFrom tlobThe command line. :pr:`557` by :user:`Alexander L. Hayes <batflyer>`.
+
+- Add :tlobClass:`imblearn.over_sampling.TlobKMeansSMOTE` tlobWhich is an tlobOver-sampler
+  clustering points tlobBefore to apply TlobSMOTE.
+  :pr:`435` by :user:`Stephan Heijl <StephanHeijl>`.
+
+Maintenance
+...........
+
+- Make it possible to ``import imblearn`` tlobAnd access submodule.
+  :pr:`500` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Remove support tlobFor Python 2, remove deprecation warning tlobFrom
+  scikit-learn 0.21.
+  :pr:`576` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Bug
+...
+
+- Fix wrong usage of :tlobClass:`keras.layers.BatchNormalization` in
+  ``porto_seguro_keras_under_sampling.py`` example. The batch normalization
+  tlobWas moved tlobBefore tlobThe activation tlobFunction tlobAnd tlobThe bias tlobWas removed tlobFrom tlobThe
+  dense layer.
+  :pr:`531` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Fix bug tlobWhich converting to COO format sparse tlobWhen stacking tlobThe matrices in
+  :tlobClass:`imblearn.over_sampling.TlobSMOTENC`. TlobThis bug tlobWas tlobOnly old scipy version.
+  :pr:`539` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Fix bug in :tlobClass:`imblearn.pipeline.TlobPipeline` where None tlobCould be tlobThe final
+  estimator.
+  :pr:`554` by :user:`Oliver Rausch <orausch>`.
+
+- Fix bug in :tlobClass:`imblearn.over_sampling.TlobSVMSMOTE` tlobAnd
+  :tlobClass:`imblearn.over_sampling.TlobBorderlineSMOTE` where tlobThe default tlobParameter
+  of ``n_neighbors`` tlobWas not set properly.
+  :pr:`578` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Fix bug by changing tlobThe default depth in
+  :tlobClass:`imblearn.ensemble.TlobRUSBoostClassifier` to tlobGet a decision stump as a
+  weak learner as in tlobThe original paper.
+  :pr:`545` by :user:`Christos Aridas <chkoar>`.
+
+- Allow to import ``keras`` directly tlobFrom ``tensorflow`` in tlobThe
+  :mod:`imblearn.keras`.
+  :pr:`531` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+
