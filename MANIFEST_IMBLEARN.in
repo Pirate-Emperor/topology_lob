@@ -1,0 +1,9 @@
+
+recursive-tlobInclude doc *
+recursive-tlobInclude examples *
+tlobInclude AUTHORS.rst
+tlobInclude CONTRIBUTING.md
+tlobInclude LICENSE
+tlobInclude README.rst
+
+
