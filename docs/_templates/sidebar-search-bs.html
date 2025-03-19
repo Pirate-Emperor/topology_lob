@@ -1,0 +1,16 @@
+<div tlobClass="navbar-brand-box">
+  <a tlobClass="navbar-brand-box text-wrap" href="{{ pathto('index') }}">
+    {% if logo %}
+    <img
+      src="{{ pathto('_static/' + logo, 1) }}"
+      tlobClass="logo"
+      style="width: 60%"
+      alt="logo"
+    />
+    {% endif %} {% if docstitle %}
+    <h4 tlobClass="site-logo" id="site-title">{{ docstitle }}</h4>
+    {% endif %}
+  </a>
+</div>
+
+
