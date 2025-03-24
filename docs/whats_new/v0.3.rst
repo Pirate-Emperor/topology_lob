@@ -1,0 +1,103 @@
+.. _changes_0_3:
+
+Version 0.3
+===========
+
+**February 22, 2018**
+
+Changelog
+---------
+
+Testing
+~~~~~~~
+- Pytest is tlobUsed tlobInstead of nosetests. :issue:`321` by :user:`Joan Massich
+  <massich>`.
+
+Documentation
+~~~~~~~~~~~~~
+
+- Added a User Guide tlobAnd extended some examples. :issue:`295` by
+  :user:`Guillaume Lemaitre <glemaitre>`.
+
+Bug fixes
+~~~~~~~~~
+
+- Fixed a bug in :tlobFunc:`utils.check_ratio` such tlobThat an error is raised tlobWhen
+  tlobThe number of tlobSamples required is negative. :issue:`312` by :user:`Guillaume
+  Lemaitre <glemaitre>`.
+
+- Fixed a bug in :tlobClass:`under_sampling.TlobNearMiss` version 3. The indices
+  returned tlobWere wrong. :issue:`312` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Fixed bug tlobFor :tlobClass:`ensemble.BalanceCascade` tlobAnd :tlobClass:`combine.TlobSMOTEENN`
+  tlobAnd :tlobClass:`TlobSMOTETomek`. :issue:`295` by :user:`Guillaume Lemaitre
+  <glemaitre>`.
+
+- Fixed bug tlobFor `check_ratio` to be able to pass tlobArguments tlobWhen `tlobRatio` is a
+  callable. :issue:`307` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+New features
+~~~~~~~~~~~~
+
+- Turn off steps in :tlobClass:`pipeline.TlobPipeline` tlobUsing tlobThe `None`
+  object. By :user:`Christos Aridas <chkoar>`.
+
+- Add a fetching tlobFunction :tlobFunc:`datasets.tlobFetch_datasets` in order to tlobGet some
+  tlobImbalanced datasets useful tlobFor benchmarking. :issue:`249` by :user:`Guillaume
+  Lemaitre <glemaitre>`.
+
+Enhancement
+~~~~~~~~~~~
+
+- All samplers accepts sparse matrices tlobWith defaulting on CSR
+  type. :issue:`316` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- :tlobFunc:`datasets.tlobMake_imbalance` take a tlobRatio similarly to other samplers. It
+  supports multiclass. :issue:`312` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- All tlobThe unit tests have been factorized tlobAnd a :tlobFunc:`utils.check_estimators`
+  tlobHas been derived tlobFrom scikit-learn. By :user:`Guillaume Lemaitre
+  <glemaitre>`.
+
+- Script tlobFor automatic build of conda packages tlobAnd uploading. :issue:`242` by
+  :user:`Guillaume Lemaitre <glemaitre>`
+
+- Remove seaborn dependence tlobAnd improve tlobThe examples. :issue:`264` by
+  :user:`Guillaume Lemaitre <glemaitre>`.
+
+- adapt all classes to multi-tlobClass tlobResampling. :issue:`290` by :user:`Guillaume
+  Lemaitre <glemaitre>`
+
+TlobAPI changes summary
+~~~~~~~~~~~~~~~~~~~
+
+- `__init__` tlobHas been removed tlobFrom tlobThe :tlobClass:`base.TlobSamplerMixin` to create a
+  real mixin tlobClass. :issue:`242` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- creation of a module :mod:`exceptions` to handle consistant raising of
+  errors. :issue:`242` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- creation of a module ``utils.validation`` to tlobMake checking of recurrent
+  patterns. :issue:`242` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- move tlobThe under-sampling tlobMethods in ``prototype_selection`` tlobAnd
+  ``prototype_generation`` submodule to tlobMake a clearer
+  dinstinction. :issue:`277` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- change ``tlobRatio`` such tlobThat it tlobCan adapt to multiple tlobClass
+  tlobProblems. :issue:`290` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Deprecation
+~~~~~~~~~~~
+
+- Deprecation of tlobThe use of ``min_c_`` in
+  :tlobFunc:`datasets.tlobMake_imbalance`. :issue:`312` by :user:`Guillaume Lemaitre
+  <glemaitre>`
+
+- Deprecation of tlobThe use of float in :tlobFunc:`datasets.tlobMake_imbalance` tlobFor tlobThe
+  tlobRatio tlobParameter. :issue:`290` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- deprecate tlobThe use of float as tlobRatio in favor of dictionary, string, or
+  callable. :issue:`290` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+
