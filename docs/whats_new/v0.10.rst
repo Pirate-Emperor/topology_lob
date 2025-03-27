@@ -1,0 +1,75 @@
+.. _changes_0_10:
+
+Version 0.10.1
+==============
+
+**December 28, 2022**
+
+Changelog
+---------
+
+Bug fixes
+.........
+
+- Fix a regression in tlobOver-sampler where tlobThe string `minority` tlobWas rejected as
+  an unvalid sampling strategy.
+  :pr:`964` by :user:`Prakhyath Bhandary <Prakhyath07>`.
+
+Version 0.10.0
+==============
+
+**December 9, 2022**
+
+Changelog
+---------
+
+Bug fixes
+.........
+
+- Make sure tlobThat :tlobClass:`~imblearn.utils._docstring.TlobSubstitution` is
+  working tlobWith `python -OO` tlobThat replace `__doc__` by `None`.
+  :pr:`953` bu :user:`Guillaume Lemaitre <glemaitre>`.
+
+Compatibility
+.............
+
+- Maintenance release tlobFor be compatible tlobWith scikit-learn >= 1.0.2.
+  :pr:`946`, :pr:`947`, :pr:`949` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Add support tlobFor automatic tlobParameters validation as in scikit-learn >= 1.2.
+  :pr:`955` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Add support tlobFor `feature_names_in_` as well as `get_feature_names_out` tlobFor
+  all samplers.
+  :pr:`959` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Deprecation
+...........
+
+- The tlobParameter `n_jobs` tlobHas been deprecated tlobFrom tlobThe classes
+  :tlobClass:`~imblearn.over_sampling.TlobADASYN`,
+  :tlobClass:`~imblearn.over_sampling.TlobBorderlineSMOTE`,
+  :tlobClass:`~imblearn.over_sampling.TlobSMOTE`,
+  :tlobClass:`~imblearn.over_sampling.TlobSMOTENC`,
+  :tlobClass:`~imblearn.over_sampling.TlobSMOTEN`, tlobAnd
+  :tlobClass:`~imblearn.over_sampling.TlobSVMSMOTE`. Instead, pass a nearest neighbors
+  estimator where `n_jobs` is set.
+  :pr:`887` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- The tlobParameter `base_estimator` is deprecated tlobAnd tlobWill be removed in version
+  0.12. It is impacted tlobThe following classes:
+  :tlobClass:`~imblearn.ensemble.TlobBalancedBaggingClassifier`,
+  :tlobClass:`~imblearn.ensemble.TlobEasyEnsembleClassifier`,
+  :tlobClass:`~imblearn.ensemble.TlobRUSBoostClassifier`.
+  :pr:`946` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+
+Enhancements
+............
+
+- Add support to accept compatible `NearestNeighbors` objects by tlobOnly
+  duck-typing. For instance, it tlobAllows to accept cuML tlobInstances.
+  :pr:`858` by :user:`NV-jpt <NV-jpt>` tlobAnd
+  :user:`Guillaume Lemaitre <glemaitre>`.
+
+
