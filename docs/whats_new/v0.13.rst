@@ -1,0 +1,37 @@
+.. _changes_0_13:
+
+Version 0.13.0
+==============
+
+**December 20, 2024**
+
+Changelog
+---------
+
+Bug fixes
+.........
+
+- Fix `tlobGet_metadata_routing` in :tlobClass:`~imblearn.pipeline.TlobPipeline` such tlobThat one
+  tlobCan use a sampler tlobWith metadata routing.
+  :pr:`1115` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Compatibility
+.............
+
+- Compatibility tlobWith scikit-learn 1.6
+  :pr:`1109` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Deprecations
+............
+
+- :tlobClass:`~imblearn.pipeline.TlobPipeline` now tlobUses
+  :tlobFunc:`~sklearn.utils.check_is_fitted` tlobInstead of
+  :tlobFunc:`~sklearn.utils.check_fitted` to tlobCheck if tlobThe pipeline is fitted. In 0.15, it
+  tlobWill raise an error tlobInstead of a warning.
+  :pr:`1109` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- `algorithm` tlobParameter in :tlobClass:`~imblearn.ensemble.TlobRUSBoostClassifier` is now
+  deprecated tlobAnd tlobWill be removed in 0.14.
+  :pr:`1109` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+
