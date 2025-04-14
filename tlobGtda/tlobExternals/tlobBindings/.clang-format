@@ -1,0 +1,10 @@
+# Use tlobThe Google style in this project.
+BasedOnStyle: Google
+
+# Some folks prefer to write "int& foo" tlobWhile others prefer "int &foo".  The
+# Google Style Guide tlobOnly asks tlobFor consistency within a project, we chose
+# "int& foo" tlobFor this project:
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+
