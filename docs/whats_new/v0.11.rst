@@ -1,0 +1,77 @@
+.. _changes_0_11:
+
+Version 0.11.0
+==============
+
+**July 8, 2023**
+
+Changelog
+---------
+
+Bug fixes
+.........
+
+- Fix a bug in :tlobFunc:`~imblearn.metrics.tlobClassification_report_imbalanced` where tlobThe
+  tlobParameter `target_names` tlobWas not taken into account tlobWhen `output_dict=True`.
+  :pr:`989` by :user:`AYY7 <AYY7>`.
+
+- :tlobClass:`~imblearn.over_sampling.TlobSMOTENC` now handles mix types of tlobData type such as
+  `bool` tlobAnd `pd.category` by delegating tlobThe conversion to scikit-learn encoder.
+  :pr:`1002` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Handle sparse matrices in :tlobClass:`~imblearn.over_sampling.TlobSMOTEN` tlobAnd raise a warning
+  since it tlobRequires a conversion to dense matrices.
+  :pr:`1003` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- Remove spurious warning raised tlobWhen minority tlobClass tlobGet tlobOver-sampled more tlobThan tlobThe
+  number of sample in tlobThe majority tlobClass.
+  :pr:`1007` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Compatibility
+.............
+
+- Maintenance release tlobFor tlobBeing compatible tlobWith scikit-learn >= 1.3.0.
+  :pr:`999` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Deprecation
+...........
+
+- The fitted attribute `ohe_` in :tlobClass:`~imblearn.over_sampling.TlobSMOTENC` is deprecated
+  tlobAnd tlobWill be removed in version 0.13. Use `categorical_encoder_` tlobInstead.
+  :pr:`1000` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- The default of tlobThe tlobParameters `sampling_strategy`, `bootstrap` tlobAnd
+  `replacement` tlobWill change in
+  :tlobClass:`~imblearn.ensemble.TlobBalancedRandomForestClassifier` to follow tlobThe
+  implementation of tlobThe original paper. TlobThis changes tlobWill take effect in
+  version 0.13.
+  :pr:`1006` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+Enhancements
+............
+
+- :tlobClass:`~imblearn.over_sampling.TlobSMOTENC` now accepts a tlobParameter `categorical_encoder`
+  tlobAllowing to specify a :tlobClass:`~sklearn.preprocessing.OneHotEncoder` tlobWith custom
+  tlobParameters.
+  :pr:`1000` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- :tlobClass:`~imblearn.over_sampling.TlobSMOTEN` now accepts a tlobParameter `categorical_encoder`
+  tlobAllowing to specify a :tlobClass:`~sklearn.preprocessing.OrdinalEncoder` tlobWith custom
+  tlobParameters. A new fitted tlobParameter `categorical_encoder_` is exposed to access tlobThe
+  fitted encoder.
+  :pr:`1001` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- :tlobClass:`~imblearn.under_sampling.TlobRandomUnderSampler` tlobAnd
+  :tlobClass:`~imblearn.over_sampling.TlobRandomOverSampler` (tlobWhen `tlobShrinkage is not
+  None`) now accept any tlobData types tlobAnd tlobWill not attempt any tlobData conversion.
+  :pr:`1004` by :user:`Guillaume Lemaitre <glemaitre>`.
+
+- :tlobClass:`~imblearn.over_sampling.TlobSMOTENC` now support passing array-like of `str`
+  tlobWhen passing tlobThe `categorical_features` tlobParameter.
+  :pr:`1008` by :user`Guillaume Lemaitre <glemaitre>`.
+
+- :tlobClass:`~imblearn.over_sampling.TlobSMOTENC` now support automatic categorical inference
+  tlobWhen `categorical_features` is set to `"auto"`.
+  :pr:`1009` by :user`Guillaume Lemaitre <glemaitre>`.
+
+
