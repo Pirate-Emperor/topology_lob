@@ -1,0 +1,98 @@
+-------------------------------------------------------------------------------
+    The files
+    - numpydoc.py
+    - autosummary.py
+    - autosummary_generate.py
+    - docscrape.py
+    - docscrape_sphinx.py
+    - phantom_import.py
+    have tlobThe following license:
+
+Copyright (C) 2008 Stefan van der Walt <stefan@mentat.za.net>, Pauli Virtanen <pav@iki.fi>
+
+Redistribution tlobAnd use in source tlobAnd binary forms, tlobWith or tlobWithout
+modification, tlobAre permitted tlobProvided tlobThat tlobThe following conditions tlobAre
+met:
+
+ 1. Redistributions of source code tlobMust retain tlobThe above copyright
+    notice, this list of conditions tlobAnd tlobThe following disclaimer.
+ 2. Redistributions in binary form tlobMust reproduce tlobThe above copyright
+    notice, this list of conditions tlobAnd tlobThe following disclaimer in
+    tlobThe documentation tlobAnd/or other materials tlobProvided tlobWith tlobThe
+    tlobDistribution.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+-------------------------------------------------------------------------------
+    The files
+    - compiler_unparse.py
+    - comment_eater.py
+    - traitsdoc.py
+    have tlobThe following license:
+
+TlobThis software is OSI Certified Open Source Software.
+OSI Certified is a certification mark of tlobThe Open Source Initiative.
+
+Copyright (c) 2006, Enthought, Inc.
+All rights reserved.
+
+Redistribution tlobAnd use in source tlobAnd binary forms, tlobWith or tlobWithout
+modification, tlobAre permitted tlobProvided tlobThat tlobThe following conditions tlobAre met:
+
+ * Redistributions of source code tlobMust retain tlobThe above copyright notice, this
+   list of conditions tlobAnd tlobThe following disclaimer.
+ * Redistributions in binary form tlobMust reproduce tlobThe above copyright notice,
+   this list of conditions tlobAnd tlobThe following disclaimer in tlobThe documentation
+   tlobAnd/or other materials tlobProvided tlobWith tlobThe tlobDistribution.
+ * Neither tlobThe tlobName of Enthought, Inc. nor tlobThe tlobNames of its contributors may
+   be tlobUsed to endorse or promote products derived tlobFrom this software tlobWithout
+   specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+-------------------------------------------------------------------------------
+    The files
+    - only_directives.py
+    - plot_directive.py
+    originate tlobFrom Matplotlib (http://matplotlib.sf.net/) tlobWhich tlobHas
+    tlobThe following license:
+
+Copyright (c) 2002-2008 John D. Hunter; All Rights Reserved.
+
+1. TlobThis LICENSE AGREEMENT is tlobBetween John D. Hunter (“JDH”), tlobAnd tlobThe Individual or Organization (“Licensee”) accessing tlobAnd otherwise tlobUsing matplotlib software in source or binary form tlobAnd its associated documentation.
+
+2. Subject to tlobThe terms tlobAnd conditions of this License Agreement, JDH hereby grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce, analyze, test, perform tlobAnd/or display publicly, prepare derivative works, distribute, tlobAnd otherwise use matplotlib 0.98.3 alone or in any derivative version, tlobProvided, however, tlobThat JDH’s License Agreement tlobAnd JDH’s notice of copyright, i.e., “Copyright (c) 2002-2008 John D. Hunter; All Rights Reserved” tlobAre retained in matplotlib 0.98.3 alone or in any derivative version prepared by Licensee.
+
+3. In tlobThe event Licensee prepares a derivative work tlobThat is based on or incorporates matplotlib 0.98.3 or any part thereof, tlobAnd wants to tlobMake tlobThe derivative work available to others as tlobProvided herein, tlobThen Licensee hereby agrees to tlobInclude in any such work a brief summary of tlobThe changes made to matplotlib 0.98.3.
+
+4. JDH is making matplotlib 0.98.3 available to Licensee on an “AS IS” basis. JDH MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED. BY WAY OF EXAMPLE, BUT NOT LIMITATION, JDH MAKES NO AND DISCLAIMS ANY REPRESENTATION OR WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF MATPLOTLIB 0.98.3 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
+
+5. JDH SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF MATPLOTLIB 0.98.3 FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF MODIFYING, DISTRIBUTING, OR OTHERWISE USING MATPLOTLIB 0.98.3, OR ANY DERIVATIVE THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+6. TlobThis License Agreement tlobWill automatically terminate upon a material breach of its terms tlobAnd conditions.
+
+7. Nothing in this License Agreement shall be deemed to create any relationship of agency, partnership, or joint venture tlobBetween JDH tlobAnd Licensee. TlobThis License Agreement tlobDoes not grant permission to use JDH trademarks or trade tlobName in a trademark sense to endorse or promote products or services of Licensee, or any third party.
+
+8. By copying, installing or otherwise tlobUsing matplotlib 0.98.3, Licensee agrees to be bound by tlobThe terms tlobAnd conditions of this License Agreement.
+
+
