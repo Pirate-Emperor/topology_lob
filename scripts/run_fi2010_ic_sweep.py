@@ -216,32 +216,35 @@ def run(args) -> dict:
         "fixed_reference": {"threshold": float(args.default_threshold), "objective": "focal"},
         "validation_selected": {"threshold": selected["threshold"], "objective": selected["objective"]},
     }
+    final_models = {}
+    for name, config in configs.items():
+        labels = y_default if name == "fixed_reference" else y_selected
+        train_positions = np.flatnonzero(final_train_mask & (labels >= 0))
+        if len(np.unique(labels[train_positions])) < 2:
+            raise RuntimeError(f"Training labels contain one class for {name}")
+        final_models[name] = fit_model(
+            config["objective"], X[train_positions], labels[train_positions], args.seed
+        )
+
     test_days = []
-    cursor = train_events
     test_boundaries = b["boundaries"][1:]
     for day_idx, (start_idx, end_idx) in enumerate(test_boundaries, start=8):
         pos = np.flatnonzero((indices >= start_idx) & (indices < end_idx))
         if len(pos) == 0:
             raise RuntimeError(f"No valid test rows on segment {day_idx}")
         day = {"segment": day_idx, "events": int(end_idx - start_idx)}
-        for name, config in configs.items():
+        for name in configs:
             labels = y_default if name == "fixed_reference" else y_selected
-            train_positions = np.flatnonzero(final_train_mask & (labels >= 0))
-            if len(np.unique(labels[train_positions])) < 2:
-                raise RuntimeError(f"Training labels contain one class for {name}")
-            # Fit independently per report config on the same training prefix.
-            model = fit_model(config["objective"], X[train_positions], labels[train_positions], args.seed)
-            day[name] = measure(model, X[pos], labels[pos], future[pos])
+            day[name] = measure(final_models[name], X[pos], labels[pos], future[pos])
         test_days.append(day)
-        cursor = end_idx
 
     pooled = {}
-    for name, config in configs.items():
+    pooled_pos = np.flatnonzero(test_mask)
+    for name in configs:
         labels = y_default if name == "fixed_reference" else y_selected
-        train_positions = np.flatnonzero(final_train_mask & (labels >= 0))
-        model = fit_model(config["objective"], X[train_positions], labels[train_positions], args.seed)
-        pos = np.flatnonzero(test_mask & (labels >= 0))
-        pooled[name] = measure(model, X[pos], labels[pos], future[pos])
+        pooled[name] = measure(
+            final_models[name], X[pooled_pos], labels[pooled_pos], future[pooled_pos]
+        )
 
     selected_test = pooled["validation_selected"]
     result = {
