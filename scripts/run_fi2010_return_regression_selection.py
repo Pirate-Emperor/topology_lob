@@ -56,8 +56,9 @@ def fold_indices(
     horizon: int,
     purge: int,
     fractions: tuple[float, float, float],
+    sequence_boundaries: list[tuple[int, int]],
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Return source-row positions for a purged, forward-only validation fold."""
+    """Build a purged forward fold within every stock's own time sequence."""
     fit_fraction, val_start_fraction, val_end_fraction = fractions
     if not 0 < fit_fraction < val_start_fraction < val_end_fraction < 1:
         raise ValueError("fold fractions must satisfy 0 < fit < val_start < val_end < 1")
@@ -65,14 +66,26 @@ def fold_indices(
     is_valid = np.asarray(valid, dtype=bool)
     if idx.ndim != 1 or is_valid.ndim != 1 or len(idx) != len(is_valid):
         raise ValueError("indices and valid mask must be matching 1-D arrays")
-    fit_end = int(train_events * fit_fraction)
-    val_start = int(train_events * val_start_fraction)
-    val_end = int(train_events * val_end_fraction)
-    gap = max(purge, horizon)
-    fit = is_valid & (idx < fit_end - gap)
-    val = is_valid & (idx >= val_start + gap) & (idx < val_end - horizon)
-    return np.flatnonzero(fit), np.flatnonzero(val)
 
+    gap = max(purge, horizon)
+    fit = np.zeros(len(idx), dtype=bool)
+    val = np.zeros(len(idx), dtype=bool)
+    used = 0
+    for start, end in sequence_boundaries:
+        if end <= start or start < 0 or end > train_events:
+            if start >= train_events:
+                continue
+            raise ValueError(f"invalid training stock sequence: {(start, end)}")
+        length = end - start
+        fit_end = start + int(length * fit_fraction)
+        val_start = start + int(length * val_start_fraction)
+        val_end = start + int(length * val_end_fraction)
+        fit |= is_valid & (idx >= start) & (idx < fit_end - gap)
+        val |= is_valid & (idx >= val_start + gap) & (idx < val_end - horizon)
+        used += 1
+    if used == 0:
+        raise ValueError("no training stock sequences found for validation")
+    return np.flatnonzero(fit), np.flatnonzero(val)
 
 def aggregate_fold_scores(folds: list[dict[str, Any]]) -> dict[str, float]:
     if not folds:
@@ -150,6 +163,7 @@ def run(args) -> dict[str, Any]:
                 raw_indices, valid,
                 train_events=train_events, horizon=horizon, purge=args.purge,
                 fractions=fractions,
+                sequence_boundaries=boundaries,
             )
             if len(fit_pos) < args.minimum_fit_rows or len(val_pos) < args.minimum_validation_rows:
                 raise RuntimeError(
@@ -189,7 +203,10 @@ def run(args) -> dict[str, Any]:
     X_all, feature_names = feature_arrays[feature_set]
     future = forward_returns(micro["log_mid"].to_numpy(), boundaries, horizon)
     purge = max(args.purge, horizon)
-    final_train = np.isfinite(X_all).all(axis=1) & np.isfinite(future) & (raw_indices < train_events - purge)
+    final_train = np.isfinite(X_all).all(axis=1) & np.isfinite(future) & (raw_indices < train_events)
+    for seq_start, seq_end in boundaries:
+        if seq_end <= train_events:
+            final_train[max(seq_start, seq_end - purge):seq_end] = False
     test_mask = np.isfinite(X_all).all(axis=1) & np.isfinite(future) & (raw_indices >= train_events)
     train_pos = np.flatnonzero(final_train)
     test_pos = np.flatnonzero(test_mask)
@@ -202,7 +219,8 @@ def run(args) -> dict[str, Any]:
 
     day_rows = []
     pooled_predictions, pooled_targets = [], []
-    for day, (start, end) in enumerate(boundaries[1:], start=8):
+    file_boundaries = bundle["file_boundaries"]
+    for day, (start, end) in enumerate(file_boundaries[1:], start=8):
         pos = np.flatnonzero(test_mask & (raw_indices >= start) & (raw_indices < end))
         if len(pos) < args.minimum_test_rows // 3:
             raise RuntimeError(f"insufficient test rows for day {day}: {len(pos)}")
@@ -231,6 +249,12 @@ def run(args) -> dict[str, Any]:
             "input_sha256": {p.name: sha256(p) for p in input_files},
             "train_events": train_events,
             "test_events": [int(len(f)) for f in bundle["frames"][1:]],
+            "sequence_jump_threshold_pct": 5.0,
+            "sequence_cuts": bundle["sequence_cut_records"],
+            "stock_sequences_per_file": [
+                int(sum(1 for b in boundaries if file_start <= b[0] and b[1] <= file_end))
+                for file_start, file_end in file_boundaries
+            ],
         },
         "method": {
             "target": f"log(mid[t+{horizon}])-log(mid[t])",
