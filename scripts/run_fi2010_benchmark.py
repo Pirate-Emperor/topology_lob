@@ -73,6 +73,114 @@ def segment_forward_returns(log_mid: np.ndarray, boundaries: list[tuple[int, int
     return future
 
 
+def _pearson_ic(prediction: np.ndarray, future: np.ndarray) -> float:
+    prediction = np.asarray(prediction, dtype=float)
+    future = np.asarray(future, dtype=float)
+    valid = np.isfinite(prediction) & np.isfinite(future)
+    prediction, future = prediction[valid], future[valid]
+    if len(prediction) < 3 or np.std(prediction) == 0 or np.std(future) == 0:
+        return 0.0
+    return float(np.corrcoef(prediction, future)[0, 1])
+
+
+def sequence_signal_diagnostics(
+    sequence_scores: list[dict],
+    *,
+    block_size: int = 500,
+    bootstrap_reps: int = 500,
+    shift_reps: int = 499,
+    seed: int = 20261015,
+) -> dict:
+    """Test OOS IC stability using sequence-level metrics and block resampling.
+
+    Each stock sequence is resampled separately. The circular-shift placebo
+    shifts scores only within a stock sequence, preserving score autocorrelation
+    and the stock's return path while breaking exact score/return alignment.
+    This is a robustness check, not an estimate of trading PnL.
+    """
+    if not sequence_scores:
+        raise ValueError("sequence_scores must not be empty")
+    if block_size < 10 or bootstrap_reps < 1 or shift_reps < 1:
+        raise ValueError("block_size must be >= 10 and repetition counts positive")
+
+    normalized = []
+    for row in sequence_scores:
+        pred = np.asarray(row["probability"], dtype=float)
+        future = np.asarray(row["future"], dtype=float)
+        if pred.ndim != 1 or future.ndim != 1 or len(pred) != len(future):
+            raise ValueError("each sequence must have matching 1-D prediction/return arrays")
+        valid = np.isfinite(pred) & np.isfinite(future)
+        pred, future = pred[valid], future[valid]
+        if len(pred) < 100:
+            continue
+        normalized.append({**{k: row[k] for k in ("day", "sequence", "start", "end")},
+                           "probability": pred, "future": future})
+    if len(normalized) < 3:
+        raise ValueError("at least three usable held-out sequences are required")
+
+    seq_ics = [_pearson_ic(row["probability"], row["future"]) for row in normalized]
+    pooled_prediction = np.concatenate([r["probability"] for r in normalized])
+    pooled_future = np.concatenate([r["future"] for r in normalized])
+    observed = _pearson_ic(pooled_prediction, pooled_future)
+
+    rng = np.random.default_rng(seed)
+    boot = np.empty(bootstrap_reps, dtype=float)
+    for b in range(bootstrap_reps):
+        pred_parts, future_parts = [], []
+        for row in normalized:
+            p, y = row["probability"], row["future"]
+            n = len(p)
+            starts = rng.integers(0, n, size=(n + block_size - 1) // block_size)
+            indices = np.concatenate([
+                (start + np.arange(block_size)) % n for start in starts
+            ])[:n]
+            pred_parts.append(p[indices])
+            future_parts.append(y[indices])
+        boot[b] = _pearson_ic(np.concatenate(pred_parts), np.concatenate(future_parts))
+
+    shifted_null = np.empty(shift_reps, dtype=float)
+    for b in range(shift_reps):
+        shifted = []
+        for row in normalized:
+            p = row["probability"]
+            n = len(p)
+            if n <= 2 * block_size + 1:
+                shift = int(rng.integers(1, n))
+            else:
+                shift = int(rng.integers(block_size, n - block_size))
+            shifted.append(np.roll(p, shift))
+        shifted_null[b] = _pearson_ic(np.concatenate(shifted), pooled_future)
+
+    p_value = float((1 + np.sum(np.abs(shifted_null) >= abs(observed))) / (shift_reps + 1))
+    return {
+        "sequence_count": int(len(normalized)),
+        "rows": int(len(pooled_prediction)),
+        "sequence_pearson_ic": [
+            {"day": int(row["day"]), "sequence": int(row["sequence"]),
+             "start": int(row["start"]), "end": int(row["end"]),
+             "rows": int(len(row["probability"])), "pearson_ic": float(ic)}
+            for row, ic in zip(normalized, seq_ics)
+        ],
+        "sequence_mean_pearson_ic": float(np.mean(seq_ics)),
+        "sequence_median_pearson_ic": float(np.median(seq_ics)),
+        "positive_ic_sequences": int(np.sum(np.asarray(seq_ics) > 0)),
+        "pooled_pearson_ic": float(observed),
+        "moving_block_bootstrap": {
+            "block_size_events": int(block_size),
+            "replicates": int(bootstrap_reps),
+            "ci_95": [float(np.quantile(boot, 0.025)), float(np.quantile(boot, 0.975))],
+            "bootstrap_median": float(np.median(boot)),
+        },
+        "within_sequence_circular_shift_placebo": {
+            "replicates": int(shift_reps),
+            "two_sided_p_value": p_value,
+            "null_abs_q95": float(np.quantile(np.abs(shifted_null), 0.95)),
+            "observed_abs_exceeds_null_q95": bool(abs(observed) > np.quantile(np.abs(shifted_null), 0.95)),
+            "method": "independent circular score shifts within each held-out stock sequence",
+        },
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Leakage-aware FI-2010 train-7/test-8,9,10 benchmark"
@@ -89,6 +197,9 @@ def main():
     ap.add_argument("--ffd-width", type=int, default=256)
     ap.add_argument("--sequence-jump-threshold", type=float, default=0.05)
     ap.add_argument("--min-segment-events", type=int, default=1024)
+    ap.add_argument("--robustness-block-size", type=int, default=500)
+    ap.add_argument("--robustness-bootstrap-reps", type=int, default=500)
+    ap.add_argument("--robustness-shift-reps", type=int, default=499)
     args = ap.parse_args()
 
     train = read_canonical(args.train)
@@ -209,6 +320,7 @@ def main():
     pooled_probability = []
     pooled_margin = []
     pooled_future = []
+    sequence_score_sets = []
     cursor = train_events
     for day_idx, test_frame in enumerate(tests, start=8):
         end = cursor + len(test_frame)
@@ -239,6 +351,46 @@ def main():
             "focal": focal_metrics,
             "logloss": baseline_metrics,
         })
+
+        # Retain per-sequence predictions long enough to calculate sequence
+        # ICs and a block-bootstrap / circular-shift placebo summary. The
+        # individual prediction arrays are not written to the report.
+        sequence_in_file = 0
+        for seq_start, seq_end in boundaries:
+            if seq_start < cursor or seq_end > end:
+                continue
+            seq_positions = np.flatnonzero(
+                (raw_indices >= seq_start) & (raw_indices < seq_end)
+            )
+            if len(seq_positions) < 100:
+                continue
+            seq_probability = 1.0 / (
+                1.0 + np.exp(-np.clip(
+                    focal.predict(xgb.DMatrix(X[seq_positions]), output_margin=True),
+                    -40, 40,
+                ))
+            )
+            sequence_in_file += 1
+            sequence_score_sets.append({
+                "day": day_idx,
+                "sequence": sequence_in_file,
+                "start": seq_start,
+                "end": seq_end,
+                "probability": seq_probability,
+                "future": rr[seq_positions],
+            })
+            seq_metrics, _, _ = evaluate_signal(
+                focal, X[seq_positions], yy[seq_positions], rr[seq_positions]
+            )
+            results.setdefault("heldout_sequences", []).append({
+                "day": int(day_idx),
+                "sequence": int(sequence_in_file),
+                "start": int(seq_start),
+                "end": int(seq_end),
+                "events": int(seq_end - seq_start),
+                "model_rows": int(len(seq_positions)),
+                "focal": seq_metrics,
+            })
         cursor = end
 
     ics = [d["focal"]["pearson_ic"] for d in results["days"]]
@@ -248,6 +400,17 @@ def main():
     pooled_probability = np.concatenate(pooled_probability)
     pooled_margin = np.concatenate(pooled_margin)
     pooled_future = np.concatenate(pooled_future)
+    robustness = sequence_signal_diagnostics(
+        sequence_score_sets,
+        block_size=args.robustness_block_size,
+        bootstrap_reps=args.robustness_bootstrap_reps,
+        shift_reps=args.robustness_shift_reps,
+        seed=20261015,
+    )
+    if abs(robustness["pooled_pearson_ic"] - float(np.corrcoef(pooled_probability, pooled_future)[0, 1])) > 1e-10:
+        raise RuntimeError("Per-sequence robustness score does not match pooled OOS Pearson IC")
+    results["heldout_sequence_robustness"] = robustness
+
     results["aggregate"] = {
         "focal_mean_pearson_ic": float(np.mean(ics)),
         "focal_std_pearson_ic": float(np.std(ics, ddof=1)) if len(ics) > 1 else 0.0,
