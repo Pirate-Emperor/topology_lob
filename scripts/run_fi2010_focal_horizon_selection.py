@@ -56,14 +56,21 @@ def split_positions(
     labels: np.ndarray,
     indices: np.ndarray,
     *,
-    fit_fraction: float,
-    validation_fraction: float,
     train_events: int,
     horizon: int,
     purge: int,
-    sequence_boundaries: list[tuple[int, int]],
+    fit_end: int | None = None,
+    validation_start: int | None = None,
+    fit_fraction: float | None = None,
+    validation_fraction: float | None = None,
+    sequence_boundaries: list[tuple[int, int]] | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Split each training-stock sequence forward in time with a purge gap."""
+    """Return finite fit/validation positions, with optional per-stock splits.
+
+    The fit_end/validation_start arguments preserve the original single-stream
+    API. New benchmark code supplies fractions and sequence boundaries so
+    each training stock is split independently.
+    """
     X = np.asarray(features, dtype=float)
     y = np.asarray(labels)
     idx = np.asarray(indices, dtype=int)
@@ -71,12 +78,23 @@ def split_positions(
         raise ValueError("features must be 2-D and labels/indices must be 1-D")
     if len(X) != len(y) or len(y) != len(idx):
         raise ValueError("features, labels, and indices must have matching lengths")
-    if not 0 < fit_fraction < validation_fraction < 1:
-        raise ValueError("require 0 < fit_fraction < validation_fraction < 1")
     row_valid = (y >= 0) & np.isfinite(X).all(axis=1)
+    gap = max(purge, horizon)
     fit = np.zeros(len(idx), dtype=bool)
     validation = np.zeros(len(idx), dtype=bool)
-    gap = max(purge, horizon)
+
+    if sequence_boundaries is None:
+        # Original API: exact absolute cut points inside one stream.
+        if fit_end is None or validation_start is None:
+            raise ValueError("provide fit_end/validation_start or stock fractions/boundaries")
+        fit = row_valid & (idx < fit_end - gap)
+        validation = row_valid & (idx >= validation_start + gap) & (idx < train_events - horizon)
+        return np.flatnonzero(fit), np.flatnonzero(validation)
+
+    if fit_fraction is None or validation_fraction is None:
+        raise ValueError("per-stock splitting requires fit_fraction and validation_fraction")
+    if not 0 < fit_fraction < validation_fraction < 1:
+        raise ValueError("require 0 < fit_fraction < validation_fraction < 1")
     used = 0
     for start, end in sequence_boundaries:
         if start >= train_events:
@@ -84,15 +102,14 @@ def split_positions(
         if start < 0 or end > train_events or start >= end:
             raise ValueError(f"invalid training stock sequence: {(start, end)}")
         length = end - start
-        fit_end = start + int(length * fit_fraction)
-        validation_start = start + int(length * validation_fraction)
-        fit |= row_valid & (idx >= start) & (idx < fit_end - gap)
-        validation |= row_valid & (idx >= validation_start + gap) & (idx < end - horizon)
+        local_fit_end = start + int(length * fit_fraction)
+        local_validation_start = start + int(length * validation_fraction)
+        fit |= row_valid & (idx >= start) & (idx < local_fit_end - gap)
+        validation |= row_valid & (idx >= local_validation_start + gap) & (idx < end - horizon)
         used += 1
     if used == 0:
         raise ValueError("no training stock sequences were available")
     return np.flatnonzero(fit), np.flatnonzero(validation)
-
 
 def run(args) -> dict:
     started = time.perf_counter()
