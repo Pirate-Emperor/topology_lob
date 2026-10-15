@@ -18,6 +18,8 @@ from fi2010 import load_raw, raw40_to_canonical
 from scripts.fi2010_feature_helpers import (
     fractional_diff_by_segment,
     microstructure_by_segment,
+    select_stationary_d_by_segment,
+    split_stock_sequences,
     topology_by_segment,
 )
 
@@ -85,6 +87,8 @@ def main():
     ap.add_argument("--label-threshold", type=float, default=0.0005)
     ap.add_argument("--purge", type=int, default=50)
     ap.add_argument("--ffd-width", type=int, default=256)
+    ap.add_argument("--sequence-jump-threshold", type=float, default=0.05)
+    ap.add_argument("--min-segment-events", type=int, default=1024)
     args = ap.parse_args()
 
     train = read_canonical(args.train)
@@ -92,13 +96,24 @@ def main():
     frames = [train, *tests]
     combined = pd.concat(frames, ignore_index=True)
     train_events = len(train)
-    micro, boundaries = microstructure_by_segment(frames, depth_levels=5)
+    sequence_frames, file_boundaries, boundaries, sequence_cuts = split_stock_sequences(
+        frames,
+        threshold_pct=float(getattr(args, "sequence_jump_threshold", 0.05)),
+        min_segment_events=int(getattr(args, "min_segment_events", 1024)),
+    )
+    micro, measured_boundaries = microstructure_by_segment(sequence_frames, depth_levels=5)
+    if measured_boundaries != boundaries:
+        raise RuntimeError("feature helper boundaries do not match stock splits")
 
-    # Select d using training data only, then reset the causal filter at each file.
-    d, stationarity = select_stationary_d(
-        micro["log_mid"].to_numpy()[:train_events],
+    # Use only training-stock segments to pick d; never run ADF over different stocks back-to-back.
+    d, stationarity = select_stationary_d_by_segment(
+        micro["log_mid"].to_numpy(),
+        boundaries,
+        train_events,
         np.linspace(0.0, 1.0, 11),
         0.05,
+        args.ffd_width,
+        prefix_fraction=1.0,
     )
     fd, gpu_used, fd_backend = fractional_diff_by_segment(
         micro["log_mid"].to_numpy(), boundaries, d, args.ffd_width,
@@ -107,7 +122,7 @@ def main():
     micro["fracdiff"] = fd
     radii = np.asarray([0.5, 1.0, 1.5, 2.0, 2.5], dtype=float)
     topo_df, topo_meta, topo_index = topology_by_segment(
-        frames, boundaries, radii,
+        sequence_frames, boundaries, radii,
         horizon=args.horizon, stride=args.tda_stride, levels=10,
         require_gtda=args.require_gtda, n_jobs=-1,
     )
@@ -151,13 +166,27 @@ def main():
     # train/test boundary cannot overlap the test interval.
     train_positions = np.flatnonzero(train_mask)
     test_positions = np.flatnonzero(test_mask)
-    cutoff = max(0, len(train_positions) - args.purge)
-    train_positions = train_positions[:cutoff]
+    purge = max(args.purge, args.horizon)
+    train_mask = train_mask.copy()
+    for start, end in boundaries:
+        if end <= train_events:
+            train_mask &= ~(
+                (raw_indices >= max(start, end - purge)) & (raw_indices < end)
+            )
+    train_positions = np.flatnonzero(train_mask)
 
     X_train = X[train_positions]
     y_train = yy[train_positions]
     results = {
-        "data_source": "FI-2010 Decimal-Precision mirror from zcakhaa/DeepLOB",
+        "data_source": "FI-2010 Decimal-Precision benchmark",
+        "data_license": "CC BY 4.0; cite Ntakaris et al. (2018)",
+        "dataset_record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+        "sequence_jump_threshold_pct": float(getattr(args, "sequence_jump_threshold", 0.05)) * 100.0,
+        "sequence_cuts": sequence_cuts,
+        "stock_sequences_per_file": [
+            int(sum(1 for b in boundaries if file_start <= b[0] and b[1] <= file_end))
+            for file_start, file_end in file_boundaries
+        ],
         "train_events": int(train_events),
         "test_events": [int(len(x)) for x in tests],
         "combined_events": int(len(combined)),
@@ -166,10 +195,11 @@ def main():
         "tda": topo_meta,
         "fractional_diff_backend": fd_backend,
         "gpu_used": bool(gpu_used),
-        "purge_events": int(args.purge),
+        "purge_events_per_stock_sequence": int(purge),
         "label_threshold": float(args.label_threshold),
         "horizon": int(args.horizon),
         "target_resume_ic": 0.064,
+        "target_metric_status": "measured on held-out days; Pearson IC and Rank IC reported separately",
         "days": [],
     }
 
