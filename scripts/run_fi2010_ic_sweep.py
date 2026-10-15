@@ -23,6 +23,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from fi2010 import load_raw, raw40_to_canonical
+from scripts.fi2010_feature_helpers import (
+    fractional_diff_by_segment,
+    microstructure_by_segment,
+    topology_by_segment,
+)
+
 from topology_lob import (
     fractional_diff_gpu,
     fit_focal_xgb,
@@ -92,22 +98,20 @@ def build_features(args):
     combined = pd.concat(frames, ignore_index=True)
     train_events = len(train)
 
-    # Choose the order only from an early training prefix, before internal
-    # validation, then apply the causal filter over the full stream.
+    # Choose d from an early training prefix only; reset feature state per file.
     inner_split = int(train_events * args.validation_start)
     select_end = int(train_events * args.stationarity_fraction)
-    micro = microstructure_features(combined, depth_levels=5)
+    micro, boundaries = microstructure_by_segment(frames, depth_levels=5)
     d, stationarity = select_stationary_d(
         micro["log_mid"].to_numpy()[:select_end],
         np.linspace(0.0, 1.0, 11),
         0.05,
         args.ffd_width,
     )
-    fd, gpu_used, fd_backend = fractional_diff_gpu(
-        micro["log_mid"].to_numpy(), d, args.ffd_width
+    fd, gpu_used, fd_backend = fractional_diff_by_segment(
+        micro["log_mid"].to_numpy(), boundaries, d, args.ffd_width,
+        require_cuda=args.require_cuda,
     )
-    if args.require_cuda and not gpu_used:
-        raise SystemExit("CUDA was required but fractional differentiation used CPU fallback")
     micro["fracdiff"] = fd
 
     # Inter-arrival is a constant synthetic event clock in FI-2010, so it is
@@ -117,15 +121,11 @@ def build_features(args):
         if c not in {"mid", "log_mid", "interarrival_us", "fracdiff"}
     ]
     fd_cols = micro_cols + ["fracdiff"]
-    topo_indices = np.arange(50, len(combined) - args.horizon, args.tda_stride)
-    clouds = make_point_clouds(combined, topo_indices, levels=10)
-    topology, topo_meta = persistent_features(
-        clouds, RADII, require_gtda=args.require_gtda, n_jobs=args.tda_jobs
+    topo_df, topo_meta, topo_indices = topology_by_segment(
+        frames, boundaries, RADII,
+        horizon=args.horizon, stride=args.tda_stride, levels=10,
+        require_gtda=args.require_gtda, n_jobs=args.tda_jobs,
     )
-    topo_df = pd.DataFrame(
-        topology, index=topo_indices, columns=topo_meta["feature_names"]
-    ).reindex(range(len(combined))).ffill()
-
     features = np.hstack([micro[fd_cols].to_numpy(float), topo_df.to_numpy(float)])
     future = forward_returns(micro["log_mid"].to_numpy(), boundaries, args.horizon)
     valid = np.isfinite(features).all(axis=1) & np.isfinite(future)
@@ -144,7 +144,7 @@ def build_features(args):
         "tda": topo_meta,
         "ffd_backend": fd_backend,
         "gpu_used": bool(gpu_used),
-        "topology_clouds": int(len(clouds)),
+        "topology_clouds": int(topo_meta["n_clouds"]),
         "inner_split": inner_split,
         "boundaries": boundaries,
     }
