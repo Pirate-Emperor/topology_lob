@@ -23,6 +23,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from fi2010 import load_raw, raw40_to_canonical
+from scripts.fi2010_feature_helpers import (
+    fractional_diff_by_segment,
+    microstructure_by_segment,
+    topology_by_segment,
+)
+
 from topology_lob import (
     fractional_diff_gpu,
     make_point_clouds,
@@ -94,7 +100,7 @@ def build_features(args) -> dict:
     combined = pd.concat(frames, ignore_index=True)
     train_events = len(frames[0])
     select_end = int(train_events * args.stationarity_fraction)
-    micro = microstructure_features(combined, depth_levels=5)
+    micro, boundaries = microstructure_by_segment(frames, depth_levels=5)
 
     d, stationarity = select_stationary_d(
         micro["log_mid"].to_numpy()[:select_end],
@@ -102,11 +108,10 @@ def build_features(args) -> dict:
         0.05,
         args.ffd_width,
     )
-    fd, gpu_used, fd_backend = fractional_diff_gpu(
-        micro["log_mid"].to_numpy(), d, args.ffd_width
+    fd, gpu_used, fd_backend = fractional_diff_by_segment(
+        micro["log_mid"].to_numpy(), boundaries, d, args.ffd_width,
+        require_cuda=args.require_cuda,
     )
-    if args.require_cuda and not gpu_used:
-        raise SystemExit("CUDA was required but fractional differentiation used CPU fallback")
     micro["fracdiff"] = fd
 
     micro_cols = [
@@ -120,15 +125,12 @@ def build_features(args) -> dict:
             micro_cols + ["fracdiff"],
         ),
     }
-    topo_indices = np.arange(50, len(combined) - max(args.horizons), args.tda_stride)
-    clouds = make_point_clouds(combined, topo_indices, levels=10)
-    topology, topo_meta = persistent_features(
-        clouds, RADII, require_gtda=args.require_gtda, n_jobs=args.tda_jobs
+    topo_df, topo_meta, topo_indices = topology_by_segment(
+        frames, boundaries, RADII,
+        horizon=max(args.horizons), stride=args.tda_stride, levels=10,
+        require_gtda=args.require_gtda, n_jobs=args.tda_jobs,
     )
     topo_names = list(topo_meta["feature_names"])
-    topo_df = pd.DataFrame(
-        topology, index=topo_indices, columns=topo_names
-    ).reindex(range(len(combined))).ffill()
     topo_arr = topo_df.to_numpy(float)
     feature_arrays["micro_plus_topology"] = (
         np.hstack([micro[micro_cols].to_numpy(float), topo_arr]),
@@ -147,7 +149,7 @@ def build_features(args) -> dict:
         "stationarity": stationarity,
         "selected_d": float(d),
         "tda": topo_meta,
-        "topology_clouds": int(len(clouds)),
+        "topology_clouds": int(topo_meta["n_clouds"]),
         "ffd_backend": fd_backend,
         "gpu_used": bool(gpu_used),
     }
