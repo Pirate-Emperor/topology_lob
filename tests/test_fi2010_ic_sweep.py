@@ -63,3 +63,20 @@ def test_focal_horizon_candidate_validation_rejects_bad_config():
         validate_candidate({"horizon": 11, "feature_set": "micro_only", "validation": {}})
     with np.testing.assert_raises(ValueError):
         validate_candidate({"horizon": 10, "feature_set": "unknown", "validation": {}})
+
+
+from scripts.run_fi2010_focal_horizon_selection import split_positions
+
+
+def test_focal_horizon_split_filters_nonfinite_feature_rows():
+    features = np.asarray([[1.0], [np.nan], [3.0], [4.0], [np.inf], [6.0], [7.0], [8.0]])
+    labels = np.asarray([0, 1, 0, 1, 0, 1, 0, 1])
+    indices = np.arange(8)
+    fit, validation = split_positions(
+        features, labels, indices,
+        fit_end=5, validation_start=5, train_events=8, horizon=1, purge=1,
+    )
+    np.testing.assert_array_equal(fit, [0, 2])
+    np.testing.assert_array_equal(validation, [6])
+    assert np.isfinite(features[fit]).all()
+    assert np.isfinite(features[validation]).all()
