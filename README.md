@@ -104,11 +104,11 @@ The fetch script downloads the public Decimal-Precision benchmark files to a loc
 ~~~bash
 python scripts/fetch_fi2010.py --out data/external/fi2010.zip --extract
 python scripts/run_fi2010_benchmark.py \
-  --train data/external/fi2010/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+  --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
   --test \
-    data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
-    data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
-    data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
   --tda-stride 1000 --require-gtda --out results/fi2010_benchmark.json
 ~~~
 
