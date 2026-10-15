@@ -39,7 +39,7 @@ def test_regression_forward_returns_never_cross_daily_boundaries():
 
 
 def test_regression_correlation_checks_finite_values():
-    assert regression_correlation(np.arange(5.0), np.arange(5.0)) == 1.0
+    assert np.isclose(regression_correlation(np.arange(5.0), np.arange(5.0)), 1.0)
     assert regression_correlation(np.ones(5), np.arange(5.0)) == 0.0
     with np.testing.assert_raises(ValueError):
         regression_correlation(np.asarray([1.0, np.nan]), np.asarray([0.0, 1.0]))
