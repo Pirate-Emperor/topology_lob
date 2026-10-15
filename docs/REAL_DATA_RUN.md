@@ -14,13 +14,13 @@ The command prints a SHA-256 checksum.
 
 ## Convert
 
-    python scripts/convert_fi2010.py --input data/external/fi2010/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt --output data/FI2010_DecPre_train.csv
+    python scripts/convert_fi2010.py --input data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt --output data/FI2010_DecPre_train.csv
 
 The converter maps 40 raw LOB variables (ask price, ask size, bid price, bid size for ten levels) into the application schema. FI-2010 provides event order rather than exchange wall-clock timestamps, so the converter creates an explicit event-index timestamp.
 
 ## Benchmark
 
-    python scripts/run_fi2010_benchmark.py --train data/external/fi2010/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt --test data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt --tda-stride 1000 --require-gtda --out results/fi2010_benchmark.json
+    python scripts/run_fi2010_benchmark.py --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt --test data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt --tda-stride 1000 --require-gtda --out results/fi2010_benchmark.json
 
 Add --require-cuda to require the GPU fractional-difference implementation.
 
