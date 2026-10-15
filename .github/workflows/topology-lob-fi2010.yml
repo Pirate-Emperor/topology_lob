@@ -140,8 +140,10 @@ jobs:
           assert r["candidate_count"] == 32, r["candidate_count"]
           assert r["selected"]["horizon"] in {10, 20, 30, 50, 100, 200, 500, 1000}
           assert r["selected"]["feature_set"] in {"micro_only", "micro_plus_fd", "micro_plus_topology", "full"}
-          assert r["selected_test"]["focal"]["rows"] > 0
-          assert r["selected_test"]["logloss_control"]["rows"] > 0
+          assert r["selected"]["test_rows"] > 0
+          assert r["selected"]["final_train_rows"] > 0
+          assert r["selected_test"]["focal"]["pearson_ic"] is not None
+          assert r["selected_test"]["logloss_control"]["pearson_ic"] is not None
           assert r["selected_test_target_status"]["focal_pearson_ic_at_least_0_064"] == (r["selected_test"]["focal"]["pearson_ic"] >= 0.064)
           assert r["selected_test_target_status"]["focal_rank_ic_at_least_0_064"] == (r["selected_test"]["focal"]["rank_ic"] >= 0.064)
           print(json.dumps({
