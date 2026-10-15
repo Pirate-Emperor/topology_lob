@@ -29,3 +29,5 @@ results/fi2010_ablation.json
 .DS_Store
 
 results/fi2010_regression_sweep.json
+
+results/fi2010_focal_horizon_selection.json

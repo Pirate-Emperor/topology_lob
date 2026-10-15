@@ -10,6 +10,7 @@ on:
       - "scripts/run_fi2010_ablation.py"
       - "scripts/run_fi2010_ic_sweep.py"
       - "scripts/run_fi2010_return_regression.py"
+      - "scripts/run_fi2010_focal_horizon_selection.py"
       - "fi2010.py"
       - "topology_lob.py"
       - "tests/**"
@@ -118,6 +119,37 @@ jobs:
               "target_rank_ic_0_064_reached_by_any_fixed_config": r["target_rank_ic_0_064_reached_by_any_fixed_config"],
           }, indent=2))
           PY
+      - name: Select Focal Loss horizon on training-only validation
+        run: |
+          python scripts/run_fi2010_focal_horizon_selection.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --horizons 10 20 30 50 100 200 500 1000 \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_focal_horizon_selection.json
+      - name: Validate selected Focal model without test-based selection
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path("results/fi2010_focal_horizon_selection.json").read_text())
+          assert r["candidate_count"] == 32, r["candidate_count"]
+          assert r["selected"]["horizon"] in {10, 20, 30, 50, 100, 200, 500, 1000}
+          assert r["selected"]["feature_set"] in {"micro_only", "micro_plus_fd", "micro_plus_topology", "full"}
+          assert r["selected_test"]["focal"]["rows"] > 0
+          assert r["selected_test"]["logloss_control"]["rows"] > 0
+          assert r["selected_test_target_status"]["focal_pearson_ic_at_least_0_064"] == (r["selected_test"]["focal"]["pearson_ic"] >= 0.064)
+          assert r["selected_test_target_status"]["focal_rank_ic_at_least_0_064"] == (r["selected_test"]["focal"]["rank_ic"] >= 0.064)
+          print(json.dumps({
+              "selected": r["selected"],
+              "selected_test_focal": r["selected_test"]["focal"],
+              "selected_test_logloss_control": r["selected_test"]["logloss_control"],
+              "target_status": r["selected_test_target_status"],
+          }, indent=2))
+          PY
       - name: Upload benchmark outputs
         uses: actions/upload-artifact@v4
         with:
@@ -127,3 +159,4 @@ jobs:
             results/fi2010_ablation.json
             results/fi2010_ic_sweep.json
             results/fi2010_regression_sweep.json
+            results/fi2010_focal_horizon_selection.json

@@ -43,3 +43,23 @@ def test_regression_correlation_checks_finite_values():
     assert regression_correlation(np.ones(5), np.arange(5.0)) == 0.0
     with np.testing.assert_raises(ValueError):
         regression_correlation(np.asarray([1.0, np.nan]), np.asarray([0.0, 1.0]))
+
+
+from scripts.run_fi2010_focal_horizon_selection import direction_labels, validate_candidate
+
+
+def test_focal_horizon_labels_mark_missing_returns_invalid():
+    values = np.asarray([0.001, 0.0, -0.001, np.nan])
+    np.testing.assert_array_equal(direction_labels(values), [1, 0, 0, -1])
+
+
+def test_focal_horizon_candidate_validation_rejects_bad_config():
+    validate_candidate({
+        "horizon": 1000,
+        "feature_set": "micro_only",
+        "validation": {"pearson_ic": 0.01, "rank_ic": 0.02},
+    })
+    with np.testing.assert_raises(ValueError):
+        validate_candidate({"horizon": 11, "feature_set": "micro_only", "validation": {}})
+    with np.testing.assert_raises(ValueError):
+        validate_candidate({"horizon": 10, "feature_set": "unknown", "validation": {}})
