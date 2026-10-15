@@ -1,291 +1,132 @@
 # Topology LOB
 
-<p align="center"><img src="main.png" alt="Topology LOB project overview" width="100%"></p>
+A reproducible research pipeline for Level-2 limit-order-book data. It combines liquidity-shape features, fractional differentiation, and rare-event prediction with XGBoost.
 
-Research code for Level-2 limit-order-book (L2 LOB) liquidity topology, fractional differentiation, and rare-event prediction.
+![Experimental validation dashboard](assets/figures/experimental_validation_dashboard.png)
 
-The runnable application is in `research/topology_lob/`. The root repository also contains the upstream codebases referenced by the original project specification; they are kept for provenance and are not required to understand the application layer.
+## Pipeline
 
-## What is implemented
+1. Validate L2 snapshots, timestamps, prices, and depth sizes.
+2. Build spread, imbalance, microprice, order-flow, and volatility features.
+3. Turn each book snapshot into a normalized liquidity point cloud.
+4. Extract H0/H1 persistent-homology and Betti-count features.
+5. Select the fractional-differencing order using only the training prefix; apply the filter causally on CPU or CUDA.
+6. Fit a custom binary Focal Loss XGBoost model and a standard log-loss control.
+7. Score chronological held-out data after a purge gap and report Pearson IC, Rank IC, ROC-AUC, PR-AUC, and log loss.
 
-The application takes L2 snapshots through the following stages:
+## Current evidence
 
-```
-L2 snapshots
-    -> schema validation
-    -> microstructure features
-    -> liquidity-support point clouds
-    -> Vietoris-Rips persistent homology (H0/H1)
-    -> Betti curves and persistence features
-    -> training-only ADF selection of fractional-differencing order
-    -> causal fractional differentiation (CUDA/CPU)
-    -> training-only class rebalancing
-    -> XGBoost with custom binary Focal Loss
-    -> chronological purge
-    -> out-of-sample metrics
-```
+The repository separates synthetic engineering checks from market-data results. The target IC of **0.064** is a reproduction target, not a measured result for the runs below.
 
-The production topology path uses Giotto-TDA. When Giotto-TDA is not installed, the application has an explicitly labelled exact small-cloud Vietoris-Rips fallback over GF(2) for local tests and smoke runs. It is not used when `--require-gtda` is supplied.
+### Deterministic synthetic experiment
 
-## Repository layout
+The supported CI experiment uses 6,000 generated events, a chronological holdout, a purge gap, five feature/objective variants, six random seeds, five walk-forward folds, and a label-permutation placebo. Numerical checks compare the Focal Loss gradient and Hessian against finite differences and test malformed books, price-translation invariance, and causal fractional differentiation.
 
-```text
-research/topology_lob/
-├── configs/                     Example and FI-2010 configurations
-├── cpp/                        C++ CPU implementation / benchmark
-├── cuda/                       CUDA kernel implementation
-├── docs/                       Experiment and real-data run notes
-├── scripts/                    FI-2010 conversion and benchmark tools
-├── tests/                      Unit and integration tests
-├── assets/                     Figures and run-output captures
-├── results/                    Result notes; generated run output is ignored
-├── run.py                      Command-line entry point
-├── topology_lob.py             Core pipeline
-├── fi2010.py                  FI-2010 loader / schema adapter
-├── pyproject.toml              Pinned Python environment
-└── requirements.txt            Pip requirements
-```
+The stored example produced Pearson IC **0.073292** for Focal Loss and **0.095368** for the log-loss control. These figures describe synthetic data only; they are not evidence of market alpha.
 
-## Reproduce the project
+![Robustness dashboard](assets/figures/robustness_dashboard.png)
 
-### 1. Get the code
+![Synthetic data diagnostics](assets/figures/data_diagnostics_dashboard.png)
 
-```bash
-git clone https://github.com/SpryzenHell/topology_lob.git
-cd topology_lob/research/topology_lob
-```
+### FI-2010 benchmark
 
-### 2. Use a supported Python
+A recorded run used 254,750 training events and three held-out segments totalling 139,587 events. It evaluated 395 topology clouds with Giotto-TDA and selected fractional-differencing order **d = 0.3** using the training stream.
 
-The pinned environment targets Python 3.10-3.12. Python 3.11 is the recommended choice for the documented reproducibility path.
+| Metric | Recorded result |
+|---|---:|
+| Pooled Pearson IC, Focal Loss | 0.002023 |
+| Pooled Rank IC, Focal Loss | 0.159088 |
+| Mean daily Pearson IC | 0.001864 |
+| Mean daily Rank IC | 0.159976 |
+| Best pooled ROC-AUC among tested variants | 0.709805 |
+| Fractional-differentiation backend | CPU fallback; no CUDA device in that run |
 
-Example with Python 3.11:
+The benchmark did **not** reach the 0.064 Pearson-IC target. The gap between Pearson IC and Rank IC is reported rather than hidden. FI-2010 is a short historical benchmark, not a live feed, and does not establish profitability.
 
-```bash
+![FI-2010 validation dashboard](assets/figures/fi2010_validation_dashboard.png)
+
+See the [FI-2010 validation](results/FI2010_VALIDATION.md), [synthetic experiment results](results/EXPERIMENTAL_VALIDATION.md), and [CI record](results/CI_VALIDATION.md).
+
+## Quick start
+
+Python 3.11 is recommended.
+
+~~~bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-```
-
-On Windows PowerShell:
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-```
-
-### 3. Install the application
-
-For the complete TDA path and development tests:
-
-```bash
 python -m pip install -e ".[tda,dev]"
-```
-
-This installs the pinned numerical stack plus Giotto-TDA and pytest.
-
-### 4. Run the test suite
-
-```bash
 python -m pytest -q
-```
+~~~
 
-The tests cover L2 schema validation, fractional-difference weights, the exact small-cloud VR fallback, the custom Focal Loss derivatives, and FI-2010 column mapping.
+Run the deterministic end-to-end demo with the full Giotto-TDA backend:
 
-### 5. Run the end-to-end demo
-
-```bash
+~~~bash
 python run.py demo --config configs/demo.json --out results/demo --require-gtda
-```
+~~~
 
-The command creates:
+The output includes metrics.json, test_scores.csv, Betti curves, a fractional-stationarity plot, and index.html. Add --require-cuda to require CUDA fractional differentiation; the command exits if it falls back to CPU.
 
-```text
-results/demo/
-├── metrics.json
-├── test_scores.csv
-├── betti_curves.png
-├── fractional_stationarity.png
-└── index.html
-```
+Run the extended experiments and C++ benchmark:
 
-Open `results/demo/index.html` in a browser to inspect the run report.
-
-The demo uses deterministic synthetic L2 data. It is intended to exercise the complete code path and is not market data. Any performance number produced by this demo is engineering evidence only.
-
-### 6. Run the ablation and walk-forward checks
-
-```bash
+~~~bash
+python scripts/generate_evidence.py --events 6000 --out results/evidence --require-gtda
 python run.py ablation --config configs/demo.json --out results/ablation
 python run.py walk-forward --config configs/demo.json --out results/walk_forward.json
 python run.py ffd-benchmark --events 200000 --width 256 --d 0.45
-```
+cmake -S . -B build
+cmake --build build --config Release
+./build/fractional_diff_cpu
+~~~
 
-These commands keep the same chronological feature/model construction and provide the basic comparison required by the project.
+## Real L2 input
 
-## Real L2 data
+The CSV loader expects one row per snapshot with a timestamp and columns for every level:
 
-The application expects a CSV with one row per L2 snapshot:
+~~~text
+timestamp,bid_price_1,bid_size_1,ask_price_1,ask_size_1,...,bid_price_N,bid_size_N,ask_price_N,ask_size_N
+~~~
 
-```text
-timestamp,
-bid_price_1,bid_size_1,ask_price_1,ask_size_1,
-...
-bid_price_N,bid_size_N,ask_price_N,ask_size_N
-```
+The loader sorts by timestamp and rejects duplicate or invalid timestamps, missing or non-finite values, negative sizes, invalid prices, and crossed/locked or incorrectly ordered books.
 
-Before feature construction the loader:
+~~~bash
+python run.py demo --config configs/demo.json --data /absolute/path/to/l2.csv --out results/real_l2 --require-gtda
+~~~
 
-- parses timestamps as UTC;
-- sorts chronologically;
-- requires unique timestamps;
-- rejects missing/non-numeric L2 fields;
-- rejects negative depth;
-- rejects a locked or crossed best bid/ask.
+Use raw, timestamped L2 snapshots for any claim about a live-feed result. FI-2010 uses an event index in place of exchange timestamps because its benchmark files do not provide usable wall-clock timestamps.
 
-For a real run, use the exact TDA path:
+## FI-2010 benchmark reproduction
 
-```bash
-python run.py demo   --config configs/demo.json   --data /absolute/path/to/l2.csv   --out results/real_l2   --require-gtda
-```
+The fetch script downloads the public Decimal-Precision benchmark files to a local directory; dataset files are not committed to this repository.
 
-For the CUDA fractional-differentiation path, also add `--require-cuda`. The command exits with an error if CUDA is requested but the GPU backend is not actually exercised.
+~~~bash
+python scripts/fetch_fi2010.py --out data/external/fi2010.zip --extract
+python scripts/run_fi2010_benchmark.py \
+  --train data/external/fi2010/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+  --test \
+    data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+    data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+    data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+  --tda-stride 1000 --require-gtda --out results/fi2010_benchmark.json
+~~~
 
-## FI-2010 benchmark
+Review the terms on the [official FI-2010 data record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649) before using or redistributing the dataset. The repository stores scripts and result summaries, not raw dataset files.
 
-FI-2010 support is included for a public high-frequency LOB benchmark. The benchmark is preprocessed/normalized and is not the original exchange feed. The project therefore treats FI-2010 as a benchmark input and keeps the raw-feed claim separate from it.
+## Figures and reports
 
-The data record is documented separately in `research/topology_lob/DATA_GUIDE.md` and `research/topology_lob/docs/REAL_DATA_RUN.md`.
+These images show experiment results and data analysis, not terminal captures. The report snapshot is rendered as a high-contrast raster image so its text stays readable on GitHub.
 
-Typical workflow:
+- [Experiment dashboard](assets/figures/experimental_validation_dashboard.png)
+- [Robustness checks](assets/figures/robustness_dashboard.png)
+- [Data diagnostics](assets/figures/data_diagnostics_dashboard.png)
+- [FI-2010 results](assets/figures/fi2010_validation_dashboard.png)
+- [Run-report snapshot](assets/screenshots/report_preview.png)
+- [Figure notes](assets/README.md)
 
-```bash
-cd research/topology_lob
+## Author
 
-python scripts/fetch_fi2010.py   --out data/external/fi2010.zip   --extract
+**Pirate-Emperor**
 
-python scripts/run_fi2010_benchmark.py   --train data/external/fi2010/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt   --test     data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt     data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt     data/external/fi2010/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt   --tda-stride 1000   --require-gtda   --out results/fi2010_benchmark.json
-```
+## License
 
-Add `--require-cuda` when the fractional-differentiation GPU path is part of the run being verified.
-
-The benchmark code deliberately constructs forward-return labels separately inside train and each held-out test segment. This prevents an end-of-segment observation from receiving a target calculated from the next segment.
-
-## Reproducibility rules
-
-The repository follows these rules for reported results:
-
-1. The fractional-differencing order is selected from the training prefix only.
-2. The fractional-difference filter is causal.
-3. Class rebalancing is performed only after the training boundary is fixed.
-4. Model fitting never uses the held-out rows.
-5. Forward-return labels do not cross train/test or test-day boundaries.
-6. The held-out period is chronological and includes a purge gap.
-7. Focal Loss is compared with a standard XGBoost binary-logloss control on the same split and features.
-8. The value `0.064` is stored only as `target_resume_ic`; it is never substituted for a measured Information Coefficient.
-
-## Figures and run captures
-
-All figures below are generated from measured local runs or from deterministic data generated by the repository. No illustrative market-data images are used as results.
-
-### L2 snapshot used by the deterministic demo
-
-![Synthetic L2 snapshot](research/topology_lob/assets/figures/lob_snapshot.svg)
-
-### Vietoris-Rips Betti counts
-
-![Betti curves](research/topology_lob/assets/figures/betti_curves.svg)
-
-### Training-only stationarity selection
-
-![ADF selection](research/topology_lob/assets/figures/ffd_stationarity.svg)
-
-### Model comparison from the supported CI run
-
-![Model comparison](research/topology_lob/assets/figures/model_comparison.svg)
-
-### Standalone C++ benchmark
-
-![C++ benchmark](research/topology_lob/assets/figures/cpp_benchmark.svg)
-
-### Run report preview
-
-![Run report preview](research/topology_lob/assets/screenshots/report_preview.png)
-
-### Terminal run capture
-
-![Terminal run capture](research/topology_lob/assets/screenshots/terminal_demo_run.png)
-
-The assets directory documents the provenance of each figure and capture.
-
-The run captures are stored as raster PNGs with embedded standard fonts. This avoids browser font/rendering differences in GitHub's Markdown image renderer. The original SVG architecture diagrams are retained separately.
-
-### Extended experiment and data-analysis evidence
-
-![Experimental validation dashboard](research/topology_lob/assets/figures/experimental_validation_dashboard.png)
-
-![Robustness and correctness dashboard](research/topology_lob/assets/figures/robustness_dashboard.png)
-
-![Synthetic data diagnostics](research/topology_lob/assets/figures/data_diagnostics_dashboard.png)
-
-![FI-2010 validation dashboard](research/topology_lob/assets/figures/fi2010_validation_dashboard.png)
-
-The evidence generator exercises a five-way feature/objective ablation, six synthetic seeds, five chronological walk-forward folds, a label-permutation placebo, Focal Loss gradient/Hessian finite-difference checks, malformed-book rejection, price-translation invariance, causal fractional-differentiation invariance, and descriptive L2/topology diagnostics.
-
-Re-generate the evidence with:
-
-```bash
-python scripts/generate_evidence.py --events 6000 --out results/evidence
-```
-
-On a supported environment with Giotto-TDA installed, add `--require-gtda` so the run fails closed rather than silently substituting the small-cloud fallback. The committed PNGs are a readable local validation snapshot; generated CI artifacts are the supported-environment execution record.
-
-## Verified synthetic run
-
-The current release-path integration run uses the deterministic synthetic generator and the supported Python 3.11 + Giotto-TDA environment. It verifies execution from input through feature construction, TDA, fractional differentiation and model evaluation.
-
-| Item | Value |
-|---|---:|
-| Synthetic events | 6,000 |
-| Model rows | 5,735 |
-| Training rows | 3,994 |
-| Test rows | 1,721 |
-| Purge gap | 20 |
-| Topology clouds | 743 |
-| Selected d | 0.1 |
-| TDA backend | giotto-tda |
-| FFD backend | cpu-fallback:no-cuda |
-
-| Metric | Focal Loss | Log-loss control |
-|---|---:|---:|
-| Pearson IC | 0.073292 | 0.095368 |
-| Rank IC | 0.039856 | 0.036762 |
-| ROC-AUC | 0.531075 | 0.528676 |
-| PR-AUC | 0.244568 | 0.242809 |
-| Log loss | 0.516779 | 0.561761 |
-
-The current release-path validation was completed in GitHub Actions on Python 3.11.16 with the pinned stack and Giotto-TDA 0.6.2. The CPU runner had no CUDA device, so FFD used the explicit CPU fallback. The extended evidence artifact was uploaded successfully and the validated raster assets were then committed back to the branch.
-
-## CI validation record
-
-The supported-environment execution record is in `research/topology_lob/results/CI_VALIDATION.md`, and the extended numerical analysis is in `research/topology_lob/results/EXPERIMENTAL_VALIDATION.md`.
-
-
-The repository contains a deterministic synthetic integration result and a standalone C++ CPU benchmark so that the codebase has concrete execution evidence without inventing a market result.
-
-The historical resume target of OOS IC = 0.064 is a reproduction target only. It must be measured on the intended real L2 dataset before being described as an achieved result.
-
-## Third-party code
-
-The original project specification named:
-
-- `giotto-ai/giotto-tda`
-- `artemmavrin/focal-loss`
-- `scikit-learn-contrib/imbalanced-learn`
-
-The application layer uses the relevant public APIs and documents the upstream sources in `THIRD_PARTY.md`. It does not claim the project-specific orchestration code is part of those upstream repositories.
-
-## Notes
-
-The real-data commands require access to the selected dataset files. Those data files are not committed to this repository. The fetch utility prints the archive SHA-256 so a run can be recorded with an explicit input checksum.
+The project code is released under the MIT License; see [LICENSE](LICENSE). Dataset terms are separate from the code license.
