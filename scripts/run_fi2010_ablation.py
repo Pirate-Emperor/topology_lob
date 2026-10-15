@@ -20,6 +20,8 @@ from fi2010 import load_raw, raw40_to_canonical
 from scripts.fi2010_feature_helpers import (
     fractional_diff_by_segment,
     microstructure_by_segment,
+    select_stationary_d_by_segment,
+    split_stock_sequences,
     topology_by_segment,
 )
 
@@ -62,11 +64,22 @@ def prepare(args):
     frames = [train, *tests]
     combined = pd.concat(frames, ignore_index=True)
     train_events = len(train)
-    micro, boundaries = microstructure_by_segment(frames, depth_levels=5)
-    d, stationarity = select_stationary_d(
-        micro["log_mid"].to_numpy()[:train_events],
+    sequence_frames, file_boundaries, boundaries, sequence_cuts = split_stock_sequences(
+        frames,
+        threshold_pct=float(getattr(args, "sequence_jump_threshold", 0.05)),
+        min_segment_events=int(getattr(args, "min_segment_events", 1024)),
+    )
+    micro, measured_boundaries = microstructure_by_segment(sequence_frames, depth_levels=5)
+    if measured_boundaries != boundaries:
+        raise RuntimeError("feature helper boundaries do not match stock splits")
+    d, stationarity = select_stationary_d_by_segment(
+        micro["log_mid"].to_numpy(),
+        boundaries,
+        train_events,
         np.linspace(0.0, 1.0, 11),
         0.05,
+        args.ffd_width,
+        prefix_fraction=1.0,
     )
     fd, gpu_used, fd_backend = fractional_diff_by_segment(
         micro["log_mid"].to_numpy(), boundaries, d, args.ffd_width,
@@ -79,7 +92,7 @@ def prepare(args):
     ]
     radii = np.asarray([0.5, 1.0, 1.5, 2.0, 2.5])
     topo_df, topo_meta, topo_index = topology_by_segment(
-        frames, boundaries, radii,
+        sequence_frames, boundaries, radii,
         horizon=args.horizon, stride=args.tda_stride, levels=10,
         require_gtda=args.require_gtda, n_jobs=-1,
     )
@@ -111,6 +124,14 @@ def prepare(args):
         "data_source": "FI-2010 Decimal-Precision",
         "train_events": train_events,
         "test_events": [len(x) for x in tests],
+        "data_license": "CC BY 4.0; cite Ntakaris et al. (2018)",
+        "dataset_record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+        "sequence_jump_threshold_pct": float(getattr(args, "sequence_jump_threshold", 0.05)) * 100.0,
+        "sequence_cuts": sequence_cuts,
+        "stock_sequences_per_file": [
+            int(sum(1 for b in boundaries if file_start <= b[0] and b[1] <= file_end))
+            for file_start, file_end in file_boundaries
+        ],
         "selected_d": float(d),
         "stationarity": stationarity,
         "tda": topo_meta,
@@ -126,8 +147,13 @@ def prepare(args):
 
     event_indices = np.flatnonzero(valid)
     train_mask = event_indices < train_events
+    for start, end in boundaries:
+        if end <= train_events:
+            train_mask &= ~(
+                (event_indices >= max(start, end - max(args.purge, args.horizon)))
+                & (event_indices < end)
+            )
     train_pos = np.flatnonzero(train_mask)
-    train_pos = train_pos[:max(0, len(train_pos) - args.purge)]
 
     cursor = train_events
     test_positions_by_day = []
@@ -192,6 +218,8 @@ def main():
     ap.add_argument("--label-threshold", type=float, default=0.0005)
     ap.add_argument("--purge", type=int, default=50)
     ap.add_argument("--ffd-width", type=int, default=256)
+    ap.add_argument("--sequence-jump-threshold", type=float, default=0.05)
+    ap.add_argument("--min-segment-events", type=int, default=1024)
     ap.add_argument("--require-gtda", action="store_true")
     ap.add_argument("--require-cuda", action="store_true")
     args = ap.parse_args()
