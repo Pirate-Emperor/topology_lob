@@ -12,6 +12,7 @@ on:
       - "scripts/run_fi2010_return_regression.py"
       - "fi2010.py"
       - "topology_lob.py"
+      - "tests/**"
 
 permissions:
   contents: read
