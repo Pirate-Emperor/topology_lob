@@ -1,5 +1,9 @@
 name: topology-lob-fi2010
 
+concurrency:
+  group: topology-lob-fi2010-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
