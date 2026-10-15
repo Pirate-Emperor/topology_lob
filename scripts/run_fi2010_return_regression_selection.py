@@ -56,9 +56,13 @@ def fold_indices(
     horizon: int,
     purge: int,
     fractions: tuple[float, float, float],
-    sequence_boundaries: list[tuple[int, int]],
+    sequence_boundaries: list[tuple[int, int]] | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Build a purged forward fold within every stock's own time sequence."""
+    """Build a purged forward fold within each stock's time sequence.
+
+    With no sequence boundaries, this preserves the older single-stream API
+    used by unit tests and small callers.
+    """
     fit_fraction, val_start_fraction, val_end_fraction = fractions
     if not 0 < fit_fraction < val_start_fraction < val_end_fraction < 1:
         raise ValueError("fold fractions must satisfy 0 < fit < val_start < val_end < 1")
@@ -70,11 +74,12 @@ def fold_indices(
     gap = max(purge, horizon)
     fit = np.zeros(len(idx), dtype=bool)
     val = np.zeros(len(idx), dtype=bool)
+    boundaries = sequence_boundaries if sequence_boundaries is not None else [(0, train_events)]
     used = 0
-    for start, end in sequence_boundaries:
+    for start, end in boundaries:
+        if start >= train_events:
+            continue
         if end <= start or start < 0 or end > train_events:
-            if start >= train_events:
-                continue
             raise ValueError(f"invalid training stock sequence: {(start, end)}")
         length = end - start
         fit_end = start + int(length * fit_fraction)
