@@ -158,7 +158,7 @@ def run(args) -> dict[str, Any]:
                 )
             model = fit_regressor(
                 X_all[fit_pos], future[fit_pos],
-                seed=args.seed + horizon, rounds=args.rounds,
+                seed=args.seed + horizon, rounds=args.rounds, nthread=args.nthread,
             )
             prediction = model.predict(__import__("xgboost").DMatrix(X_all[val_pos])) / 1e4
             metrics = score(prediction, future[val_pos])
@@ -197,7 +197,7 @@ def run(args) -> dict[str, Any]:
         raise RuntimeError(f"insufficient final rows train={len(train_pos)} test={len(test_pos)}")
     final_model = fit_regressor(
         X_all[train_pos], future[train_pos],
-        seed=args.seed + horizon, rounds=args.rounds,
+        seed=args.seed + horizon, rounds=args.rounds, nthread=args.nthread,
     )
 
     day_rows = []
@@ -228,7 +228,7 @@ def run(args) -> dict[str, Any]:
             "record": DATASET_PAGE,
             "license": DATASET_LICENSE,
             "attribution": "Ntakaris et al., Journal of Forecasting 37(8), 852-866 (2018), DOI 10.1002/for.2543",
-            "input_sha256": {str(p): sha256(p) for p in input_files},
+            "input_sha256": {p.name: sha256(p) for p in input_files},
             "train_events": train_events,
             "test_events": [int(len(f)) for f in bundle["frames"][1:]],
         },
