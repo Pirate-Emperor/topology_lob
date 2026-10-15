@@ -1,0 +1,354 @@
+{
+  "data_source": "FI-2010 Decimal-Precision",
+  "train_events": 254750,
+  "test_events": [
+    55478,
+    52172,
+    31937
+  ],
+  "selected_d": 0.30000000000000004,
+  "stationarity": {
+    "candidates": [
+      {
+        "d": 0.0,
+        "adf_pvalue": 0.6397947572379157,
+        "corr_with_price": 1.0
+      },
+      {
+        "d": 0.1,
+        "adf_pvalue": 0.37739698635903474,
+        "corr_with_price": 0.9998826443827005
+      },
+      {
+        "d": 0.2,
+        "adf_pvalue": 0.08744601733642698,
+        "corr_with_price": 0.9993155960898897
+      },
+      {
+        "d": 0.30000000000000004,
+        "adf_pvalue": 0.0017019549687574862,
+        "corr_with_price": 0.9975627640710244
+      },
+      {
+        "d": 0.4,
+        "adf_pvalue": 6.941825196067026e-08,
+        "corr_with_price": 0.9923385649875766
+      },
+      {
+        "d": 0.5,
+        "adf_pvalue": 1.2247000433312573e-17,
+        "corr_with_price": 0.9756555639397728
+      },
+      {
+        "d": 0.6000000000000001,
+        "adf_pvalue": 5.415200683256963e-30,
+        "corr_with_price": 0.9180723022965988
+      },
+      {
+        "d": 0.7000000000000001,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.7361061671587289
+      },
+      {
+        "d": 0.8,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.3994154564453587
+      },
+      {
+        "d": 0.9,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.1264980941663969
+      },
+      {
+        "d": 1.0,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.0032932916269138362
+      }
+    ],
+    "selected_d": 0.30000000000000004,
+    "adf_threshold": 0.05
+  },
+  "tda": {
+    "backend": "giotto-tda",
+    "n_clouds": 396,
+    "radii": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5
+    ],
+    "feature_names": [
+      "betti0_r0",
+      "betti0_r1",
+      "betti0_r2",
+      "betti0_r3",
+      "betti0_r4",
+      "betti1_r0",
+      "betti1_r1",
+      "betti1_r2",
+      "betti1_r3",
+      "betti1_r4",
+      "h1_max_persistence",
+      "h1_persistence_entropy"
+    ],
+    "homology_dimensions": [
+      0,
+      1
+    ],
+    "segment_cloud_counts": [
+      255,
+      56,
+      53,
+      32
+    ]
+  },
+  "fractional_diff_backend": "cpu-fallback:no-cuda",
+  "gpu_used": false,
+  "experiments": {
+    "micro_only": {
+      "days": [
+        {
+          "day": 8,
+          "focal": {
+            "probability_pearson_ic": 0.0086031794532178,
+            "margin_pearson_ic": 0.008547743190239713,
+            "rank_ic": 0.183096392839853,
+            "roc_auc": 0.7157705860024317
+          },
+          "logloss": {
+            "probability_pearson_ic": 0.007961059877989035,
+            "margin_pearson_ic": 0.007881937938489172,
+            "rank_ic": 0.18448440493891424,
+            "roc_auc": 0.7159324727597092
+          }
+        },
+        {
+          "day": 9,
+          "focal": {
+            "probability_pearson_ic": -0.0010560484253494971,
+            "margin_pearson_ic": -0.001058288611036215,
+            "rank_ic": 0.15841477774095586,
+            "roc_auc": 0.6883761013920828
+          },
+          "logloss": {
+            "probability_pearson_ic": -0.0021187772202222836,
+            "margin_pearson_ic": -0.0010458973399209265,
+            "rank_ic": 0.16022957549283096,
+            "roc_auc": 0.6885504152413024
+          }
+        },
+        {
+          "day": 10,
+          "focal": {
+            "probability_pearson_ic": 0.0028783334228164458,
+            "margin_pearson_ic": 0.002913957350348195,
+            "rank_ic": 0.18062745530522034,
+            "roc_auc": 0.7028381344196524
+          },
+          "logloss": {
+            "probability_pearson_ic": 0.001935641423520513,
+            "margin_pearson_ic": 0.002123173070368231,
+            "rank_ic": 0.17995593501988652,
+            "roc_auc": 0.7031214061430359
+          }
+        }
+      ],
+      "pooled_focal": {
+        "probability_pearson_ic": 0.003562653559002615,
+        "margin_pearson_ic": 0.003552825842670071,
+        "rank_ic": 0.1728447984095132,
+        "roc_auc": 0.702137063515669
+      },
+      "pooled_logloss": {
+        "probability_pearson_ic": 0.0026591006844896253,
+        "margin_pearson_ic": 0.0030981227673779967,
+        "rank_ic": 0.17402106031425632,
+        "roc_auc": 0.7024177256473683
+      }
+    },
+    "micro_plus_fd": {
+      "days": [
+        {
+          "day": 8,
+          "focal": {
+            "probability_pearson_ic": 0.008827402620021794,
+            "margin_pearson_ic": 0.008769602065648134,
+            "rank_ic": 0.16925964572759128,
+            "roc_auc": 0.7196506754973825
+          },
+          "logloss": {
+            "probability_pearson_ic": 0.008761286313744636,
+            "margin_pearson_ic": 0.008356621879175257,
+            "rank_ic": 0.17227600758390632,
+            "roc_auc": 0.7214193031445736
+          }
+        },
+        {
+          "day": 9,
+          "focal": {
+            "probability_pearson_ic": -0.0016278911289741955,
+            "margin_pearson_ic": -0.0016382158650438286,
+            "rank_ic": 0.14800731231274808,
+            "roc_auc": 0.6889795635234638
+          },
+          "logloss": {
+            "probability_pearson_ic": -0.004093800310875475,
+            "margin_pearson_ic": -0.002069031543439587,
+            "rank_ic": 0.14906280048643708,
+            "roc_auc": 0.6906314635608062
+          }
+        },
+        {
+          "day": 10,
+          "focal": {
+            "probability_pearson_ic": 0.0004938297515164217,
+            "margin_pearson_ic": 0.0005487133257023062,
+            "rank_ic": 0.16774680014452623,
+            "roc_auc": 0.7059049462985794
+          },
+          "logloss": {
+            "probability_pearson_ic": -0.0017510601228804105,
+            "margin_pearson_ic": -0.0007559387084009841,
+            "rank_ic": 0.16511289176030472,
+            "roc_auc": 0.7050819530538042
+          }
+        }
+      ],
+      "pooled_focal": {
+        "probability_pearson_ic": 0.0028220348754031347,
+        "margin_pearson_ic": 0.002816385675354642,
+        "rank_ic": 0.15998825142247058,
+        "roc_auc": 0.7048093014169057
+      },
+      "pooled_logloss": {
+        "probability_pearson_ic": 0.0012024224781628258,
+        "margin_pearson_ic": 0.0021495269808859967,
+        "rank_ic": 0.16110273098686287,
+        "roc_auc": 0.7060561992385206
+      }
+    },
+    "micro_plus_topology": {
+      "days": [
+        {
+          "day": 8,
+          "focal": {
+            "probability_pearson_ic": 0.00885027452847861,
+            "margin_pearson_ic": 0.008809523414415328,
+            "rank_ic": 0.18768463589543952,
+            "roc_auc": 0.716091892250973
+          },
+          "logloss": {
+            "probability_pearson_ic": 0.007336464496081954,
+            "margin_pearson_ic": 0.00768046702771356,
+            "rank_ic": 0.18883213409072802,
+            "roc_auc": 0.7158263193043993
+          }
+        },
+        {
+          "day": 9,
+          "focal": {
+            "probability_pearson_ic": -0.0023658250699999314,
+            "margin_pearson_ic": -0.0023548243286423826,
+            "rank_ic": 0.16145265363925482,
+            "roc_auc": 0.688826784085059
+          },
+          "logloss": {
+            "probability_pearson_ic": -0.0024004476828424666,
+            "margin_pearson_ic": -0.0011410401214189026,
+            "rank_ic": 0.16286817154218755,
+            "roc_auc": 0.6887974583827513
+          }
+        },
+        {
+          "day": 10,
+          "focal": {
+            "probability_pearson_ic": 0.006800432708585125,
+            "margin_pearson_ic": 0.006789619493172806,
+            "rank_ic": 0.18588314416526164,
+            "roc_auc": 0.6997368061846224
+          },
+          "logloss": {
+            "probability_pearson_ic": 0.00705688593900136,
+            "margin_pearson_ic": 0.006357415015160938,
+            "rank_ic": 0.18459972276560171,
+            "roc_auc": 0.6985718855533355
+          }
+        }
+      ],
+      "pooled_focal": {
+        "probability_pearson_ic": 0.004233351535547442,
+        "margin_pearson_ic": 0.004219512519058784,
+        "rank_ic": 0.17689306665880955,
+        "roc_auc": 0.70099839976144
+      },
+      "pooled_logloss": {
+        "probability_pearson_ic": 0.0037309303172149357,
+        "margin_pearson_ic": 0.004137763744767212,
+        "rank_ic": 0.17764968678337567,
+        "roc_auc": 0.7008216500934389
+      }
+    },
+    "full": {
+      "days": [
+        {
+          "day": 8,
+          "focal": {
+            "probability_pearson_ic": 0.007785865835456362,
+            "margin_pearson_ic": 0.0077443742231102595,
+            "rank_ic": 0.172143408232164,
+            "roc_auc": 0.7232413751842979
+          },
+          "logloss": {
+            "probability_pearson_ic": 0.007359619200335602,
+            "margin_pearson_ic": 0.007380755712540607,
+            "rank_ic": 0.17623767879239907,
+            "roc_auc": 0.7213990628018861
+          }
+        },
+        {
+          "day": 9,
+          "focal": {
+            "probability_pearson_ic": -0.001877155511627427,
+            "margin_pearson_ic": -0.0018852546476942117,
+            "rank_ic": 0.14670110866828895,
+            "roc_auc": 0.6924555631213188
+          },
+          "logloss": {
+            "probability_pearson_ic": -0.003910143715003073,
+            "margin_pearson_ic": -0.0020781829684556772,
+            "rank_ic": 0.15099829770135814,
+            "roc_auc": 0.6905304287285885
+          }
+        },
+        {
+          "day": 10,
+          "focal": {
+            "probability_pearson_ic": 0.003383794853492349,
+            "margin_pearson_ic": 0.003418278545344698,
+            "rank_ic": 0.16827915878329822,
+            "roc_auc": 0.7041766204581823
+          },
+          "logloss": {
+            "probability_pearson_ic": 0.0010964204456405777,
+            "margin_pearson_ic": 0.001527613124002129,
+            "rank_ic": 0.17100210273877595,
+            "roc_auc": 0.7037070217288339
+          }
+        }
+      ],
+      "pooled_focal": {
+        "probability_pearson_ic": 0.003128525846299442,
+        "margin_pearson_ic": 0.0031222578745069567,
+        "rank_ic": 0.1608342593678324,
+        "roc_auc": 0.706937115203753
+      },
+      "pooled_logloss": {
+        "probability_pearson_ic": 0.0015444819301994805,
+        "margin_pearson_ic": 0.0023968326686298323,
+        "rank_ic": 0.1647702584893056,
+        "roc_auc": 0.7056171462524142
+      }
+    }
+  }
+}

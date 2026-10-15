@@ -1,0 +1,2017 @@
+{
+  "data_source": "FI-2010 Decimal-Precision benchmark",
+  "data_license": "CC BY 4.0; cite Ntakaris et al. (2018)",
+  "dataset_record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+  "experiment": "continuous forward-return XGBoost regression; fixed configs, no test-based selection",
+  "train_events": 254750,
+  "test_events": [
+    55478,
+    52172,
+    31937
+  ],
+  "horizons": [
+    10,
+    20,
+    30,
+    50,
+    100,
+    200,
+    500,
+    1000
+  ],
+  "rounds": 220,
+  "purge_minimum": 50,
+  "selected_d": 0.2,
+  "stationarity": {
+    "candidates": [
+      {
+        "d": 0.0,
+        "adf_pvalue": 0.2456542220573879,
+        "corr_with_price": 1.0
+      },
+      {
+        "d": 0.1,
+        "adf_pvalue": 0.11406622641165903,
+        "corr_with_price": 0.9997668006865851
+      },
+      {
+        "d": 0.2,
+        "adf_pvalue": 0.017035554267845556,
+        "corr_with_price": 0.9986405167366252
+      },
+      {
+        "d": 0.30000000000000004,
+        "adf_pvalue": 0.00014229682317549097,
+        "corr_with_price": 0.9951689913132221
+      },
+      {
+        "d": 0.4,
+        "adf_pvalue": 1.3152289506566537e-09,
+        "corr_with_price": 0.9849238851983084
+      },
+      {
+        "d": 0.5,
+        "adf_pvalue": 5.739785476993282e-20,
+        "corr_with_price": 0.9532173676291698
+      },
+      {
+        "d": 0.6000000000000001,
+        "adf_pvalue": 2.091687320817655e-30,
+        "corr_with_price": 0.854062991121323
+      },
+      {
+        "d": 0.7000000000000001,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.610843253725744
+      },
+      {
+        "d": 0.8,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.2957404210987242
+      },
+      {
+        "d": 0.9,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.09070820545675808
+      },
+      {
+        "d": 1.0,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.0028638037854802506
+      }
+    ],
+    "selected_d": 0.2,
+    "adf_threshold": 0.05
+  },
+  "tda": {
+    "backend": "giotto-tda",
+    "n_clouds": 392,
+    "radii": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5
+    ],
+    "feature_names": [
+      "betti0_r0",
+      "betti0_r1",
+      "betti0_r2",
+      "betti0_r3",
+      "betti0_r4",
+      "betti1_r0",
+      "betti1_r1",
+      "betti1_r2",
+      "betti1_r3",
+      "betti1_r4",
+      "h1_max_persistence",
+      "h1_persistence_entropy"
+    ],
+    "homology_dimensions": [
+      0,
+      1
+    ],
+    "segment_cloud_counts": [
+      254,
+      55,
+      52,
+      31
+    ]
+  },
+  "topology_clouds": 392,
+  "ffd_backend": "cpu-fallback:no-cuda",
+  "gpu_used": false,
+  "results": [
+    {
+      "horizon": 10,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 254700,
+      "test_rows": 139557,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55468,
+            "pearson_ic": 0.010018125152445559,
+            "rank_ic": 0.164196389951655,
+            "direction_hit_rate": 0.5684538833201125,
+            "prediction_std": 0.0007679243572056293,
+            "future_return_std": 0.018074323040941864,
+            "mean_prediction_bps": 0.1445598991267616,
+            "mean_future_return_bps": 0.5732224232744373
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52162,
+            "pearson_ic": 0.006465203757657902,
+            "rank_ic": 0.15967175495358774,
+            "direction_hit_rate": 0.5678654959549096,
+            "prediction_std": 0.0008911745972000062,
+            "future_return_std": 0.018289365863591794,
+            "mean_prediction_bps": -0.07782668035360985,
+            "mean_future_return_bps": 0.5907952170544621
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31927,
+            "pearson_ic": 0.0007865774656683068,
+            "rank_ic": 0.15996131008965273,
+            "direction_hit_rate": 0.5987408776270868,
+            "prediction_std": 0.0006941561587154865,
+            "future_return_std": 0.022987864785834252,
+            "mean_prediction_bps": -0.3730404205271043,
+            "mean_future_return_bps": 1.0828633611069047
+          }
+        ],
+        "pooled": {
+          "rows": 139557,
+          "pearson_ic": 0.0062558408960203,
+          "rank_ic": 0.16090094146868006,
+          "direction_hit_rate": 0.5751628366903846,
+          "prediction_std": 0.000801158370450139,
+          "future_return_std": 0.019384580809546807,
+          "mean_prediction_bps": -0.056974627113959286,
+          "mean_future_return_bps": 0.6963831267241446
+        }
+      }
+    },
+    {
+      "horizon": 10,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 254445,
+      "test_rows": 138792,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55213,
+            "pearson_ic": 0.00796072350802702,
+            "rank_ic": 0.1745401730442923,
+            "direction_hit_rate": 0.5674207161356927,
+            "prediction_std": 0.0007173859630711377,
+            "future_return_std": 0.018115904909757823,
+            "mean_prediction_bps": 0.116854025691282,
+            "mean_future_return_bps": 0.5728441855693087
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51907,
+            "pearson_ic": 0.0033380115879609235,
+            "rank_ic": 0.1560217986716598,
+            "direction_hit_rate": 0.5695763577166856,
+            "prediction_std": 0.0009528904338367283,
+            "future_return_std": 0.018334109377703692,
+            "mean_prediction_bps": -0.23551903723273426,
+            "mean_future_return_bps": 0.6017386678546064
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31672,
+            "pearson_ic": 0.0007902537121719413,
+            "rank_ic": 0.158651472913453,
+            "direction_hit_rate": 0.591942409699419,
+            "prediction_std": 0.0007478086045011878,
+            "future_return_std": 0.023079955322764096,
+            "mean_prediction_bps": -0.5531711940420792,
+            "mean_future_return_bps": 1.0934694927958635
+          }
+        ],
+        "pooled": {
+          "rows": 138792,
+          "pearson_ic": 0.004115949487657849,
+          "rank_ic": 0.1634762696014193,
+          "direction_hit_rate": 0.5738226987146233,
+          "prediction_std": 0.0008201251039281487,
+          "future_return_std": 0.0194377738072469,
+          "mean_prediction_bps": -0.16782858438091353,
+          "mean_future_return_bps": 0.7024559111908314
+        }
+      }
+    },
+    {
+      "horizon": 10,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 254650,
+      "test_rows": 139407,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55418,
+            "pearson_ic": 0.0037185096075202898,
+            "rank_ic": 0.15951658240907676,
+            "direction_hit_rate": 0.5633729113284492,
+            "prediction_std": 0.0007107806159183383,
+            "future_return_std": 0.018082456608436433,
+            "mean_prediction_bps": -0.3450185977271758,
+            "mean_future_return_bps": 0.5693715177382603
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52112,
+            "pearson_ic": 0.015686246576093153,
+            "rank_ic": 0.13280480583651838,
+            "direction_hit_rate": 0.5610991710162726,
+            "prediction_std": 0.001285420497879386,
+            "future_return_std": 0.01829813394761889,
+            "mean_prediction_bps": -1.6961139044724405,
+            "mean_future_return_bps": 0.5916488391333312
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31877,
+            "pearson_ic": 0.00029920826260930445,
+            "rank_ic": 0.1417754140366947,
+            "direction_hit_rate": 0.5896100636822788,
+            "prediction_std": 0.002849728334695101,
+            "future_return_std": 0.023005867728338642,
+            "mean_prediction_bps": -0.1533993963676039,
+            "mean_future_return_bps": 1.084210482126946
+          }
+        ],
+        "pooled": {
+          "rows": 139407,
+          "pearson_ic": 0.005105084488337412,
+          "rank_ic": 0.1447631614659905,
+          "direction_hit_rate": 0.5685223840983595,
+          "prediction_std": 0.0016371359815821052,
+          "future_return_std": 0.01939499374457698,
+          "mean_prediction_bps": -0.8062581764534116,
+          "mean_future_return_bps": 0.6954228454359948
+        }
+      }
+    },
+    {
+      "horizon": 10,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 254445,
+      "test_rows": 138792,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55213,
+            "pearson_ic": 0.004814600924929605,
+            "rank_ic": 0.1437586764707084,
+            "direction_hit_rate": 0.5651748682375527,
+            "prediction_std": 0.0005676805158145726,
+            "future_return_std": 0.018115904909757823,
+            "mean_prediction_bps": -0.030234339192247717,
+            "mean_future_return_bps": 0.5728441855693087
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51907,
+            "pearson_ic": 0.00759065055346368,
+            "rank_ic": 0.1363971257541216,
+            "direction_hit_rate": 0.5693644402489066,
+            "prediction_std": 0.0012190237175673246,
+            "future_return_std": 0.018334109377703692,
+            "mean_prediction_bps": -1.628976606298238,
+            "mean_future_return_bps": 0.6017386678546064
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31672,
+            "pearson_ic": -0.0012914266562517739,
+            "rank_ic": 0.14303396353744569,
+            "direction_hit_rate": 0.5939631220005052,
+            "prediction_std": 0.001868185237981379,
+            "future_return_std": 0.023079955322764096,
+            "mean_prediction_bps": -0.9222115477314219,
+            "mean_future_return_bps": 1.0934694927958635
+          }
+        ],
+        "pooled": {
+          "rows": 138792,
+          "pearson_ic": 0.0029651571270215777,
+          "rank_ic": 0.1406033012791853,
+          "direction_hit_rate": 0.5733111418525564,
+          "prediction_std": 0.0012187471147626638,
+          "future_return_std": 0.0194377738072469,
+          "mean_prediction_bps": -0.8316971070598811,
+          "mean_future_return_bps": 0.7024559111908314
+        }
+      }
+    },
+    {
+      "horizon": 20,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 254700,
+      "test_rows": 139527,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55458,
+            "pearson_ic": 0.012371739107897205,
+            "rank_ic": 0.1406466485688429,
+            "direction_hit_rate": 0.5723971293591547,
+            "prediction_std": 0.0014048925368115306,
+            "future_return_std": 0.025557632295745626,
+            "mean_prediction_bps": 0.40001465094974265,
+            "mean_future_return_bps": 1.1434531332645423
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52152,
+            "pearson_ic": 0.016872669299843802,
+            "rank_ic": 0.1514583794443665,
+            "direction_hit_rate": 0.5730365086669734,
+            "prediction_std": 0.0011152762454003096,
+            "future_return_std": 0.025862126380272722,
+            "mean_prediction_bps": 0.031447841593035264,
+            "mean_future_return_bps": 1.1813548958941529
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31917,
+            "pearson_ic": 0.0028443339129333545,
+            "rank_ic": 0.13447037161389597,
+            "direction_hit_rate": 0.5849233950559263,
+            "prediction_std": 0.0011583651648834348,
+            "future_return_std": 0.03251396877793392,
+            "mean_prediction_bps": -0.81735743151512,
+            "mean_future_return_bps": 2.1666396116485243
+          }
+        ],
+        "pooled": {
+          "rows": 139527,
+          "pearson_ic": 0.0111361783779033,
+          "rank_ic": 0.14214119937426375,
+          "direction_hit_rate": 0.5755015158356447,
+          "prediction_std": 0.0012484086910262704,
+          "future_return_std": 0.02741266662230143,
+          "mean_prediction_bps": -0.016222777503571706,
+          "mean_future_return_bps": 1.3916753092967147
+        }
+      }
+    },
+    {
+      "horizon": 20,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 254445,
+      "test_rows": 138762,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55203,
+            "pearson_ic": 0.006968160952375826,
+            "rank_ic": 0.14523653173857137,
+            "direction_hit_rate": 0.5835371266054381,
+            "prediction_std": 0.0012991249095648527,
+            "future_return_std": 0.025616429055175673,
+            "mean_prediction_bps": 0.22361175069818273,
+            "mean_future_return_bps": 1.1415338199340708
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51897,
+            "pearson_ic": 0.0139866601428004,
+            "rank_ic": 0.15005217445535987,
+            "direction_hit_rate": 0.5838295084494287,
+            "prediction_std": 0.0009861924918368459,
+            "future_return_std": 0.02592541236779638,
+            "mean_prediction_bps": -0.48024267016444355,
+            "mean_future_return_bps": 1.2023783087604871
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31662,
+            "pearson_ic": -0.004349376378128063,
+            "rank_ic": 0.13695301375950714,
+            "direction_hit_rate": 0.5947823889836397,
+            "prediction_std": 0.0008905277354642749,
+            "future_return_std": 0.03264422362614384,
+            "mean_prediction_bps": -0.5253259223536588,
+            "mean_future_return_bps": 2.1890467108129013
+          }
+        ],
+        "pooled": {
+          "rows": 138762,
+          "pearson_ic": 0.006473523254082388,
+          "rank_ic": 0.1442967778736159,
+          "direction_hit_rate": 0.5862123636153991,
+          "prediction_std": 0.0011033415794372559,
+          "future_return_std": 0.027487892579833004,
+          "mean_prediction_bps": -0.21051861040177755,
+          "mean_future_return_bps": 1.4033057718202506
+        }
+      }
+    },
+    {
+      "horizon": 20,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 254650,
+      "test_rows": 139377,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55408,
+            "pearson_ic": 0.003368707609850444,
+            "rank_ic": 0.10979859897469704,
+            "direction_hit_rate": 0.5723361247473289,
+            "prediction_std": 0.001153807039372623,
+            "future_return_std": 0.0255691393787405,
+            "mean_prediction_bps": -0.6137598393252119,
+            "mean_future_return_bps": 1.1366661372145184
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52102,
+            "pearson_ic": 0.015098938041975303,
+            "rank_ic": 0.11378625087208853,
+            "direction_hit_rate": 0.5668880273310045,
+            "prediction_std": 0.0022654938511550426,
+            "future_return_std": 0.025874529029622083,
+            "mean_prediction_bps": -3.2560867839492857,
+            "mean_future_return_bps": 1.1819155812260702
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31867,
+            "pearson_ic": -0.0015287086578612149,
+            "rank_ic": 0.10364854154937721,
+            "direction_hit_rate": 0.580475099632849,
+            "prediction_std": 0.0037064822390675545,
+            "future_return_std": 0.03253943943755853,
+            "mean_prediction_bps": -0.88848355517257,
+            "mean_future_return_bps": 2.1733238835211837
+          }
+        ],
+        "pooled": {
+          "rows": 139377,
+          "pearson_ic": 0.005079150594202427,
+          "rank_ic": 0.10826019799290368,
+          "direction_hit_rate": 0.5721603994920252,
+          "prediction_std": 0.0023673048708587885,
+          "future_return_std": 0.02742739754733772,
+          "mean_prediction_bps": -1.6643290291540325,
+          "mean_future_return_bps": 1.3906015708473585
+        }
+      }
+    },
+    {
+      "horizon": 20,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 254445,
+      "test_rows": 138762,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55203,
+            "pearson_ic": 0.004091667542797905,
+            "rank_ic": 0.11689637314757827,
+            "direction_hit_rate": 0.5798416752712715,
+            "prediction_std": 0.0011625085026025772,
+            "future_return_std": 0.025616429055175673,
+            "mean_prediction_bps": 0.0597940288571408,
+            "mean_future_return_bps": 1.1415338199340708
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51897,
+            "pearson_ic": 0.01887059585523369,
+            "rank_ic": 0.12084599513849688,
+            "direction_hit_rate": 0.577605641944621,
+            "prediction_std": 0.002916382160037756,
+            "future_return_std": 0.02592541236779638,
+            "mean_prediction_bps": -4.781187162734568,
+            "mean_future_return_bps": 1.2023783087604871
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31662,
+            "pearson_ic": 0.0012488369468608216,
+            "rank_ic": 0.11577045669959694,
+            "direction_hit_rate": 0.5862232328974796,
+            "prediction_std": 0.003579785581678152,
+            "future_return_std": 0.03264422362614384,
+            "mean_prediction_bps": -3.1062591006048024,
+            "mean_future_return_bps": 2.1890467108129013
+          }
+        ],
+        "pooled": {
+          "rows": 138762,
+          "pearson_ic": 0.008627513991821472,
+          "rank_ic": 0.11565969183212864,
+          "direction_hit_rate": 0.5804615096352027,
+          "prediction_std": 0.002586310263723135,
+          "future_return_std": 0.027487892579833004,
+          "mean_prediction_bps": -2.4731471785344183,
+          "mean_future_return_bps": 1.4033057718202506
+        }
+      }
+    },
+    {
+      "horizon": 30,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 254700,
+      "test_rows": 139497,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55448,
+            "pearson_ic": 0.008849052108123897,
+            "rank_ic": 0.11247205517814525,
+            "direction_hit_rate": 0.5628156110229404,
+            "prediction_std": 0.00218887603841722,
+            "future_return_std": 0.03132005258319533,
+            "mean_prediction_bps": 0.36739100323757157,
+            "mean_future_return_bps": 1.7134140564851332
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52142,
+            "pearson_ic": 0.022508375147015723,
+            "rank_ic": 0.1266498055263415,
+            "direction_hit_rate": 0.5683326301254267,
+            "prediction_std": 0.0015917757991701365,
+            "future_return_std": 0.03167967175445311,
+            "mean_prediction_bps": -0.8847132994560525,
+            "mean_future_return_bps": 1.772331888353574
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31907,
+            "pearson_ic": -0.005343937237334051,
+            "rank_ic": 0.07964003598948605,
+            "direction_hit_rate": 0.565142445231454,
+            "prediction_std": 0.0012383239809423685,
+            "future_return_std": 0.039826694545519965,
+            "mean_prediction_bps": -0.9569524991093203,
+            "mean_future_return_bps": 3.2518560938315493
+          }
+        ],
+        "pooled": {
+          "rows": 139497,
+          "pearson_ic": 0.010028581027523398,
+          "rank_ic": 0.11029573989342475,
+          "direction_hit_rate": 0.5654100088173939,
+          "prediction_std": 0.0017905791755765676,
+          "future_return_std": 0.033583470379644514,
+          "mean_prediction_bps": -0.4035435267724097,
+          "mean_future_return_bps": 2.087322912409607
+        }
+      }
+    },
+    {
+      "horizon": 30,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 254445,
+      "test_rows": 138732,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55193,
+            "pearson_ic": 0.003653838688746611,
+            "rank_ic": 0.11939899582033714,
+            "direction_hit_rate": 0.5637490261446197,
+            "prediction_std": 0.0021436226088553667,
+            "future_return_std": 0.0313921210728799,
+            "mean_prediction_bps": 0.35561930417316034,
+            "mean_future_return_bps": 1.708323558606333
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51887,
+            "pearson_ic": 0.01629544895844987,
+            "rank_ic": 0.12425625691449516,
+            "direction_hit_rate": 0.5736504326709966,
+            "prediction_std": 0.0013976222835481167,
+            "future_return_std": 0.031757196093989366,
+            "mean_prediction_bps": -1.2024508760077879,
+            "mean_future_return_bps": 1.8022500650550872
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31652,
+            "pearson_ic": -0.012273514695458563,
+            "rank_ic": 0.08642285860754437,
+            "direction_hit_rate": 0.5618918235814483,
+            "prediction_std": 0.0010204334976151586,
+            "future_return_std": 0.03998638535650323,
+            "mean_prediction_bps": -0.6146705709397793,
+            "mean_future_return_bps": 3.2807722490504925
+          }
+        ],
+        "pooled": {
+          "rows": 138732,
+          "pearson_ic": 0.004492648040054908,
+          "rank_ic": 0.11452165295942746,
+          "direction_hit_rate": 0.5670285154110083,
+          "prediction_std": 0.0016736245015636086,
+          "future_return_std": 0.033675671136772486,
+          "mean_prediction_bps": -0.44848642573924735,
+          "mean_future_return_bps": 2.102210409441359
+        }
+      }
+    },
+    {
+      "horizon": 30,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 254650,
+      "test_rows": 139347,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55398,
+            "pearson_ic": -0.002031053599963598,
+            "rank_ic": 0.09848569101189278,
+            "direction_hit_rate": 0.5604353947795949,
+            "prediction_std": 0.002015472389757633,
+            "future_return_std": 0.03133415478912745,
+            "mean_prediction_bps": -1.3999472139403224,
+            "mean_future_return_bps": 1.7031139471003822
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52092,
+            "pearson_ic": 0.016295828539996383,
+            "rank_ic": 0.10231929534463369,
+            "direction_hit_rate": 0.5728902710588958,
+            "prediction_std": 0.002921429928392172,
+            "future_return_std": 0.03169486144426187,
+            "mean_prediction_bps": -4.809901001863182,
+            "mean_future_return_bps": 1.7689108270141325
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31857,
+            "pearson_ic": -0.005953150411571224,
+            "rank_ic": 0.06079021100568191,
+            "direction_hit_rate": 0.5578365822268261,
+            "prediction_std": 0.007454501930624247,
+            "future_return_std": 0.039857910721321096,
+            "mean_prediction_bps": 6.441393634304404,
+            "mean_future_return_bps": 3.2640605902544446
+          }
+        ],
+        "pooled": {
+          "rows": 139347,
+          "pearson_ic": 0.0009472059770528319,
+          "rank_ic": 0.09197427384728112,
+          "direction_hit_rate": 0.5644972622302598,
+          "prediction_std": 0.004206059034913778,
+          "future_return_std": 0.033601521127898534,
+          "mean_prediction_bps": -0.8820294169709086,
+          "mean_future_return_bps": 2.084568648525071
+        }
+      }
+    },
+    {
+      "horizon": 30,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 254445,
+      "test_rows": 138732,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55193,
+            "pearson_ic": 0.00046353209563662704,
+            "rank_ic": 0.09095841727249143,
+            "direction_hit_rate": 0.5640026814994655,
+            "prediction_std": 0.0015396588714793324,
+            "future_return_std": 0.0313921210728799,
+            "mean_prediction_bps": -0.3406773612368852,
+            "mean_future_return_bps": 1.708323558606333
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51887,
+            "pearson_ic": 0.015882272433807503,
+            "rank_ic": 0.09011213340618267,
+            "direction_hit_rate": 0.5714918958505985,
+            "prediction_std": 0.0033750496804714203,
+            "future_return_std": 0.031757196093989366,
+            "mean_prediction_bps": -5.972263170406222,
+            "mean_future_return_bps": 1.8022500650550872
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31652,
+            "pearson_ic": -0.00235862384282395,
+            "rank_ic": 0.0604800908182602,
+            "direction_hit_rate": 0.5644193099962088,
+            "prediction_std": 0.005112575367093086,
+            "future_return_std": 0.03998638535650323,
+            "mean_prediction_bps": 4.339151782914996,
+            "mean_future_return_bps": 3.2807722490504925
+          }
+        ],
+        "pooled": {
+          "rows": 138732,
+          "pearson_ic": 0.004892755347506059,
+          "rank_ic": 0.08282231385664973,
+          "direction_hit_rate": 0.5668987688492921,
+          "prediction_std": 0.003365226788446307,
+          "future_return_std": 0.033675671136772486,
+          "mean_prediction_bps": -1.3792280515190214,
+          "mean_future_return_bps": 2.102210409441359
+        }
+      }
+    },
+    {
+      "horizon": 50,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 254700,
+      "test_rows": 139437,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55428,
+            "pearson_ic": 0.012572027888364897,
+            "rank_ic": 0.0891791177206276,
+            "direction_hit_rate": 0.5596088619470304,
+            "prediction_std": 0.0026611099019646645,
+            "future_return_std": 0.04046407274625339,
+            "mean_prediction_bps": 0.10778934665722772,
+            "mean_future_return_bps": 2.851604932007043
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52122,
+            "pearson_ic": 0.01973923037166835,
+            "rank_ic": 0.10009167570945228,
+            "direction_hit_rate": 0.5567322819538775,
+            "prediction_std": 0.0020259504672139883,
+            "future_return_std": 0.040919171890557306,
+            "mean_prediction_bps": -1.5867427282501012,
+            "mean_future_return_bps": 2.9509833476881626
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31887,
+            "pearson_ic": -0.003225282734515078,
+            "rank_ic": 0.0665435417366338,
+            "direction_hit_rate": 0.5342929720575783,
+            "prediction_std": 0.0011710884282365441,
+            "future_return_std": 0.05143033032488416,
+            "mean_prediction_bps": -0.6205421959748492,
+            "mean_future_return_bps": 5.4251524602669985
+          }
+        ],
+        "pooled": {
+          "rows": 139437,
+          "pearson_ic": 0.011794994062390776,
+          "rank_ic": 0.08864477986445433,
+          "direction_hit_rate": 0.5527442500914391,
+          "prediction_std": 0.002160655101761222,
+          "future_return_std": 0.043377996447539695,
+          "mean_prediction_bps": -0.69218993303366,
+          "mean_future_return_bps": 3.4772818457082573
+        }
+      }
+    },
+    {
+      "horizon": 50,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 254445,
+      "test_rows": 138672,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55173,
+            "pearson_ic": 0.0036556275288080814,
+            "rank_ic": 0.08730082536219742,
+            "direction_hit_rate": 0.5613252859188371,
+            "prediction_std": 0.002610964933410287,
+            "future_return_std": 0.040557224303792834,
+            "mean_prediction_bps": -0.3092881161137484,
+            "mean_future_return_bps": 2.843860635457402
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51867,
+            "pearson_ic": 0.014017008328440874,
+            "rank_ic": 0.09040335748507913,
+            "direction_hit_rate": 0.569572174986022,
+            "prediction_std": 0.0017492640763521194,
+            "future_return_std": 0.041019253648688365,
+            "mean_prediction_bps": -2.4727615527808666,
+            "mean_future_return_bps": 2.994495372240837
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31632,
+            "pearson_ic": -0.018818189231738718,
+            "rank_ic": 0.058833418318590444,
+            "direction_hit_rate": 0.5391691957511381,
+            "prediction_std": 0.0009960803436115384,
+            "future_return_std": 0.05163697041627706,
+            "mean_prediction_bps": -1.0858109453693032,
+            "mean_future_return_bps": 5.467592136258538
+          }
+        ],
+        "pooled": {
+          "rows": 138672,
+          "pearson_ic": 0.0035231362005382822,
+          "rank_ic": 0.08356895288946929,
+          "direction_hit_rate": 0.5593558901580709,
+          "prediction_std": 0.002022939268499613,
+          "future_return_std": 0.043497189570229924,
+          "mean_prediction_bps": -1.2956144928466529,
+          "mean_future_return_bps": 3.4986925173520014
+        }
+      }
+    },
+    {
+      "horizon": 50,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 254650,
+      "test_rows": 139287,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55378,
+            "pearson_ic": -0.00042261020974725333,
+            "rank_ic": 0.08198708642643074,
+            "direction_hit_rate": 0.5409548918343025,
+            "prediction_std": 0.003345016622915864,
+            "future_return_std": 0.040482294301675555,
+            "mean_prediction_bps": -1.7719116294756532,
+            "mean_future_return_bps": 2.8347499984797313
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52072,
+            "pearson_ic": 0.02737959567825499,
+            "rank_ic": 0.074987201872216,
+            "direction_hit_rate": 0.5486633891534798,
+            "prediction_std": 0.004712393507361412,
+            "future_return_std": 0.04093878981676717,
+            "mean_prediction_bps": -7.708272896707058,
+            "mean_future_return_bps": 2.942207992341464
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31837,
+            "pearson_ic": -0.0019318583493988146,
+            "rank_ic": -0.004760186814166593,
+            "direction_hit_rate": 0.5204007915318655,
+            "prediction_std": 0.01646466739475727,
+            "future_return_std": 0.051470665245425394,
+            "mean_prediction_bps": 19.633774645626545,
+            "mean_future_return_bps": 5.445357319252583
+          }
+        ],
+        "pooled": {
+          "rows": 139287,
+          "pearson_ic": 0.004461417507758774,
+          "rank_ic": 0.061039747167278384,
+          "direction_hit_rate": 0.539138613079469,
+          "prediction_std": 0.008707488887012005,
+          "future_return_std": 0.04340131768867118,
+          "mean_prediction_bps": 0.9015225805342197,
+          "mean_future_return_bps": 3.471632535456
+        }
+      }
+    },
+    {
+      "horizon": 50,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 254445,
+      "test_rows": 138672,
+      "purge_events": 50,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55173,
+            "pearson_ic": 0.005007274116226456,
+            "rank_ic": 0.10537190706675878,
+            "direction_hit_rate": 0.5700976927120149,
+            "prediction_std": 0.0022275233641266823,
+            "future_return_std": 0.040557224303792834,
+            "mean_prediction_bps": 0.5693075945600867,
+            "mean_future_return_bps": 2.843860635457402
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51867,
+            "pearson_ic": 0.03107196425526142,
+            "rank_ic": 0.06672340756009193,
+            "direction_hit_rate": 0.5525285827211908,
+            "prediction_std": 0.009374165907502174,
+            "future_return_std": 0.041019253648688365,
+            "mean_prediction_bps": -17.171410145238042,
+            "mean_future_return_bps": 2.994495372240837
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31632,
+            "pearson_ic": -0.0027387949979700084,
+            "rank_ic": 0.029403270140860558,
+            "direction_hit_rate": 0.5376517450682853,
+            "prediction_std": 0.01557145081460476,
+            "future_return_std": 0.05163697041627706,
+            "mean_prediction_bps": 23.93859438598156,
+            "mean_future_return_bps": 5.467592136258538
+          }
+        ],
+        "pooled": {
+          "rows": 138672,
+          "pearson_ic": 0.010239359679390981,
+          "rank_ic": 0.07216282420029348,
+          "direction_hit_rate": 0.5561252451828775,
+          "prediction_std": 0.009620638564229012,
+          "future_return_std": 0.043497189570229924,
+          "mean_prediction_bps": -0.73549963417463,
+          "mean_future_return_bps": 3.4986925173520014
+        }
+      }
+    },
+    {
+      "horizon": 100,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 254650,
+      "test_rows": 139287,
+      "purge_events": 100,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55378,
+            "pearson_ic": 0.03965282350048546,
+            "rank_ic": 0.060271900608384846,
+            "direction_hit_rate": 0.525027989454296,
+            "prediction_std": 0.003085194155573845,
+            "future_return_std": 0.05732359206235635,
+            "mean_prediction_bps": -1.0213359200861305,
+            "mean_future_return_bps": 5.684903204782352
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52072,
+            "pearson_ic": 0.03954050525991409,
+            "rank_ic": 0.06540663148867427,
+            "direction_hit_rate": 0.5271739130434783,
+            "prediction_std": 0.002934023505076766,
+            "future_return_std": 0.057890187292647784,
+            "mean_prediction_bps": -3.0991810490377247,
+            "mean_future_return_bps": 5.8899318803147125
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31837,
+            "pearson_ic": 0.02653037787284624,
+            "rank_ic": 0.06741931761927414,
+            "direction_hit_rate": 0.514935452460973,
+            "prediction_std": 0.0024737739004194736,
+            "future_return_std": 0.07276143902104472,
+            "mean_prediction_bps": -1.3241349370218813,
+            "mean_future_return_bps": 10.87902998001
+          }
+        ],
+        "pooled": {
+          "rows": 139287,
+          "pearson_ic": 0.035921175876278265,
+          "rank_ic": 0.06494919871010729,
+          "direction_hit_rate": 0.5235233726047657,
+          "prediction_std": 0.0029000963550060987,
+          "future_return_std": 0.06139600024750446,
+          "mean_prediction_bps": -1.8673426529858261,
+          "mean_future_return_bps": 6.948780431912259
+        }
+      }
+    },
+    {
+      "horizon": 100,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 254395,
+      "test_rows": 138522,
+      "purge_events": 100,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55123,
+            "pearson_ic": 0.015589626026794472,
+            "rank_ic": 0.04551245776935633,
+            "direction_hit_rate": 0.5210529180197014,
+            "prediction_std": 0.0026964987628161907,
+            "future_return_std": 0.05745591150605104,
+            "mean_prediction_bps": -1.0784106416394934,
+            "mean_future_return_bps": 5.692166442693776
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51817,
+            "pearson_ic": 0.021777292696655386,
+            "rank_ic": 0.07248189176146022,
+            "direction_hit_rate": 0.5362139838277014,
+            "prediction_std": 0.002663733670488,
+            "future_return_std": 0.05803163716975196,
+            "mean_prediction_bps": -4.6797640970908105,
+            "mean_future_return_bps": 5.954500163665228
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31582,
+            "pearson_ic": 0.012853024708895069,
+            "rank_ic": 0.06293138152708136,
+            "direction_hit_rate": 0.5198530808688493,
+            "prediction_std": 0.0020117510575801134,
+            "future_return_std": 0.07305441425272594,
+            "mean_prediction_bps": -3.197278128936887,
+            "mean_future_return_bps": 10.943326725962377
+          }
+        ],
+        "pooled": {
+          "rows": 138522,
+          "pearson_ic": 0.01686259565052709,
+          "rank_ic": 0.06011141496245244,
+          "direction_hit_rate": 0.5264506720954072,
+          "prediction_std": 0.00254865107126534,
+          "future_return_std": 0.06156492009638978,
+          "mean_prediction_bps": -2.9086568974889815,
+          "mean_future_return_bps": 6.987523790160363
+        }
+      }
+    },
+    {
+      "horizon": 100,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 254600,
+      "test_rows": 139137,
+      "purge_events": 100,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55328,
+            "pearson_ic": 0.002123924925822187,
+            "rank_ic": 0.049485825972395016,
+            "direction_hit_rate": 0.513175968768074,
+            "prediction_std": 0.0025071781128644943,
+            "future_return_std": 0.05734945896025663,
+            "mean_prediction_bps": -2.6930737658403814,
+            "mean_future_return_bps": 5.673505860864562
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 52022,
+            "pearson_ic": 0.04723713304382951,
+            "rank_ic": 0.03408324089440229,
+            "direction_hit_rate": 0.5296028603283226,
+            "prediction_std": 0.006240913178771734,
+            "future_return_std": 0.057917957403010575,
+            "mean_prediction_bps": -10.196048533543944,
+            "mean_future_return_bps": 5.906019274827756
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31787,
+            "pearson_ic": -0.001652146232145214,
+            "rank_ic": 0.03957039333768158,
+            "direction_hit_rate": 0.5043256677257999,
+            "prediction_std": 0.03350347653031349,
+            "future_return_std": 0.07281862514147543,
+            "mean_prediction_bps": 52.172914147377014,
+            "mean_future_return_bps": 10.884514943573878
+          }
+        ],
+        "pooled": {
+          "rows": 139137,
+          "pearson_ic": 0.00594490507838875,
+          "rank_ic": 0.039211953437062595,
+          "direction_hit_rate": 0.5172959025995961,
+          "prediction_std": 0.016722556203603745,
+          "future_return_std": 0.06142905557707059,
+          "mean_prediction_bps": 7.0362212136387825,
+          "mean_future_return_bps": 6.9509385964652575
+        }
+      }
+    },
+    {
+      "horizon": 100,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 254395,
+      "test_rows": 138522,
+      "purge_events": 100,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55123,
+            "pearson_ic": -0.0134027454570734,
+            "rank_ic": 0.008267368405943356,
+            "direction_hit_rate": 0.5050704787475283,
+            "prediction_std": 0.003620245959609747,
+            "future_return_std": 0.05745591150605104,
+            "mean_prediction_bps": -0.18828826796379872,
+            "mean_future_return_bps": 5.692166442693776
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51817,
+            "pearson_ic": 0.03772935306565385,
+            "rank_ic": 0.02782588026615203,
+            "direction_hit_rate": 0.5208329312773801,
+            "prediction_std": 0.01155905146151781,
+            "future_return_std": 0.05803163716975196,
+            "mean_prediction_bps": -22.52093516290188,
+            "mean_future_return_bps": 5.954500163665228
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31582,
+            "pearson_ic": -0.000500152316286852,
+            "rank_ic": 0.027879287248096726,
+            "direction_hit_rate": 0.5061744031410297,
+            "prediction_std": 0.01858479529619217,
+            "future_return_std": 0.07305441425272594,
+            "mean_prediction_bps": 26.996261440217495,
+            "mean_future_return_bps": 10.943326725962377
+          }
+        ],
+        "pooled": {
+          "rows": 138522,
+          "pearson_ic": 0.011824254925808743,
+          "rank_ic": 0.019974582834352727,
+          "direction_hit_rate": 0.511218434616884,
+          "prediction_std": 0.011723784729838371,
+          "future_return_std": 0.06156492009638978,
+          "mean_prediction_bps": -2.344396634725854,
+          "mean_future_return_bps": 6.987523790160363
+        }
+      }
+    },
+    {
+      "horizon": 200,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 254550,
+      "test_rows": 138987,
+      "purge_events": 200,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55278,
+            "pearson_ic": 0.07055289976048892,
+            "rank_ic": 0.04123715013621706,
+            "direction_hit_rate": 0.5087919244545751,
+            "prediction_std": 0.004608010873198509,
+            "future_return_std": 0.08101735647769379,
+            "mean_prediction_bps": -0.528845121152699,
+            "mean_future_return_bps": 11.364854536778527
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51972,
+            "pearson_ic": 0.10999573736562898,
+            "rank_ic": 0.028012409380663485,
+            "direction_hit_rate": 0.5081582390517971,
+            "prediction_std": 0.0036349575966596603,
+            "future_return_std": 0.08195179887120169,
+            "mean_prediction_bps": -5.45728369615972,
+            "mean_future_return_bps": 11.878408379833578
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31737,
+            "pearson_ic": 0.11102199785288552,
+            "rank_ic": 0.0587087643958949,
+            "direction_hit_rate": 0.5247502914579197,
+            "prediction_std": 0.0034953830763697624,
+            "future_return_std": 0.10310089222771332,
+            "mean_prediction_bps": -0.5137561674928293,
+            "mean_future_return_bps": 21.77462114132076
+          }
+        ],
+        "pooled": {
+          "rows": 138987,
+          "pearson_ic": 0.09113264609282959,
+          "rank_ic": 0.04431899657649359,
+          "direction_hit_rate": 0.512198982638664,
+          "prediction_std": 0.004028984345495701,
+          "future_return_std": 0.0868872038999022,
+          "mean_prediction_bps": -2.3683119798079133,
+          "mean_future_return_bps": 13.93390907468217
+        }
+      }
+    },
+    {
+      "horizon": 200,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 254295,
+      "test_rows": 138222,
+      "purge_events": 200,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55023,
+            "pearson_ic": 0.04084999444736074,
+            "rank_ic": 0.032306738118456434,
+            "direction_hit_rate": 0.5064609345182923,
+            "prediction_std": 0.0041235676035285,
+            "future_return_std": 0.0812047501454151,
+            "mean_prediction_bps": -1.0179213131777942,
+            "mean_future_return_bps": 11.387546076715799
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51717,
+            "pearson_ic": 0.13182163177479372,
+            "rank_ic": 0.043946598932243876,
+            "direction_hit_rate": 0.5148790533093567,
+            "prediction_std": 0.003942422103136778,
+            "future_return_std": 0.08215312095434393,
+            "mean_prediction_bps": -8.658482693135738,
+            "mean_future_return_bps": 11.990793243004381
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31482,
+            "pearson_ic": 0.0787988607372711,
+            "rank_ic": 0.03616819197215185,
+            "direction_hit_rate": 0.5051775617813353,
+            "prediction_std": 0.0023930708412081003,
+            "future_return_std": 0.10351748397942441,
+            "mean_prediction_bps": -3.856052062474191,
+            "mean_future_return_bps": 21.872765890116412
+          }
+        ],
+        "pooled": {
+          "rows": 138222,
+          "pearson_ic": 0.07935625042167303,
+          "rank_ic": 0.039945244704115264,
+          "direction_hit_rate": 0.5093183429555354,
+          "prediction_std": 0.0037419951986521482,
+          "future_return_std": 0.08712707089923447,
+          "mean_prediction_bps": -4.523129318840802,
+          "mean_future_return_bps": 14.001412348831856
+        }
+      }
+    },
+    {
+      "horizon": 200,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 254500,
+      "test_rows": 138837,
+      "purge_events": 200,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55228,
+            "pearson_ic": 0.011143712904517062,
+            "rank_ic": 0.05841523330755279,
+            "direction_hit_rate": 0.5138878829579199,
+            "prediction_std": 0.00428268127143383,
+            "future_return_std": 0.08105400347134234,
+            "mean_prediction_bps": -2.383349055889994,
+            "mean_future_return_bps": 11.372122239873201
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51922,
+            "pearson_ic": 0.10561053790709157,
+            "rank_ic": 0.049197079250250283,
+            "direction_hit_rate": 0.5311813874658141,
+            "prediction_std": 0.010702299885451794,
+            "future_return_std": 0.08199100931447512,
+            "mean_prediction_bps": -19.813692197203636,
+            "mean_future_return_bps": 11.939617940339028
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31687,
+            "pearson_ic": -0.00237948246664842,
+            "rank_ic": 0.010923745849668263,
+            "direction_hit_rate": 0.48205888850317163,
+            "prediction_std": 0.04878360405564308,
+            "future_return_std": 0.10318218755084459,
+            "mean_prediction_bps": 78.19398306310177,
+            "mean_future_return_bps": 21.78871465725169
+          }
+        ],
+        "pooled": {
+          "rows": 138837,
+          "pearson_ic": 0.01634580999783051,
+          "rank_ic": 0.045246024241009174,
+          "direction_hit_rate": 0.5130908907567867,
+          "prediction_std": 0.02465423382818699,
+          "future_return_std": 0.08693402743775647,
+          "mean_prediction_bps": 9.488385985605419,
+          "mean_future_return_bps": 13.961749469567435
+        }
+      }
+    },
+    {
+      "horizon": 200,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 254295,
+      "test_rows": 138222,
+      "purge_events": 200,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 55023,
+            "pearson_ic": -0.0008173995323239947,
+            "rank_ic": 0.048935373408499225,
+            "direction_hit_rate": 0.4882321938098613,
+            "prediction_std": 0.007180710788816214,
+            "future_return_std": 0.0812047501454151,
+            "mean_prediction_bps": 2.909488102886826,
+            "mean_future_return_bps": 11.387546076715799
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51717,
+            "pearson_ic": 0.053409446005659916,
+            "rank_ic": 0.03192423079528139,
+            "direction_hit_rate": 0.5139509252276814,
+            "prediction_std": 0.04091183841228485,
+            "future_return_std": 0.08215312095434393,
+            "mean_prediction_bps": -69.79894358664751,
+            "mean_future_return_bps": 11.990793243004381
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31482,
+            "pearson_ic": -0.0019164697923449636,
+            "rank_ic": 0.013884384017360552,
+            "direction_hit_rate": 0.46737818435931644,
+            "prediction_std": 0.03011249378323555,
+            "future_return_std": 0.10351748397942441,
+            "mean_prediction_bps": 39.82572350651026,
+            "mean_future_return_bps": 21.872765890116412
+          }
+        ],
+        "pooled": {
+          "rows": 138222,
+          "pearson_ic": 0.02596309163366839,
+          "rank_ic": 0.034395875752992064,
+          "direction_hit_rate": 0.49310529438150225,
+          "prediction_std": 0.029540885239839554,
+          "future_return_std": 0.08712707089923447,
+          "mean_prediction_bps": -15.886829933151603,
+          "mean_future_return_bps": 14.001412348831856
+        }
+      }
+    },
+    {
+      "horizon": 500,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 254250,
+      "test_rows": 138087,
+      "purge_events": 500,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54978,
+            "pearson_ic": 0.11357693767102775,
+            "rank_ic": 0.08726095903369818,
+            "direction_hit_rate": 0.507675797591764,
+            "prediction_std": 0.007690486032515764,
+            "future_return_std": 0.12825269030581102,
+            "mean_prediction_bps": -5.758788320235908,
+            "mean_future_return_bps": 28.576918615821853
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51672,
+            "pearson_ic": 0.24666883432619338,
+            "rank_ic": 0.0623963450843139,
+            "direction_hit_rate": 0.49305233008205607,
+            "prediction_std": 0.008175033144652843,
+            "future_return_std": 0.1295912303160732,
+            "mean_prediction_bps": -15.542464097961783,
+            "mean_future_return_bps": 30.08263065006816
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31437,
+            "pearson_ic": 0.10257731977271149,
+            "rank_ic": 0.0551979445579206,
+            "direction_hit_rate": 0.4984890415752139,
+            "prediction_std": 0.006645954679697752,
+            "future_return_std": 0.16400550871546565,
+            "mean_prediction_bps": -5.958485999144614,
+            "mean_future_return_bps": 54.707314416325616
+          }
+        ],
+        "pooled": {
+          "rows": 138087,
+          "pearson_ic": 0.1590929414949036,
+          "rank_ic": 0.07276438799871643,
+          "direction_hit_rate": 0.5001122480754886,
+          "prediction_std": 0.007670200429856777,
+          "future_return_std": 0.13768761971369095,
+          "mean_prediction_bps": -9.465291514061391,
+          "mean_future_return_bps": 35.089221765387066
+        }
+      }
+    },
+    {
+      "horizon": 500,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 253995,
+      "test_rows": 137322,
+      "purge_events": 500,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54723,
+            "pearson_ic": 0.042465810169110864,
+            "rank_ic": 0.0598416091044067,
+            "direction_hit_rate": 0.49920508744038156,
+            "prediction_std": 0.007023753598332405,
+            "future_return_std": 0.12855090490078602,
+            "mean_prediction_bps": -2.794345491565764,
+            "mean_future_return_bps": 28.422810650520752
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51417,
+            "pearson_ic": 0.3057425484026598,
+            "rank_ic": 0.03281518918403256,
+            "direction_hit_rate": 0.48703736118404417,
+            "prediction_std": 0.01020393893122673,
+            "future_return_std": 0.1299099929462767,
+            "mean_prediction_bps": -23.341579362750053,
+            "mean_future_return_bps": 30.59921705602928
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31182,
+            "pearson_ic": 0.060830150664314686,
+            "rank_ic": 0.058835472040490264,
+            "direction_hit_rate": 0.5024373035725739,
+            "prediction_std": 0.003568681888282299,
+            "future_return_std": 0.16467446555567053,
+            "mean_prediction_bps": -8.524677832610905,
+            "mean_future_return_bps": 54.90176462611775
+          }
+        ],
+        "pooled": {
+          "rows": 137322,
+          "pearson_ic": 0.16070466942992895,
+          "rank_ic": 0.05198463359527741,
+          "direction_hit_rate": 0.4953831141404873,
+          "prediction_std": 0.007898286916315556,
+          "future_return_std": 0.138069657539002,
+          "mean_prediction_bps": -11.788974516093731,
+          "mean_future_return_bps": 35.25034761487534
+        }
+      }
+    },
+    {
+      "horizon": 500,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 254200,
+      "test_rows": 137937,
+      "purge_events": 500,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54928,
+            "pearson_ic": 0.012127107912377599,
+            "rank_ic": -0.00897059227422658,
+            "direction_hit_rate": 0.5227752694436353,
+            "prediction_std": 0.013866155408322811,
+            "future_return_std": 0.12831095413875715,
+            "mean_prediction_bps": 3.4040541504509747,
+            "mean_future_return_bps": 28.530895164683166
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51622,
+            "pearson_ic": 0.26049514215424646,
+            "rank_ic": 0.09800864368256669,
+            "direction_hit_rate": 0.5174925419394831,
+            "prediction_std": 0.012616599909961224,
+            "future_return_std": 0.12965343509875743,
+            "mean_prediction_bps": -22.202618420124054,
+            "mean_future_return_bps": 30.198919791317195
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31387,
+            "pearson_ic": -0.011047181471382152,
+            "rank_ic": -0.14080636143333639,
+            "direction_hit_rate": 0.47267977188007776,
+            "prediction_std": 0.11291573941707611,
+            "future_return_std": 0.16413600190863883,
+            "mean_prediction_bps": 217.61776879429817,
+            "mean_future_return_bps": 54.77394185800567
+          }
+        ],
+        "pooled": {
+          "rows": 137937,
+          "pearson_ic": 0.017067777726483373,
+          "rank_ic": 0.005772757754067539,
+          "direction_hit_rate": 0.5093992184838005,
+          "prediction_std": 0.05593631789088249,
+          "future_return_std": 0.13776222330510351,
+          "mean_prediction_bps": 42.56438463926315,
+          "mean_future_return_bps": 35.12664013404899
+        }
+      }
+    },
+    {
+      "horizon": 500,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 253995,
+      "test_rows": 137322,
+      "purge_events": 500,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54723,
+            "pearson_ic": -0.034834896660291784,
+            "rank_ic": -0.051025642347853,
+            "direction_hit_rate": 0.4695831734371288,
+            "prediction_std": 0.00786571018397808,
+            "future_return_std": 0.12855090490078602,
+            "mean_prediction_bps": -3.5013107117265463,
+            "mean_future_return_bps": 28.422810650520752
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51417,
+            "pearson_ic": 0.3685035679062277,
+            "rank_ic": -0.0018060924662604008,
+            "direction_hit_rate": 0.4712449189956629,
+            "prediction_std": 0.015603343956172466,
+            "future_return_std": 0.1299099929462767,
+            "mean_prediction_bps": -34.144625533372164,
+            "mean_future_return_bps": 30.59921705602928
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 31182,
+            "pearson_ic": -0.009111661391936277,
+            "rank_ic": -0.09807143877511856,
+            "direction_hit_rate": 0.4366621768969277,
+            "prediction_std": 0.040970247238874435,
+            "future_return_std": 0.16467446555567053,
+            "mean_prediction_bps": 46.48707341402769,
+            "mean_future_return_bps": 54.90176462611775
+          }
+        ],
+        "pooled": {
+          "rows": 137322,
+          "pearson_ic": 0.08191557480902378,
+          "rank_ic": -0.049663049497421174,
+          "direction_hit_rate": 0.46272993402368157,
+          "prediction_std": 0.022497978061437607,
+          "future_return_std": 0.138069657539002,
+          "mean_prediction_bps": -3.6240098415873945,
+          "mean_future_return_bps": 35.25034761487534
+        }
+      }
+    },
+    {
+      "horizon": 1000,
+      "feature_set": "micro_only",
+      "feature_count": 8,
+      "train_rows": 253750,
+      "test_rows": 136587,
+      "purge_events": 1000,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54478,
+            "pearson_ic": 0.16436027188208355,
+            "rank_ic": 0.09560379612832569,
+            "direction_hit_rate": 0.527937883182202,
+            "prediction_std": 0.012208117172122002,
+            "future_return_std": 0.18209600028246534,
+            "mean_prediction_bps": -12.885048054158688,
+            "mean_future_return_bps": 57.18308735498819
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51172,
+            "pearson_ic": 0.32238878937469945,
+            "rank_ic": 0.1398679356733038,
+            "direction_hit_rate": 0.5345892284843273,
+            "prediction_std": 0.01328328438103199,
+            "future_return_std": 0.1839640146782291,
+            "mean_prediction_bps": -33.41380739584565,
+            "mean_future_return_bps": 61.448685816521575
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 30937,
+            "pearson_ic": 0.15916397492674408,
+            "rank_ic": 0.07140310576973277,
+            "direction_hit_rate": 0.5149820603161264,
+            "prediction_std": 0.014425989240407944,
+            "future_return_std": 0.23366982889680285,
+            "mean_prediction_bps": 0.7672292122151703,
+            "mean_future_return_bps": 109.99861989451922
+          }
+        ],
+        "pooled": {
+          "rows": 136587,
+          "pearson_ic": 0.2183754003122907,
+          "rank_ic": 0.11106448167021665,
+          "direction_hit_rate": 0.5274952960384224,
+          "prediction_std": 0.01320891547948122,
+          "future_return_std": 0.19564368312422714,
+          "mean_prediction_bps": -17.483857227489352,
+          "mean_future_return_bps": 70.74391916657389
+        }
+      }
+    },
+    {
+      "horizon": 1000,
+      "feature_set": "micro_plus_fd",
+      "feature_count": 9,
+      "train_rows": 253495,
+      "test_rows": 135822,
+      "purge_events": 1000,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54223,
+            "pearson_ic": 0.07582839755414607,
+            "rank_ic": 0.08228822505217932,
+            "direction_hit_rate": 0.5200745071279715,
+            "prediction_std": 0.010246588848531246,
+            "future_return_std": 0.18252338782614977,
+            "mean_prediction_bps": -6.280898815020919,
+            "mean_future_return_bps": 56.99198636121095
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 50917,
+            "pearson_ic": 0.33834777963190565,
+            "rank_ic": 0.12698130327168994,
+            "direction_hit_rate": 0.5209851326668893,
+            "prediction_std": 0.016818704083561897,
+            "future_return_std": 0.18441280482160616,
+            "mean_prediction_bps": -42.44525916874409,
+            "mean_future_return_bps": 62.88178390630775
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 30682,
+            "pearson_ic": 0.057507988351568035,
+            "rank_ic": 0.0706113715229698,
+            "direction_hit_rate": 0.5051495991134868,
+            "prediction_std": 0.007540740538388491,
+            "future_return_std": 0.23463877649881842,
+            "mean_prediction_bps": -20.01261804252863,
+            "mean_future_return_bps": 110.0827663198363
+          }
+        ],
+        "pooled": {
+          "rows": 135822,
+          "pearson_ic": 0.18860405567959024,
+          "rank_ic": 0.09998937175221846,
+          "direction_hit_rate": 0.5170443668919615,
+          "prediction_std": 0.01278107799589634,
+          "future_return_std": 0.19618953730100774,
+          "mean_prediction_bps": -22.94018166139722,
+          "mean_future_return_bps": 71.19308877683017
+        }
+      }
+    },
+    {
+      "horizon": 1000,
+      "feature_set": "micro_plus_topology",
+      "feature_count": 20,
+      "train_rows": 253700,
+      "test_rows": 136437,
+      "purge_events": 1000,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54428,
+            "pearson_ic": -0.004897197060210244,
+            "rank_ic": -0.028280251074415973,
+            "direction_hit_rate": 0.5217718821194973,
+            "prediction_std": 0.030158406123518944,
+            "future_return_std": 0.18217960037782482,
+            "mean_prediction_bps": 34.13161728531122,
+            "mean_future_return_bps": 57.15981821198237
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 51122,
+            "pearson_ic": 0.3010132666066018,
+            "rank_ic": 0.0729401375641567,
+            "direction_hit_rate": 0.5183678259848988,
+            "prediction_std": 0.015129121020436287,
+            "future_return_std": 0.1840516002331392,
+            "mean_prediction_bps": -4.534926847554743,
+            "mean_future_return_bps": 61.73957784510097
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 30887,
+            "pearson_ic": -0.03147846218928747,
+            "rank_ic": -0.12914245896428436,
+            "direction_hit_rate": 0.4830187457506394,
+            "prediction_std": 0.10282600671052933,
+            "future_return_std": 0.2338588680592065,
+            "mean_prediction_bps": 261.803213506937,
+            "mean_future_return_bps": 110.03341991119933
+          }
+        ],
+        "pooled": {
+          "rows": 136437,
+          "pearson_ic": 0.014432582369870287,
+          "rank_ic": -0.012853394802567223,
+          "direction_hit_rate": 0.5117233594992561,
+          "prediction_std": 0.05432681366801262,
+          "future_return_std": 0.1957503112881203,
+          "mean_prediction_bps": 71.1844814941287,
+          "mean_future_return_bps": 70.84550030443528
+        }
+      }
+    },
+    {
+      "horizon": 1000,
+      "feature_set": "full",
+      "feature_count": 21,
+      "train_rows": 253495,
+      "test_rows": 135822,
+      "purge_events": 1000,
+      "heldout": {
+        "segment_metrics": [
+          {
+            "segment": 8,
+            "events": 55478,
+            "rows": 54223,
+            "pearson_ic": -0.07939245780706347,
+            "rank_ic": -0.10065328740467075,
+            "direction_hit_rate": 0.46009995758257566,
+            "prediction_std": 0.017069315537810326,
+            "future_return_std": 0.18252338782614977,
+            "mean_prediction_bps": 2.1775155619252473,
+            "mean_future_return_bps": 56.99198636121095
+          },
+          {
+            "segment": 9,
+            "events": 52172,
+            "rows": 50917,
+            "pearson_ic": 0.506777486670522,
+            "rank_ic": 0.11136552458823036,
+            "direction_hit_rate": 0.47190525757605517,
+            "prediction_std": 0.025448942556977272,
+            "future_return_std": 0.18441280482160616,
+            "mean_prediction_bps": -56.54879380017519,
+            "mean_future_return_bps": 62.88178390630775
+          },
+          {
+            "segment": 10,
+            "events": 31937,
+            "rows": 30682,
+            "pearson_ic": -0.11995510863516796,
+            "rank_ic": -0.10586255284524242,
+            "direction_hit_rate": 0.4303500423701193,
+            "prediction_std": 0.0354241207242012,
+            "future_return_std": 0.23463877649881842,
+            "mean_prediction_bps": -15.951143577694893,
+            "mean_future_return_bps": 110.0827663198363
+          }
+        ],
+        "pooled": {
+          "rows": 135822,
+          "pearson_ic": 0.11357855904460701,
+          "rank_ic": -0.017358107301846486,
+          "direction_hit_rate": 0.4578050683983449,
+          "prediction_std": 0.02548401616513729,
+          "future_return_std": 0.19618953730100774,
+          "mean_prediction_bps": -23.933066986501217,
+          "mean_future_return_bps": 71.19308877683017
+        }
+      }
+    }
+  ],
+  "top_5_heldout_pearson_ic_descriptive_only": [
+    {
+      "horizon": 1000,
+      "feature_set": "micro_only",
+      "pearson_ic": 0.2183754003122907,
+      "rank_ic": 0.11106448167021665
+    },
+    {
+      "horizon": 1000,
+      "feature_set": "micro_plus_fd",
+      "pearson_ic": 0.18860405567959024,
+      "rank_ic": 0.09998937175221846
+    },
+    {
+      "horizon": 500,
+      "feature_set": "micro_plus_fd",
+      "pearson_ic": 0.16070466942992895,
+      "rank_ic": 0.05198463359527741
+    },
+    {
+      "horizon": 500,
+      "feature_set": "micro_only",
+      "pearson_ic": 0.1590929414949036,
+      "rank_ic": 0.07276438799871643
+    },
+    {
+      "horizon": 1000,
+      "feature_set": "full",
+      "pearson_ic": 0.11357855904460701,
+      "rank_ic": -0.017358107301846486
+    }
+  ],
+  "target_pearson_ic_0_064_reached_by_any_fixed_config": true,
+  "target_rank_ic_0_064_reached_by_any_fixed_config": true,
+  "elapsed_seconds": 45.65876112699999
+}

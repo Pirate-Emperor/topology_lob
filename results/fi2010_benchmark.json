@@ -1,0 +1,215 @@
+{
+  "data_source": "FI-2010 Decimal-Precision mirror from zcakhaa/DeepLOB",
+  "train_events": 254750,
+  "test_events": [
+    55478,
+    52172,
+    31937
+  ],
+  "combined_events": 394337,
+  "selected_d": 0.30000000000000004,
+  "stationarity": {
+    "candidates": [
+      {
+        "d": 0.0,
+        "adf_pvalue": 0.6397947572379157,
+        "corr_with_price": 1.0
+      },
+      {
+        "d": 0.1,
+        "adf_pvalue": 0.37739698635903474,
+        "corr_with_price": 0.9998826443827005
+      },
+      {
+        "d": 0.2,
+        "adf_pvalue": 0.08744601733642698,
+        "corr_with_price": 0.9993155960898897
+      },
+      {
+        "d": 0.30000000000000004,
+        "adf_pvalue": 0.0017019549687574862,
+        "corr_with_price": 0.9975627640710244
+      },
+      {
+        "d": 0.4,
+        "adf_pvalue": 6.941825196067026e-08,
+        "corr_with_price": 0.9923385649875766
+      },
+      {
+        "d": 0.5,
+        "adf_pvalue": 1.2247000433312573e-17,
+        "corr_with_price": 0.9756555639397728
+      },
+      {
+        "d": 0.6000000000000001,
+        "adf_pvalue": 5.415200683256963e-30,
+        "corr_with_price": 0.9180723022965988
+      },
+      {
+        "d": 0.7000000000000001,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.7361061671587289
+      },
+      {
+        "d": 0.8,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.3994154564453587
+      },
+      {
+        "d": 0.9,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.1264980941663969
+      },
+      {
+        "d": 1.0,
+        "adf_pvalue": 0.0,
+        "corr_with_price": 0.0032932916269138362
+      }
+    ],
+    "selected_d": 0.30000000000000004,
+    "adf_threshold": 0.05
+  },
+  "tda": {
+    "backend": "giotto-tda",
+    "n_clouds": 396,
+    "radii": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5
+    ],
+    "feature_names": [
+      "betti0_r0",
+      "betti0_r1",
+      "betti0_r2",
+      "betti0_r3",
+      "betti0_r4",
+      "betti1_r0",
+      "betti1_r1",
+      "betti1_r2",
+      "betti1_r3",
+      "betti1_r4",
+      "h1_max_persistence",
+      "h1_persistence_entropy"
+    ],
+    "homology_dimensions": [
+      0,
+      1
+    ],
+    "segment_cloud_counts": [
+      255,
+      56,
+      53,
+      32
+    ]
+  },
+  "fractional_diff_backend": "cpu-fallback:no-cuda",
+  "gpu_used": false,
+  "purge_events": 50,
+  "label_threshold": 0.0005,
+  "horizon": 10,
+  "target_resume_ic": 0.064,
+  "days": [
+    {
+      "day": 8,
+      "events": 55478,
+      "model_rows": 55213,
+      "focal": {
+        "roc_auc": 0.7230767551906692,
+        "pr_auc": 0.2624902088797321,
+        "logloss": 0.6363862504504757,
+        "pearson_ic": 0.00837191076943104,
+        "rank_ic": 0.17277805836122842,
+        "positive_rate": 0.11899371524822053,
+        "margin_mean": -0.1196950301527977,
+        "probability_mean": 0.47071710228919983,
+        "margin_pearson_ic": 0.00832241510486154,
+        "margin_rank_ic": 0.17277808130195027
+      },
+      "logloss": {
+        "roc_auc": 0.7211489865388032,
+        "pr_auc": 0.2519557509053055,
+        "logloss": 0.37136293574826496,
+        "pearson_ic": 0.0076358281550019955,
+        "rank_ic": 0.17386307431584797,
+        "positive_rate": 0.11899371524822053,
+        "margin_mean": -1.3795390129089355,
+        "probability_mean": 0.22298593819141388,
+        "margin_pearson_ic": 0.007439402971194154,
+        "margin_rank_ic": 0.17386306904086565
+      }
+    },
+    {
+      "day": 9,
+      "events": 52172,
+      "model_rows": 51907,
+      "focal": {
+        "roc_auc": 0.6909687038515304,
+        "pr_auc": 0.2272952365334278,
+        "logloss": 0.6457756674243789,
+        "pearson_ic": -0.002241524379592248,
+        "rank_ic": 0.14615885816527002,
+        "positive_rate": 0.11963704317336775,
+        "margin_mean": -0.10149464011192322,
+        "probability_mean": 0.4751153886318207,
+        "margin_pearson_ic": -0.0022455310979808485,
+        "margin_rank_ic": 0.14615884438731386
+      },
+      "logloss": {
+        "roc_auc": 0.6898625342727848,
+        "pr_auc": 0.22482980023971583,
+        "logloss": 0.3860768086560781,
+        "pearson_ic": -0.004413833075593421,
+        "rank_ic": 0.14943010308531499,
+        "positive_rate": 0.11963704317336775,
+        "margin_mean": -1.3265739679336548,
+        "probability_mean": 0.2316931039094925,
+        "margin_pearson_ic": -0.002430439772073773,
+        "margin_rank_ic": 0.14943010191759
+      }
+    },
+    {
+      "day": 10,
+      "events": 31937,
+      "model_rows": 31672,
+      "focal": {
+        "roc_auc": 0.7040943449792012,
+        "pr_auc": 0.2443787216923297,
+        "logloss": 0.639396851411672,
+        "pearson_ic": 0.001985106226470699,
+        "rank_ic": 0.16667249134995532,
+        "positive_rate": 0.1353877241727709,
+        "margin_mean": -0.11508415639400482,
+        "probability_mean": 0.4718049168586731,
+        "margin_pearson_ic": 0.0020323598228553182,
+        "margin_rank_ic": 0.16667253232057133
+      },
+      "logloss": {
+        "roc_auc": 0.704732403624679,
+        "pr_auc": 0.2433818838725374,
+        "logloss": 0.39421333744908654,
+        "pearson_ic": 0.001240776447219435,
+        "rank_ic": 0.17025610736392907,
+        "positive_rate": 0.1353877241727709,
+        "margin_mean": -1.3838363885879517,
+        "probability_mean": 0.22468362748622894,
+        "margin_pearson_ic": 0.0015807625452251132,
+        "margin_rank_ic": 0.17025609220008053
+      }
+    }
+  ],
+  "aggregate": {
+    "focal_mean_pearson_ic": 0.0027051642054364967,
+    "focal_std_pearson_ic": 0.005343230673986944,
+    "focal_mean_rank_ic": 0.1618698026254846,
+    "focal_std_rank_ic": 0.013944347206170916,
+    "focal_mean_margin_pearson_ic": 0.0027030812765786697,
+    "focal_std_margin_pearson_ic": 0.005315804002021358,
+    "focal_mean_margin_rank_ic": 0.16186981933661182,
+    "focal_std_margin_rank_ic": 0.013944370996359264,
+    "focal_pooled_probability_pearson_ic": 0.0028306875195793723,
+    "focal_pooled_margin_pearson_ic": 0.0028268878864162114,
+    "focal_pooled_margin_rank_ic": 0.16055748285538832
+  }
+}
