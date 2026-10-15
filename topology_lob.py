@@ -158,10 +158,14 @@ def microstructure_features(df: pd.DataFrame, depth_levels: int = 3):
 
     log_mid = np.log(mid)
     ret = np.r_[0.0, np.diff(log_mid)]
-    rolling_vol = pd.Series(ret).rolling(100, min_periods=20).std().to_numpy()
-    rolling_vol = np.nan_to_num(
-        rolling_vol,
-        nan=float(np.nanmedian(rolling_vol)) if np.isfinite(rolling_vol).any() else 0.0,
+    # Use a causal warm-up value. Filling the leading window from the
+    # full-sequence median would let future volatility affect earlier rows.
+    rolling_vol = (
+        pd.Series(ret)
+        .rolling(100, min_periods=20)
+        .std()
+        .fillna(0.0)
+        .to_numpy()
     )
     dt_us = np.r_[np.nan, np.diff(df["timestamp"].astype("int64").to_numpy()) / 1000.0]
     median_dt = float(np.nanmedian(dt_us)) if np.isfinite(dt_us).any() else 0.0
