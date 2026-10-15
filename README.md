@@ -97,7 +97,7 @@ Use raw, timestamped L2 snapshots for any claim about a live-feed result. FI-201
 
 ## FI-2010 benchmark reproduction
 
-The fetch script downloads the public Decimal-Precision benchmark files to a local directory; dataset files are not committed to this repository.
+The fetch script downloads the public Decimal-Precision benchmark files to a local directory; dataset files are not committed. FI-2010 is CC BY 4.0; credit Ntakaris et al. (2018) and link the [official data record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649) when sharing results.
 
 ~~~bash
 python scripts/fetch_fi2010.py --out data/external/fi2010.zip --extract
@@ -111,6 +111,10 @@ python scripts/run_fi2010_benchmark.py \
 ~~~
 
 Review the terms on the [official FI-2010 data record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649) before using or redistributing the dataset. The repository stores scripts and result summaries, not raw dataset files.
+
+### IC sensitivity experiment
+
+The real-data workflow also runs `scripts/run_fi2010_ic_sweep.py`. It compares five return thresholds and both Focal Loss and log-loss using a chronological validation period inside the training data. Only the selected configuration is then evaluated on held-out segments. Pearson IC and Rank IC are recorded independently; the target value is never inserted into the measurements.
 
 ## Figures and reports
 
