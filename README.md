@@ -30,24 +30,25 @@ The stored example produced Pearson IC **0.073292** for Focal Loss and **0.09536
 
 ### FI-2010 benchmark
 
-A recorded run used 254,750 training events and three held-out segments totalling 139,587 events. It evaluated 395 topology clouds with Giotto-TDA and selected fractional-differencing order **d = 0.3** using the training stream.
+The public FI-2010 Decimal-Precision benchmark contains 254,750 training events and three held-out segments totalling 139,587 events. The latest CPU experiment used Giotto-TDA for H0/H1 features, selected fractional-differencing order **d = 0.3** using training data only, and built 396 topology clouds. FI-2010 is a preprocessed benchmark, not a raw live exchange feed.
 
-| Metric | Recorded result |
-|---|---:|
-| Pooled Pearson IC, Focal Loss | 0.002023 |
-| Pooled Rank IC, Focal Loss | 0.159088 |
-| Mean daily Pearson IC | 0.001864 |
-| Mean daily Rank IC | 0.159976 |
-| Best pooled ROC-AUC among tested variants | 0.709805 |
-| Fractional-differentiation backend | CPU fallback; no CUDA device in that run |
+| Model / metric | Held-out result | Target 0.064 |
+|---|---:|---|
+| Focal Loss, pooled Pearson IC | 0.00283 | Not reached |
+| Focal Loss, pooled Rank IC | 0.16034 | Reached |
+| Focal Loss, mean daily Rank IC | 0.16165 | Reached |
+| Training-only-selected continuous-return regressor, Pearson IC | 0.16070 | Reached |
+| Same continuous-return regressor, Rank IC | 0.05198 | Not reached |
 
-The fixed Focal reference measured pooled Pearson IC **0.002023** and Rank IC **0.159088**. A separate leakage-aware sweep selected threshold **0.0001** and log-loss using training-only validation; on held-out data it measured Pearson IC **0.001105** and Rank IC **0.203677**. Thus, 0.064 is exceeded only if the intended metric is Rank IC—not Pearson IC. The selected validation Pearson IC of 0.1349 fell sharply to 0.0011 on the final test, so it is not an out-of-sample result. FI-2010 is a short historical benchmark, not a raw live feed, and does not establish profitability.
+The Focal Loss classifier is consistently useful for rank ordering on this benchmark, but its Pearson IC against continuous forward returns is much lower. An earlier A100 run verified the Focal path with CUDA fractional differentiation and Giotto-TDA; it measured pooled Pearson IC **0.00202** and Rank IC **0.15887**. The GPU result is separate from the newer regression result.
+
+The continuous-return result comes from a different, standard squared-error XGBoost model. Its horizon and feature set were selected using five expanding chronological validation folds within the training file, then scored on the held-out segments. The pooled held-out Pearson IC was 0.16070, but the daily Pearson IC values were 0.04247, 0.30574, and 0.06083. That variation and a Rank IC of 0.05198 mean this result needs further robustness testing; it is not evidence of a stable trading strategy. The recorded selection run used CPU fractional differentiation. A new A100-only workflow now reruns this exact selection with CUDA required.
+
+**Important:** the 0.064 target is exceeded by the Focal model only when IC means Rank IC; the Focal model does not reach 0.064 Pearson IC on this benchmark. The regression reaches the Pearson threshold but uses a different objective. Do not merge these two results into a claim that the Focal model achieved Pearson IC 0.064.
 
 ![FI-2010 validation dashboard](assets/figures/fi2010_validation_dashboard.png)
 
-The updated dashboard compares Pearson IC with Rank IC, plots the 0.064 target, and shows the gap between internal validation and held-out performance. See [the full FI-2010 validation report](results/FI2010_VALIDATION.md) for segment-by-segment figures.
-
-See the [FI-2010 validation](results/FI2010_VALIDATION.md), [synthetic experiment results](results/EXPERIMENTAL_VALIDATION.md), and [CI record](results/CI_VALIDATION.md).
+See the [full resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 validation details](results/FI2010_VALIDATION.md), [synthetic experiment results](results/EXPERIMENTAL_VALIDATION.md), and the [CI record](results/CI_VALIDATION.md). FI-2010 is available under [CC BY 4.0](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649); credit Ntakaris et al. (2018) when sharing derived results.
 
 ## Quick start
 
