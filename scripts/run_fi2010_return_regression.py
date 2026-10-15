@@ -155,7 +155,7 @@ def build_features(args) -> dict:
     }
 
 
-def fit_regressor(X_train: np.ndarray, y_train: np.ndarray, seed: int, rounds: int):
+def fit_regressor(X_train: np.ndarray, y_train: np.ndarray, seed: int, rounds: int, nthread: int = 4):
     # Return scale is in basis points to keep tree gradients numerically useful.
     target_bps = np.asarray(y_train, dtype=float) * 1e4
     params = {
@@ -168,6 +168,7 @@ def fit_regressor(X_train: np.ndarray, y_train: np.ndarray, seed: int, rounds: i
         "min_child_weight": 8,
         "lambda": 2.0,
         "seed": seed,
+        "nthread": int(nthread),
     }
     return xgb.train(
         params,
