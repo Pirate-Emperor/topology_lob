@@ -1,0 +1,277 @@
+from __future__ import annotations
+
+"""Training-only selection of a Focal Loss return-direction model.
+
+All choices (forecast horizon and feature set) are selected from a chronological
+validation slice of the training segment. The held-out FI-2010 days are scored
+only after the candidate is fixed. The target IC is never used for selection.
+"""
+
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+import xgboost as xgb
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from topology_lob import evaluate, fit_focal_xgb, fit_logloss_xgb
+from scripts.run_fi2010_return_regression import (
+    FEATURE_SETS,
+    build_features,
+    forward_returns,
+)
+
+HORIZONS = (10, 20, 30, 50, 100, 200, 500, 1000)
+LABEL_THRESHOLD = 0.0
+
+
+def direction_labels(future: np.ndarray, threshold: float = LABEL_THRESHOLD) -> np.ndarray:
+    future = np.asarray(future, dtype=float)
+    if future.ndim != 1 or not np.isfinite(threshold):
+        raise ValueError("future must be 1-D and threshold finite")
+    labels = np.full(len(future), -1, dtype=np.int8)
+    valid = np.isfinite(future)
+    labels[valid] = (future[valid] > threshold).astype(np.int8)
+    return labels
+
+
+def validate_candidate(candidate: dict) -> None:
+    required = {"horizon", "feature_set", "validation"}
+    if not required.issubset(candidate):
+        raise ValueError(f"candidate is missing keys: {sorted(required - candidate.keys())}")
+    if candidate["horizon"] not in HORIZONS:
+        raise ValueError("unsupported horizon")
+    if candidate["feature_set"] not in FEATURE_SETS:
+        raise ValueError("unsupported feature set")
+
+
+def run(args) -> dict:
+    started = time.perf_counter()
+    bundle = build_features(args)
+    raw_events = len(bundle["micro"])
+    train_events = bundle["train_events"]
+    indices = np.arange(raw_events)
+    future_log_mid = bundle["micro"]["log_mid"].to_numpy(dtype=float)
+    boundaries = bundle["boundaries"]
+    X_sets = bundle["feature_arrays"]
+
+    # Keep a five-percent gap between the inner fit and validation periods.
+    fit_cut = int(train_events * args.fit_fraction)
+    validation_start = int(train_events * args.validation_fraction)
+    candidate_rows = []
+
+    for horizon in args.horizons:
+        future = forward_returns(future_log_mid, boundaries, horizon)
+        labels = direction_labels(future, args.label_threshold)
+        valid_labels = labels >= 0
+        purge = max(args.purge, horizon)
+        fit_mask = (
+            (indices < fit_cut - purge)
+            & valid_labels
+        )
+        validation_mask = (
+            (indices >= validation_start + purge)
+            & (indices < train_events - horizon)
+            & valid_labels
+        )
+        fit_positions = np.flatnonzero(fit_mask)
+        validation_positions = np.flatnonzero(validation_mask)
+        if len(fit_positions) < args.minimum_fit_rows or len(validation_positions) < args.minimum_validation_rows:
+            raise RuntimeError(
+                f"not enough inner split rows for horizon={horizon}: "
+                f"fit={len(fit_positions)}, validation={len(validation_positions)}"
+            )
+        if len(np.unique(labels[fit_positions])) != 2:
+            raise RuntimeError(f"single-class inner training labels for horizon={horizon}")
+
+        for feature_index, feature_set in enumerate(FEATURE_SETS):
+            X_all, feature_names = X_sets[feature_set]
+            if not np.isfinite(X_all[fit_positions]).all() or not np.isfinite(X_all[validation_positions]).all():
+                raise ValueError("feature matrix has non-finite values after split filtering")
+
+            model = fit_focal_xgb(
+                X_all[fit_positions],
+                labels[fit_positions],
+                seed=args.seed + horizon + feature_index,
+                alpha=args.focal_alpha,
+                gamma=args.focal_gamma,
+                ratio=args.oversample_ratio,
+            )
+            metrics, _ = evaluate(
+                model,
+                X_all[validation_positions],
+                labels[validation_positions],
+                future[validation_positions],
+            )
+            candidate_rows.append({
+                "horizon": int(horizon),
+                "feature_set": feature_set,
+                "feature_count": int(X_all.shape[1]),
+                "fit_rows": int(len(fit_positions)),
+                "validation_rows": int(len(validation_positions)),
+                "purge_events": int(purge),
+                "validation": metrics,
+            })
+
+    # Only training-prefix validation IC determines the selected config.
+    selected_row = max(
+        candidate_rows,
+        key=lambda r: (
+            r["validation"]["pearson_ic"],
+            r["validation"]["rank_ic"],
+        ),
+    )
+    validate_candidate(selected_row)
+    selected_horizon = selected_row["horizon"]
+    selected_feature_set = selected_row["feature_set"]
+    future = forward_returns(future_log_mid, boundaries, selected_horizon)
+    labels = direction_labels(future, args.label_threshold)
+    X_all, feature_names = X_sets[selected_feature_set]
+    selected_purge = max(args.purge, selected_horizon)
+    valid = np.isfinite(X_all).all(axis=1) & np.isfinite(future) & (labels >= 0)
+    final_train_positions = np.flatnonzero(valid & (indices < train_events - selected_purge))
+    test_positions = np.flatnonzero(valid & (indices >= train_events))
+    if len(final_train_positions) < args.minimum_fit_rows or len(test_positions) < args.minimum_test_rows:
+        raise RuntimeError(
+            f"not enough final split rows: train={len(final_train_positions)}, "
+            f"test={len(test_positions)}"
+        )
+    if len(np.unique(labels[final_train_positions])) != 2:
+        raise RuntimeError("single-class final training labels")
+
+    focal = fit_focal_xgb(
+        X_all[final_train_positions],
+        labels[final_train_positions],
+        seed=args.seed,
+        alpha=args.focal_alpha,
+        gamma=args.focal_gamma,
+        ratio=args.oversample_ratio,
+    )
+    control = fit_logloss_xgb(
+        X_all[final_train_positions],
+        labels[final_train_positions],
+        seed=args.seed,
+        ratio=args.oversample_ratio,
+    )
+
+    focal_metrics, focal_probability = evaluate(
+        focal, X_all[test_positions], labels[test_positions], future[test_positions]
+    )
+    control_metrics, control_probability = evaluate(
+        control, X_all[test_positions], labels[test_positions], future[test_positions]
+    )
+    heldout_days = []
+    for segment, (start, end) in enumerate(boundaries[1:], start=8):
+        local = np.flatnonzero((indices[test_positions] >= start) & (indices[test_positions] < end))
+        if len(local) == 0:
+            continue
+        focal_day, _ = evaluate(
+            focal, X_all[test_positions[local]], labels[test_positions[local]], future[test_positions[local]]
+        )
+        control_day, _ = evaluate(
+            control, X_all[test_positions[local]], labels[test_positions[local]], future[test_positions[local]]
+        )
+        heldout_days.append({
+            "segment": int(segment),
+            "events": int(end - start),
+            "rows": int(len(local)),
+            "focal": focal_day,
+            "logloss_control": control_day,
+        })
+
+    selected_focal = focal_metrics
+    return {
+        "data_source": "FI-2010 Decimal-Precision benchmark",
+        "data_license": "CC BY 4.0; cite Ntakaris et al. (2018)",
+        "dataset_record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+        "experiment": "Focal Loss classification; prediction probability IC against continuous forward log returns",
+        "selection_policy": "Select horizon and feature set using chronological validation rows from training only; score held-out segments after selection",
+        "label_definition": "positive continuous forward log return; threshold 0.0; labels never cross train/test or segment boundaries",
+        "target_resume_ic": 0.064,
+        "fit_fraction": args.fit_fraction,
+        "validation_fraction": args.validation_fraction,
+        "fit_cut_event": int(fit_cut),
+        "validation_start_event": int(validation_start),
+        "train_events": int(train_events),
+        "test_events": [int(len(f)) for f in bundle["frames"][1:]],
+        "candidate_count": int(len(candidate_rows)),
+        "candidate_grid": candidate_rows,
+        "selected": {
+            "horizon": selected_horizon,
+            "feature_set": selected_feature_set,
+            "feature_count": int(X_all.shape[1]),
+            "fit_rows_inner": int(selected_row["fit_rows"]),
+            "validation_rows": int(selected_row["validation_rows"]),
+            "validation": selected_row["validation"],
+            "final_train_rows": int(len(final_train_positions)),
+            "test_rows": int(len(test_positions)),
+            "purge_events": int(selected_purge),
+        },
+        "selected_test": {
+            "focal": focal_metrics,
+            "logloss_control": control_metrics,
+            "segments": heldout_days,
+        },
+        "selected_test_target_status": {
+            "focal_pearson_ic_at_least_0_064": bool(selected_focal["pearson_ic"] >= 0.064),
+            "focal_rank_ic_at_least_0_064": bool(selected_focal["rank_ic"] >= 0.064),
+            "control_pearson_ic_at_least_0_064": bool(control_metrics["pearson_ic"] >= 0.064),
+            "warning": "These flags use the held-out scores. The 0.064 target is not used during selection.",
+        },
+        "selected_d": bundle["selected_d"],
+        "stationarity": bundle["stationarity"],
+        "tda": bundle["tda"],
+        "topology_clouds": bundle["topology_clouds"],
+        "ffd_backend": bundle["ffd_backend"],
+        "gpu_used": bundle["gpu_used"],
+        "elapsed_seconds": float(time.perf_counter() - started),
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--train", required=True)
+    parser.add_argument("--test", nargs=3, required=True)
+    parser.add_argument("--out", default="results/fi2010_focal_horizon_selection.json")
+    parser.add_argument("--horizons", nargs="+", type=int, default=list(HORIZONS))
+    parser.add_argument("--purge", type=int, default=50)
+    parser.add_argument("--ffd-width", type=int, default=256)
+    parser.add_argument("--tda-stride", type=int, default=1000)
+    parser.add_argument("--tda-jobs", type=int, default=-1)
+    parser.add_argument("--stationarity-fraction", type=float, default=0.6)
+    parser.add_argument("--fit-fraction", type=float, default=0.70)
+    parser.add_argument("--validation-fraction", type=float, default=0.75)
+    parser.add_argument("--minimum-fit-rows", type=int, default=1000)
+    parser.add_argument("--minimum-validation-rows", type=int, default=1000)
+    parser.add_argument("--minimum-test-rows", type=int, default=1000)
+    parser.add_argument("--seed", type=int, default=2010)
+    parser.add_argument("--focal-alpha", type=float, default=0.75)
+    parser.add_argument("--focal-gamma", type=float, default=2.0)
+    parser.add_argument("--oversample-ratio", type=float, default=0.35)
+    parser.add_argument("--label-threshold", type=float, default=0.0)
+    parser.add_argument("--require-gtda", action="store_true")
+    parser.add_argument("--require-cuda", action="store_true")
+    args = parser.parse_args()
+    if not args.horizons or any(h not in HORIZONS for h in args.horizons) or len(set(args.horizons)) != len(args.horizons):
+        raise SystemExit(f"horizons must be unique values drawn from {HORIZONS}")
+    if args.purge < 1 or args.ffd_width < 1 or args.minimum_fit_rows < 1:
+        raise SystemExit("purge, ffd-width, and minimum rows must be positive")
+    if not 0.2 <= args.stationarity_fraction <= 0.8:
+        raise SystemExit("stationarity-fraction must be between 0.2 and 0.8")
+    if not 0.3 <= args.fit_fraction < args.validation_fraction < 0.9:
+        raise SystemExit("require 0.3 <= fit-fraction < validation-fraction < 0.9")
+    result = run(args)
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(result, indent=2))
+    print(json.dumps(result, indent=2))
+
+
+if __name__ == "__main__":
+    main()
