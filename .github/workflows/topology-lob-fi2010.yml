@@ -10,6 +10,7 @@ on:
       - "scripts/run_fi2010_ablation.py"
       - "scripts/run_fi2010_ic_sweep.py"
       - "scripts/run_fi2010_return_regression.py"
+      - "scripts/run_fi2010_return_regression_selection.py"
       - "scripts/run_fi2010_focal_horizon_selection.py"
       - "scripts/fi2010_feature_helpers.py"
       - "fi2010.py"
@@ -17,12 +18,12 @@ on:
       - "tests/**"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   fi2010:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,6 +41,44 @@ jobs:
           curl -L --fail --retry 3 -o /tmp/fi2010/data.zip https://raw.githubusercontent.com/zcakhaa/DeepLOB-Deep-Convolutional-Neural-Networks-for-Limit-Order-Books/master/data/data.zip
           unzip -q /tmp/fi2010/data.zip -d /tmp/fi2010
           find /tmp/fi2010 -maxdepth 3 -type f -name '*DecPre*' -print
+      - name: Record licensed dataset hashes
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          archive = Path("/tmp/fi2010/data.zip")
+          names = [
+              "/tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt",
+              "/tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt",
+              "/tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt",
+              "/tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt",
+          ]
+          def sha(path):
+              digest = hashlib.sha256()
+              with path.open("rb") as f:
+                  for block in iter(lambda: f.read(1024 * 1024), b""):
+                      digest.update(block)
+              return digest.hexdigest()
+          files = {}
+          for value in names:
+              p = Path(value)
+              assert p.is_file(), f"missing required FI-2010 file: {p}"
+              files[p.name] = {"sha256": sha(p), "bytes": p.stat().st_size}
+          manifest = {
+              "dataset": "FI-2010 limit order book benchmark",
+              "landing_page": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+              "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+              "attribution": "Ntakaris et al., Journal of Forecasting 37(8), 852-866 (2018), DOI 10.1002/for.2543",
+              "download_source": "https://raw.githubusercontent.com/zcakhaa/DeepLOB-Deep-Convolutional-Neural-Networks-for-Limit-Order-Books/master/data/data.zip",
+              "archive_sha256": sha(archive),
+              "files": files,
+              "raw_data_committed": False
+          }
+          out = Path("results/fi2010_data_manifest.json")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(manifest, indent=2))
+          print(json.dumps(manifest, indent=2))
+          PY
       - name: Run real-data TDA benchmark
         run: |
           python scripts/run_fi2010_benchmark.py \
@@ -153,6 +192,47 @@ jobs:
               "target_status": r["selected_test_target_status"],
           }, indent=2))
           PY
+      - name: Select continuous-return model by five walk-forward folds
+        run: |
+          python scripts/run_fi2010_return_regression_selection.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --horizons 10 20 30 50 100 200 500 1000 \
+            --require-gtda --tda-stride 1000 --nthread 4 \
+            --out results/fi2010_return_regression_selection.json \
+            --dashboard assets/figures/fi2010_return_regression_selection.png
+      - name: Validate training-only regression selection and final scores
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path("results/fi2010_return_regression_selection.json").read_text())
+          assert r["method"]["tda"]["backend"] == "giotto-tda", r["method"]["tda"]
+          assert r["method"]["candidate_count"] == 32
+          assert len(r["selection"]["candidate_rows"]) == 32
+          assert r["selection"]["validation"]["fold_count"] == 5
+          assert r["method"]["gpu_used"] is False or r["method"]["ffd_backend"] == "numba-cuda"
+          assert len(r["heldout_days"]) == 3
+          assert r["heldout_pooled"]["rows"] > 0
+          assert (Path("assets/figures/fi2010_return_regression_selection.png")).is_file()
+          status = r["target_status"]
+          assert status["pearson_ic_at_least_target"] == (r["heldout_pooled"]["pearson_ic"] >= r["target_pearson_ic"])
+          assert status["rank_ic_at_least_target"] == (r["heldout_pooled"]["rank_ic"] >= r["target_pearson_ic"])
+          print(json.dumps({
+              "selected": {
+                  "horizon": r["selection"]["horizon"],
+                  "feature_set": r["selection"]["feature_set"],
+                  "validation": r["selection"]["validation"],
+              },
+              "heldout_pooled": r["heldout_pooled"],
+              "target_status": r["target_status"],
+              "gpu_used": r["method"]["gpu_used"],
+              "ffd_backend": r["method"]["ffd_backend"],
+          }, indent=2))
+          PY
       - name: Upload benchmark outputs
         uses: actions/upload-artifact@v4
         with:
@@ -163,3 +243,29 @@ jobs:
             results/fi2010_ic_sweep.json
             results/fi2010_regression_sweep.json
             results/fi2010_focal_horizon_selection.json
+            results/fi2010_data_manifest.json
+            results/fi2010_return_regression_selection.json
+            assets/figures/fi2010_return_regression_selection.png
+
+      - name: Publish metrics and measured analysis image
+        if: success()
+        run: |
+          git config user.name "Pirate-Emperor"
+          git config user.email "Pirate-Emperor@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          git add \
+            results/fi2010_data_manifest.json \
+            results/fi2010_benchmark.json \
+            results/fi2010_ablation.json \
+            results/fi2010_ic_sweep.json \
+            results/fi2010_regression_sweep.json \
+            results/fi2010_focal_horizon_selection.json \
+            results/fi2010_return_regression_selection.json \
+            assets/figures/fi2010_return_regression_selection.png
+          if git diff --cached --quiet; then
+            echo "No new FI-2010 evidence"
+            exit 0
+          fi
+          git commit -m "data: record verified FI-2010 experiment results [skip ci]"
+          git push origin HEAD:main
