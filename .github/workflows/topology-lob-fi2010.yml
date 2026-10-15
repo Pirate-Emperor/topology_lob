@@ -11,6 +11,7 @@ on:
       - "scripts/run_fi2010_ic_sweep.py"
       - "scripts/run_fi2010_return_regression.py"
       - "scripts/run_fi2010_focal_horizon_selection.py"
+      - "scripts/fi2010_feature_helpers.py"
       - "fi2010.py"
       - "topology_lob.py"
       - "tests/**"
