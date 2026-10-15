@@ -41,9 +41,11 @@ A recorded run used 254,750 training events and three held-out segments totallin
 | Best pooled ROC-AUC among tested variants | 0.709805 |
 | Fractional-differentiation backend | CPU fallback; no CUDA device in that run |
 
-The benchmark did **not** reach the 0.064 Pearson-IC target. The gap between Pearson IC and Rank IC is reported rather than hidden. FI-2010 is a short historical benchmark, not a live feed, and does not establish profitability.
+The fixed Focal reference measured pooled Pearson IC **0.002023** and Rank IC **0.159088**. A separate leakage-aware sweep selected threshold **0.0001** and log-loss using training-only validation; on held-out data it measured Pearson IC **0.001105** and Rank IC **0.203677**. Thus, 0.064 is exceeded only if the intended metric is Rank IC—not Pearson IC. The selected validation Pearson IC of 0.1349 fell sharply to 0.0011 on the final test, so it is not an out-of-sample result. FI-2010 is a short historical benchmark, not a raw live feed, and does not establish profitability.
 
 ![FI-2010 validation dashboard](assets/figures/fi2010_validation_dashboard.png)
+
+The updated dashboard compares Pearson IC with Rank IC, plots the 0.064 target, and shows the gap between internal validation and held-out performance. See [the full FI-2010 validation report](results/FI2010_VALIDATION.md) for segment-by-segment figures.
 
 See the [FI-2010 validation](results/FI2010_VALIDATION.md), [synthetic experiment results](results/EXPERIMENTAL_VALIDATION.md), and [CI record](results/CI_VALIDATION.md).
 
