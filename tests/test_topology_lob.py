@@ -203,3 +203,26 @@ def test_fractional_difference_benchmark_reports_backend_timing_and_parity():
     else:
         assert result["gpu_timed_repeats"] == 0
         assert "GPU throughput not measured" in result["timing_mode"]
+
+
+def test_rolling_volatility_warmup_does_not_use_future_rows():
+    df = make_synthetic_lob(500, 10, 41)
+    altered = df.copy()
+    tail = np.arange(len(altered) - 50, dtype=float)
+    shifts = 0.35 * np.sin(0.7 * tail)
+    price_columns = [
+        c for c in altered.columns
+        if c.startswith("bid_price_") or c.startswith("ask_price_")
+    ]
+    for column in price_columns:
+        altered.loc[50:, column] += shifts
+
+    base_features = microstructure_features(df)
+    changed_features = microstructure_features(altered)
+    # Before 20 returns exist, the rolling volatility warm-up stays a fixed 0
+    # instead of being filled with a statistic computed from future rows.
+    np.testing.assert_array_equal(
+        base_features["rolling_vol"].to_numpy()[:19],
+        changed_features["rolling_vol"].to_numpy()[:19],
+    )
+    np.testing.assert_array_equal(base_features["rolling_vol"].to_numpy()[:19], np.zeros(19))
