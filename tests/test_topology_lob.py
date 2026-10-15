@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import xgboost as xgb
 
 from topology_lob import (
@@ -226,3 +227,21 @@ def test_rolling_volatility_warmup_does_not_use_future_rows():
         changed_features["rolling_vol"].to_numpy()[:19],
     )
     np.testing.assert_array_equal(base_features["rolling_vol"].to_numpy()[:19], np.zeros(19))
+
+
+def test_first_interarrival_value_does_not_depend_on_future_timestamps():
+    df = make_synthetic_lob(160, 4, 42)
+    altered = df.copy()
+    base_time = pd.Timestamp("2025-01-01", tz="UTC")
+    intervals = np.arange(1, len(altered) - 49, dtype=np.int64) + 3
+    future_times = base_time + pd.to_timedelta(50 + np.cumsum(intervals), unit="us")
+    altered.loc[50:, "timestamp"] = future_times.to_numpy()
+
+    base_features = microstructure_features(df)
+    changed_features = microstructure_features(altered)
+    np.testing.assert_array_equal(
+        base_features["interarrival_us"].to_numpy()[:50],
+        changed_features["interarrival_us"].to_numpy()[:50],
+    )
+    assert base_features.loc[0, "interarrival_us"] == 0.0
+    assert changed_features.loc[0, "interarrival_us"] == 0.0
