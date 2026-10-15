@@ -96,6 +96,7 @@ jobs:
               /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
               /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
               /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --horizons 10 20 30 50 100 200 500 1000 \
             --require-gtda --tda-stride 1000 \
             --out results/fi2010_regression_sweep.json
       - name: Validate regression coverage without selecting on test
