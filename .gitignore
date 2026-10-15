@@ -27,3 +27,5 @@ results/fi2010_ablation.json
 .vscode/
 .idea/
 .DS_Store
+
+results/fi2010_regression_sweep.json
