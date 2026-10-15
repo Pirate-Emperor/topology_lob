@@ -3,6 +3,7 @@ import xgboost as xgb
 
 from topology_lob import (
     LOBValidationError,
+    benchmark_fd,
     fracdiff_weights,
     fractional_diff_cpu,
     fractional_diff_gpu,
@@ -184,3 +185,21 @@ def test_fractional_difference_gpu_matches_cpu_when_available():
         assert backend == "numba-cuda"
     else:
         assert backend.startswith("cpu-fallback:")
+
+
+
+def test_fractional_difference_benchmark_reports_backend_timing_and_parity():
+    result = benchmark_fd(events=600, width=64, d=0.45, gpu_repeats=1)
+    assert result["cpu_elapsed_s"] > 0
+    assert result["backend_elapsed_s"] > 0
+    assert result["events_per_s_cpu"] > 0
+    assert result["events_per_s_backend"] > 0
+    assert result["speedup_vs_cpu"] > 0
+    assert result["backend_max_abs_error"] is not None
+    assert result["backend_max_abs_error"] < 1e-8
+    if result["gpu_used"]:
+        assert result["backend"] == "numba-cuda"
+        assert result["gpu_timed_repeats"] == 1
+    else:
+        assert result["gpu_timed_repeats"] == 0
+        assert "GPU throughput not measured" in result["timing_mode"]
