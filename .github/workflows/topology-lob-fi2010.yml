@@ -105,8 +105,8 @@ jobs:
           from pathlib import Path
           r = json.loads(Path("results/fi2010_regression_sweep.json").read_text())
           assert r["tda"]["backend"] == "giotto-tda", r["tda"]
-          assert len(r["results"]) == 20, len(r["results"])
-          assert set(x["horizon"] for x in r["results"]) == {10, 20, 30, 50, 100}
+          assert len(r["results"]) == 32, len(r["results"])
+          assert set(x["horizon"] for x in r["results"]) == {10, 20, 30, 50, 100, 200, 500, 1000}
           assert set(x["feature_set"] for x in r["results"]) == {"micro_only", "micro_plus_fd", "micro_plus_topology", "full"}
           assert all(x["heldout"]["pooled"]["rows"] > 0 for x in r["results"])
           print(json.dumps({
