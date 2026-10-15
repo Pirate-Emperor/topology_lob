@@ -167,8 +167,9 @@ def microstructure_features(df: pd.DataFrame, depth_levels: int = 3):
         .fillna(0.0)
         .to_numpy()
     )
-    dt_us = np.r_[np.nan, np.diff(df["timestamp"].astype("int64").to_numpy()) / 1000.0]
-    median_dt = float(np.nanmedian(dt_us)) if np.isfinite(dt_us).any() else 0.0
+    # The first row has no previous timestamp; use a fixed zero rather than
+    # filling it with a median computed from future inter-arrival times.
+    dt_us = np.r_[0.0, np.diff(df["timestamp"].astype("int64").to_numpy()) / 1000.0]
 
     return pd.DataFrame({
         "mid": mid,
@@ -181,7 +182,7 @@ def microstructure_features(df: pd.DataFrame, depth_levels: int = 3):
         "rolling_vol": rolling_vol,
         "bid_depth": bid_depth,
         "ask_depth": ask_depth,
-        "interarrival_us": np.nan_to_num(dt_us, nan=median_dt),
+        "interarrival_us": np.nan_to_num(dt_us, nan=0.0),
     })
 
 
