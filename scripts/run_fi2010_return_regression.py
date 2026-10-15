@@ -26,6 +26,8 @@ from fi2010 import load_raw, raw40_to_canonical
 from scripts.fi2010_feature_helpers import (
     fractional_diff_by_segment,
     microstructure_by_segment,
+    select_stationary_d_by_segment,
+    split_stock_sequences,
     topology_by_segment,
 )
 
@@ -46,7 +48,7 @@ def forward_returns(
     boundaries: list[tuple[int, int]],
     horizon: int,
 ) -> np.ndarray:
-    """Calculate continuous forward log returns without crossing file splits."""
+    """Calculate continuous forward log returns without crossing stock sequences."""
     if horizon < 1:
         raise ValueError("horizon must be positive")
     future = np.full(len(log_mid), np.nan, dtype=float)
@@ -96,17 +98,27 @@ def read_segments(train_path: str, test_paths: list[str]):
 
 
 def build_features(args) -> dict:
-    frames, boundaries = read_segments(args.train, args.test)
-    combined = pd.concat(frames, ignore_index=True)
+    frames, file_boundaries = read_segments(args.train, args.test)
     train_events = len(frames[0])
-    select_end = int(train_events * args.stationarity_fraction)
-    micro, boundaries = microstructure_by_segment(frames, depth_levels=5)
+    sequence_frames, detected_file_bounds, boundaries, cut_records = split_stock_sequences(
+        frames,
+        threshold_pct=float(getattr(args, "sequence_jump_threshold", 0.05)),
+        min_segment_events=int(getattr(args, "min_segment_events", 1024)),
+    )
+    if detected_file_bounds != file_boundaries:
+        raise RuntimeError("FI-2010 file boundaries changed during stock splitting")
+    micro, measured_boundaries = microstructure_by_segment(sequence_frames, depth_levels=5)
+    if measured_boundaries != boundaries:
+        raise RuntimeError("feature helper boundaries do not match stock splits")
 
-    d, stationarity = select_stationary_d(
-        micro["log_mid"].to_numpy()[:select_end],
+    d, stationarity = select_stationary_d_by_segment(
+        micro["log_mid"].to_numpy(),
+        boundaries,
+        train_events,
         np.linspace(0.0, 1.0, 11),
         0.05,
         args.ffd_width,
+        prefix_fraction=float(args.stationarity_fraction),
     )
     fd, gpu_used, fd_backend = fractional_diff_by_segment(
         micro["log_mid"].to_numpy(), boundaries, d, args.ffd_width,
@@ -126,7 +138,7 @@ def build_features(args) -> dict:
         ),
     }
     topo_df, topo_meta, topo_indices = topology_by_segment(
-        frames, boundaries, RADII,
+        sequence_frames, boundaries, RADII,
         horizon=max(args.horizons), stride=args.tda_stride, levels=10,
         require_gtda=args.require_gtda, n_jobs=args.tda_jobs,
     )
@@ -143,7 +155,11 @@ def build_features(args) -> dict:
     return {
         "micro": micro,
         "frames": frames,
+        "sequence_frames": sequence_frames,
         "boundaries": boundaries,
+        "sequence_boundaries": boundaries,
+        "file_boundaries": file_boundaries,
+        "sequence_cut_records": cut_records,
         "train_events": train_events,
         "feature_arrays": feature_arrays,
         "stationarity": stationarity,
@@ -184,7 +200,7 @@ def run(args) -> dict:
     indices = np.arange(len(bundle["micro"]))
     train_events = bundle["train_events"]
     boundaries = bundle["boundaries"]
-    final_train_end = train_events - args.purge
+    file_boundaries = bundle["file_boundaries"]
     results = []
 
     for horizon in args.horizons:
@@ -195,7 +211,10 @@ def run(args) -> dict:
         for feature_name in FEATURE_SETS:
             X_all, feature_names = bundle["feature_arrays"][feature_name]
             valid = np.isfinite(X_all).all(axis=1) & np.isfinite(future)
-            train_mask = valid & (indices < train_events - purge)
+            train_mask = valid & (indices < train_events)
+            for start, end in boundaries:
+                if end <= train_events:
+                    train_mask[max(start, end - purge):end] = False
             test_mask = valid & (indices >= train_events)
             train_pos = np.flatnonzero(train_mask)
             test_pos = np.flatnonzero(test_mask)
@@ -213,7 +232,7 @@ def run(args) -> dict:
                 "segment_metrics": [],
                 "pooled": score(prediction, future[test_pos]),
             }
-            for segment_no, (start, end) in enumerate(boundaries[1:], start=8):
+            for segment_no, (start, end) in enumerate(file_boundaries[1:], start=8):
                 local = np.flatnonzero(
                     (indices[test_pos] >= start) & (indices[test_pos] < end)
                 )
@@ -254,6 +273,12 @@ def run(args) -> dict:
         "experiment": "continuous forward-return XGBoost regression; fixed configs, no test-based selection",
         "train_events": int(train_events),
         "test_events": [int(len(f)) for f in bundle["frames"][1:]],
+        "stock_sequences_per_file": [
+            int(sum(1 for b in bundle["sequence_boundaries"] if file_start <= b[0] and b[1] <= file_end))
+            for file_start, file_end in bundle["file_boundaries"]
+        ],
+        "sequence_jump_threshold_pct": float(getattr(args, "sequence_jump_threshold", 0.05)) * 100.0,
+        "sequence_cuts": bundle["sequence_cut_records"],
         "horizons": list(map(int, args.horizons)),
         "rounds": int(args.rounds),
         "purge_minimum": int(args.purge),
@@ -286,6 +311,8 @@ def main():
     parser.add_argument("--tda-stride", type=int, default=1000)
     parser.add_argument("--tda-jobs", type=int, default=-1)
     parser.add_argument("--stationarity-fraction", type=float, default=0.6)
+    parser.add_argument("--sequence-jump-threshold", type=float, default=0.05)
+    parser.add_argument("--min-segment-events", type=int, default=1024)
     parser.add_argument("--seed", type=int, default=2010)
     parser.add_argument("--rounds", type=int, default=220)
     parser.add_argument("--require-gtda", action="store_true")
