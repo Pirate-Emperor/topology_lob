@@ -35,12 +35,16 @@ jobs:
           python -m pip install -c constraints.txt -e ".[tda,dev]"
       - name: Run unit tests
         run: python -m pytest -q
-      - name: Download public FI-2010 Decimal-Precision benchmark
+      - name: Download and verify FI-2010 Decimal-Precision benchmark
         run: |
-          mkdir -p /tmp/fi2010
-          curl -L --fail --retry 3 -o /tmp/fi2010/data.zip https://raw.githubusercontent.com/zcakhaa/DeepLOB-Deep-Convolutional-Neural-Networks-for-Limit-Order-Books/master/data/data.zip
-          unzip -q /tmp/fi2010/data.zip -d /tmp/fi2010
-          find /tmp/fi2010 -maxdepth 3 -type f -name '*DecPre*' -print
+          python scripts/fetch_fi2010.py \
+            --out /tmp/fi2010/data.zip \
+            --extract \
+            --extract-dir /tmp/fi2010 \
+            --chunk-size 4194304 \
+            --retries 8 \
+            --timeout 120
+          find /tmp/fi2010 -maxdepth 1 -type f -name '*DecPre*' -print
       - name: Record licensed dataset hashes
         run: |
           python - <<'PY'
