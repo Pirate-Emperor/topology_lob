@@ -15,6 +15,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from fi2010 import load_raw, raw40_to_canonical
+from scripts.fi2010_feature_helpers import (
+    fractional_diff_by_segment,
+    microstructure_by_segment,
+    topology_by_segment,
+)
+
 from topology_lob import (
     fractional_diff_gpu,
     fit_focal_xgb,
@@ -83,45 +89,28 @@ def main():
 
     train = read_canonical(args.train)
     tests = [read_canonical(path) for path in args.test]
-    combined = pd.concat([train, *tests], ignore_index=True)
+    frames = [train, *tests]
+    combined = pd.concat(frames, ignore_index=True)
     train_events = len(train)
+    micro, boundaries = microstructure_by_segment(frames, depth_levels=5)
 
-    micro = microstructure_features(combined, depth_levels=5)
-
-    # The order d is chosen on the training stream only. It is then frozen
-    # for every held-out test segment.
+    # Select d using training data only, then reset the causal filter at each file.
     d, stationarity = select_stationary_d(
         micro["log_mid"].to_numpy()[:train_events],
         np.linspace(0.0, 1.0, 11),
         0.05,
     )
-    fd, gpu_used, fd_backend = fractional_diff_gpu(
-        micro["log_mid"].to_numpy(), d, args.ffd_width
+    fd, gpu_used, fd_backend = fractional_diff_by_segment(
+        micro["log_mid"].to_numpy(), boundaries, d, args.ffd_width,
+        require_cuda=args.require_cuda,
     )
-    if args.require_cuda and not gpu_used:
-        raise SystemExit(
-            "CUDA was required but the fractional-difference CUDA backend was not used"
-        )
     micro["fracdiff"] = fd
-
-    topo_index = np.arange(
-        50,
-        len(combined) - args.horizon,
-        args.tda_stride,
-    )
     radii = np.asarray([0.5, 1.0, 1.5, 2.0, 2.5], dtype=float)
-    clouds = make_point_clouds(combined, topo_index, levels=10)
-    topology, topo_meta = persistent_features(
-        clouds,
-        radii,
-        require_gtda=args.require_gtda,
-        n_jobs=-1,
+    topo_df, topo_meta, topo_index = topology_by_segment(
+        frames, boundaries, radii,
+        horizon=args.horizon, stride=args.tda_stride, levels=10,
+        require_gtda=args.require_gtda, n_jobs=-1,
     )
-
-    topo_df = pd.DataFrame(
-        topology,
-        index=topo_index,
-    ).reindex(range(len(combined))).ffill()
 
     base_columns = [
         c for c in micro.columns
@@ -133,12 +122,11 @@ def main():
     ])
 
     mid_log = micro["log_mid"].to_numpy()
-    boundaries = []
-    cursor = 0
-    for frame in [train, *tests]:
-        boundaries.append((cursor, cursor + len(frame)))
-        cursor += len(frame)
     future = segment_forward_returns(mid_log, boundaries, args.horizon)
+    y = np.full(len(combined), -1)
+    finite = np.isfinite(future)
+    y[finite] = (future[finite] > args.label_threshold).astype(int)
+
     y = np.full(len(combined), -1)
     finite = np.isfinite(future)
     y[finite] = (
