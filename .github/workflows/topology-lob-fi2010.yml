@@ -9,6 +9,7 @@ on:
       - "scripts/run_fi2010_benchmark.py"
       - "scripts/run_fi2010_ablation.py"
       - "scripts/run_fi2010_ic_sweep.py"
+      - "scripts/run_fi2010_return_regression.py"
       - "fi2010.py"
       - "topology_lob.py"
 
@@ -86,6 +87,35 @@ jobs:
               "target_metric_status": r["target_metric_status"],
           }, indent=2))
           PY
+      - name: Run fixed multi-horizon continuous-return regression
+        run: |
+          python scripts/run_fi2010_return_regression.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_regression_sweep.json
+      - name: Validate regression coverage without selecting on test
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path("results/fi2010_regression_sweep.json").read_text())
+          assert r["tda"]["backend"] == "giotto-tda", r["tda"]
+          assert len(r["results"]) == 20, len(r["results"])
+          assert set(x["horizon"] for x in r["results"]) == {10, 20, 30, 50, 100}
+          assert set(x["feature_set"] for x in r["results"]) == {"micro_only", "micro_plus_fd", "micro_plus_topology", "full"}
+          assert all(x["heldout"]["pooled"]["rows"] > 0 for x in r["results"])
+          print(json.dumps({
+              "selected_d": r["selected_d"],
+              "gpu_used": r["gpu_used"],
+              "top_5_heldout_pearson_ic_descriptive_only": r["top_5_heldout_pearson_ic_descriptive_only"],
+              "target_pearson_ic_0_064_reached_by_any_fixed_config": r["target_pearson_ic_0_064_reached_by_any_fixed_config"],
+              "target_rank_ic_0_064_reached_by_any_fixed_config": r["target_rank_ic_0_064_reached_by_any_fixed_config"],
+          }, indent=2))
+          PY
       - name: Upload benchmark outputs
         uses: actions/upload-artifact@v4
         with:
@@ -94,3 +124,4 @@ jobs:
             results/fi2010_benchmark.json
             results/fi2010_ablation.json
             results/fi2010_ic_sweep.json
+            results/fi2010_regression_sweep.json
