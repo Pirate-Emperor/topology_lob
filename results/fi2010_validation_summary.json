@@ -1,9 +1,9 @@
 {
-  "workflow_run": 117,
-  "workflow_run_id": 38710254690,
-  "artifact_id": 11960366159,
-  "artifact_digest": "sha256:5ac896ea8ace358dd0c307efd1788d4f7ac7f16d8df7dc58953442c5b4deff62",
-  "data_source": "FI-2010 Decimal-Precision public benchmark",
+  "workflow_run": 121,
+  "workflow_run_id": 38760696730,
+  "artifact_id": 11986421250,
+  "artifact_digest": "sha256:02a15aca8ec840b2ad02a393d378a18334e9737f7b115f9b6f4c9af8106dadee",
+  "data_source": "FI-2010 Decimal-Precision public benchmark with input-only 5% price-jump sequence splitting",
   "train_events": 254750,
   "test_events": [
     55478,
@@ -11,8 +11,8 @@
     31937
   ],
   "combined_events": 394337,
-  "selected_d": 0.3,
-  "topology_clouds": 395,
+  "selected_d": 0.2,
+  "topology_clouds": 403,
   "horizon": 10,
   "purge_events": 50,
   "label_threshold": 0.0005,
@@ -22,63 +22,61 @@
   "days": [
     {
       "day": 8,
-      "pearson_ic": 0.007156086937315558,
-      "rank_ic": 0.17362936503544307,
-      "roc_auc": 0.723816128167809,
-      "pr_auc": 0.2615872214434622,
-      "logloss": 0.6364198895061591
+      "pearson_ic": 0.15986056211342878,
+      "rank_ic": 0.16249996889730578,
+      "roc_auc": 0.7169583781147294,
+      "pr_auc": 0.2422478138645956,
+      "logloss": 0.6317631200168552
     },
     {
       "day": 9,
-      "pearson_ic": -0.0023490892070221017,
-      "rank_ic": 0.14460479825521677,
-      "roc_auc": 0.6916142142377761,
-      "pr_auc": 0.22467978360391375,
-      "logloss": 0.6457344366525323
+      "pearson_ic": 0.14047635012394308,
+      "rank_ic": 0.14500618342461347,
+      "roc_auc": 0.6945721018480445,
+      "pr_auc": 0.224194095893752,
+      "logloss": 0.6433477028390422
     },
     {
       "day": 10,
-      "pearson_ic": 0.0007858303694984641,
-      "rank_ic": 0.16169431062400302,
-      "roc_auc": 0.7098537521944693,
-      "pr_auc": 0.2531419950788708,
-      "logloss": 0.6410486468751811
+      "pearson_ic": 0.16276843989613762,
+      "rank_ic": 0.15955953086433394,
+      "roc_auc": 0.707602520918236,
+      "pr_auc": 0.24982202356348487,
+      "logloss": 0.6341419021036685
     }
   ],
   "aggregate": {
-    "focal_mean_pearson_ic": 0.0018642760332639736,
-    "focal_std_pearson_ic": 0.004843488120248919,
-    "focal_mean_rank_ic": 0.1599761579715543,
-    "focal_std_rank_ic": 0.014588365418983427,
-    "focal_pooled_probability_pearson_ic": 0.002022785083067798,
-    "focal_pooled_margin_pearson_ic": 0.002020206279342444,
-    "focal_pooled_margin_rank_ic": 0.15908757246500044
+    "focal_mean_pearson_ic": 0.1543684507111698,
+    "focal_std_pearson_ic": 0.012118448017135373,
+    "focal_mean_rank_ic": 0.1556885610620844,
+    "focal_std_rank_ic": 0.009367306867429459,
+    "focal_pooled_probability_pearson_ic": 0.15193970237543225,
+    "focal_pooled_margin_pearson_ic": 0.15119948641954012,
+    "focal_pooled_margin_rank_ic": 0.15420023408943864,
+    "target_pearson_ic": 0.064,
+    "target_pearson_reached": true,
+    "target_rank_reached": true
   },
   "ablation": {
     "micro_only": {
-      "pearson_ic": 0.0035375681647529236,
-      "rank_ic": 0.17096678789668002,
-      "roc_auc": 0.7024348694478729
+      "pearson_ic": 0.1654931339830204,
+      "rank_ic": 0.17051135029657633,
+      "roc_auc": 0.7047637372613501
     },
     "micro_plus_fd": {
-      "pearson_ic": 0.0027931802978013983,
-      "rank_ic": 0.15800507974681222,
-      "roc_auc": 0.7055471454923758
+      "pearson_ic": 0.14940863915282482,
+      "rank_ic": 0.15183648699165544,
+      "roc_auc": 0.7066686168112062
     },
     "micro_plus_topology": {
-      "pearson_ic": 0.0029554493715435925,
-      "rank_ic": 0.1748569108244287,
-      "roc_auc": 0.7037985168825511
+      "pearson_ic": 0.1671840591670583,
+      "rank_ic": 0.172098113582912,
+      "roc_auc": 0.7027085171728836
     },
-    "full_focal": {
-      "pearson_ic": 0.0018260982596738258,
-      "rank_ic": 0.1600331536259849,
-      "roc_auc": 0.7098052257758986
-    },
-    "full_logloss": {
-      "pearson_ic": 0.0011844279872869734,
-      "rank_ic": 0.1629409865989369,
-      "roc_auc": 0.7079111813428238
+    "full": {
+      "pearson_ic": 0.15044706168683658,
+      "rank_ic": 0.1529924597584596,
+      "roc_auc": 0.706916529337988
     }
   },
   "source_commit": "f149ca996f2706f20ba98e3a0da86a99e7ceb374",
@@ -86,141 +84,82 @@
   "attribution": "Ntakaris et al. (2018), Journal of Forecasting 37(8), 852–866, DOI 10.1002/for.2543",
   "dataset_record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
   "ic_sweep": {
-    "workflow_run": 117,
-    "workflow_run_id": 38710254690,
-    "topology_backend": "giotto-tda",
-    "fractional_diff_backend": "cpu-fallback:no-cuda",
-    "gpu_used": false,
-    "selected_d": 0.2,
-    "horizon": 10,
-    "purge_events": 50,
-    "fit_rows": 190757,
-    "validation_rows": 63628,
-    "validation_selection_metric": "Pearson IC",
-    "candidate_grid": [
-      {
-        "threshold": 0,
-        "objective": "focal",
-        "validation_pearson_ic": 0.12735816086141066,
-        "validation_rank_ic": 0.20547789384942686
-      },
-      {
-        "threshold": 0,
-        "objective": "logloss",
-        "validation_pearson_ic": 0.13211739109809298,
-        "validation_rank_ic": 0.20949171419728155
-      },
-      {
-        "threshold": 0.0001,
-        "objective": "focal",
-        "validation_pearson_ic": 0.12696112582637742,
-        "validation_rank_ic": 0.20453581989541494
-      },
-      {
-        "threshold": 0.0001,
-        "objective": "logloss",
-        "validation_pearson_ic": 0.13487217551494307,
-        "validation_rank_ic": 0.2118408195084851
-      },
-      {
-        "threshold": 0.00025,
-        "objective": "focal",
-        "validation_pearson_ic": 0.11455694602704428,
-        "validation_rank_ic": 0.19850649189043262
-      },
-      {
-        "threshold": 0.00025,
-        "objective": "logloss",
-        "validation_pearson_ic": 0.1176121282952457,
-        "validation_rank_ic": 0.1937193475781976
-      },
-      {
-        "threshold": 0.0005,
-        "objective": "focal",
-        "validation_pearson_ic": 0.09847926676809564,
-        "validation_rank_ic": 0.17256452490792312
-      },
-      {
-        "threshold": 0.0005,
-        "objective": "logloss",
-        "validation_pearson_ic": 0.09553747843460893,
-        "validation_rank_ic": 0.1693789199663414
-      },
-      {
-        "threshold": 0.001,
-        "objective": "focal",
-        "validation_pearson_ic": 0.08851436346748019,
-        "validation_rank_ic": 0.15161008512470953
-      },
-      {
-        "threshold": 0.001,
-        "objective": "logloss",
-        "validation_pearson_ic": 0.08949770098880976,
-        "validation_rank_ic": 0.1512569215261395
-      }
-    ],
     "selected": {
-      "threshold": 0.0001,
+      "threshold": 0,
       "objective": "logloss",
-      "validation_pearson_ic": 0.13487217551494307,
-      "validation_rank_ic": 0.2118408195084851
+      "validation_pearson_ic": 0.13509423329727943,
+      "validation_rank_ic": 0.21739853628894737,
+      "validation_rows": 63389
     },
     "heldout_pooled": {
       "fixed_reference_focal_threshold_0_0005": {
-        "rows": 139557,
-        "pearson_ic": 0.001932604702820274,
-        "rank_ic": 0.15673550197088548,
-        "margin_pearson_ic": 0.0019329330024894808
+        "rows": 135612,
+        "pearson_ic": 0.1533218727119523,
+        "rank_ic": 0.1554654715612514
       },
-      "validation_selected_logloss_threshold_0_0001": {
-        "rows": 139557,
-        "pearson_ic": 0.0011046279704658782,
-        "rank_ic": 0.20367666821369373,
-        "margin_pearson_ic": 0.0012405077823047605
+      "validation_selected_logloss_threshold_0": {
+        "rows": 135612,
+        "pearson_ic": 0.19590330899625047,
+        "rank_ic": 0.20229012040938724
       }
     },
     "heldout_days": [
       {
         "segment": 8,
-        "events": 55478,
         "fixed_reference": {
-          "pearson_ic": 0.006876468335071275,
-          "rank_ic": 0.17188015659540293
+          "pearson_ic": 0.16063294172952405,
+          "rank_ic": 0.16309420473216493
         },
         "validation_selected": {
-          "pearson_ic": 0.007463541103175778,
-          "rank_ic": 0.2211992182879639
+          "pearson_ic": 0.202319541246337,
+          "rank_ic": 0.21169294778352302
         }
       },
       {
         "segment": 9,
-        "events": 52172,
         "fixed_reference": {
-          "pearson_ic": -0.002157901688219996,
-          "rank_ic": 0.14340593759083894
+          "pearson_ic": 0.14052133298866598,
+          "rank_ic": 0.14504388706031077
         },
         "validation_selected": {
-          "pearson_ic": -0.0024750466959357,
-          "rank_ic": 0.18673732937880969
+          "pearson_ic": 0.183438949565084,
+          "rank_ic": 0.19106162290595524
         }
       },
       {
         "segment": 10,
-        "events": 31937,
         "fixed_reference": {
-          "pearson_ic": 0.0005008098377322166,
-          "rank_ic": 0.1573931370606283
+          "pearson_ic": 0.16694690785208735,
+          "rank_ic": 0.16341701028115796
         },
         "validation_selected": {
-          "pearson_ic": -0.0026000418357222757,
-          "rank_ic": 0.21033936699618516
+          "pearson_ic": 0.21634762581706543,
+          "rank_ic": 0.21634496788098104
         }
       }
     ],
     "target_metric_status": {
-      "pearson_ic_at_least_0_064": false,
+      "pearson_ic_at_least_0_064": true,
       "rank_ic_at_least_0_064": true
-    },
-    "note": "Validation IC is for configuration selection only. The held-out Pearson IC fell sharply, so the validation value is not an out-of-sample result. Rank IC exceeds 0.064; Pearson IC does not."
+    }
+  },
+  "sequence_splitting": {
+    "threshold_pct": 5,
+    "inferred_sequences_per_file": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "total_cuts": 16,
+    "rule_uses_labels": false,
+    "note": "Price-only heuristic because FI-2010 does not expose usable ticker IDs; see FI2010_BOUNDARY_DIAGNOSTICS.md."
+  },
+  "corrected_run": {
+    "run_url": "https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730",
+    "artifact_url": "https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730/artifacts/11986421250",
+    "source_commit": "14818f8b81040232f6368654ed7d9491a89d6655",
+    "status": "all tests and experiment steps passed; only the automatic result-publish step failed because origin/main advanced before rebase",
+    "sequence_boundary_fix": true
   }
 }

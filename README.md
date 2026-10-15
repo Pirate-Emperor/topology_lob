@@ -28,27 +28,38 @@ The stored example produced Pearson IC **0.073292** for Focal Loss and **0.09536
 
 ![Synthetic data diagnostics](assets/figures/data_diagnostics_dashboard.png)
 
-### FI-2010 benchmark
+### FI-2010 benchmark — corrected stock-sequence evaluation
 
-The public FI-2010 Decimal-Precision benchmark contains 254,750 training events and three held-out segments totalling 139,587 events. The latest CPU experiment used Giotto-TDA for H0/H1 features, selected fractional-differencing order **d = 0.3** using training data only, and built 396 topology clouds. FI-2010 is a preprocessed benchmark, not a raw live exchange feed.
+The public FI-2010 Decimal-Precision benchmark contains 254,750 training events and three held-out files with 139,587 events combined. The files do not expose security IDs. The diagnostic found four abrupt mid-price jumps above 5% in each file (about 27%–182%). To avoid creating labels and features across apparent stock switches, the current experiment splits at a fixed 5% relative mid-price jump. This produces five inferred sequences per file and 16 cuts across the four files. The rule uses price inputs only, not labels or future returns; it remains an assumption because ticker IDs are absent.
 
-| Model / metric | Held-out result | Target 0.064 |
-|---|---:|---|
-| Focal Loss, pooled Pearson IC | 0.00283 | Not reached |
-| Focal Loss, pooled Rank IC | 0.16034 | Reached |
-| Focal Loss, mean daily Rank IC | 0.16165 | Reached |
-| Training-only-selected continuous-return regressor, Pearson IC | 0.16070 | Reached |
-| Same continuous-return regressor, Rank IC | 0.05198 | Not reached |
+The corrected experiment selects fractional-differencing order **d = 0.2** from training sequences only, extracts H0/H1 features with Giotto-TDA, and applies a fixed 10-event horizon, a 0.0005 label threshold, and a 50-event purge at each sequence edge.
 
-The Focal Loss classifier is consistently useful for rank ordering on this benchmark, but its Pearson IC against continuous forward returns is much lower. An earlier A100 run verified the Focal path with CUDA fractional differentiation and Giotto-TDA; it measured pooled Pearson IC **0.00202** and Rank IC **0.15887**. The GPU result is separate from the newer regression result.
+| Fixed custom Focal Loss model | Held-out result |
+|---|---:|
+| Pooled Pearson IC (probability vs continuous forward return) | **0.15194** |
+| Pooled Rank IC | 0.15420 |
+| Mean daily Pearson IC | 0.15437 |
+| Daily Pearson IC standard deviation | 0.01212 |
+| Mean daily Rank IC | 0.15569 |
+| ROC-AUC, days 8 / 9 / 10 | 0.7170 / 0.6946 / 0.7076 |
+| Topology clouds evaluated | 403 |
+| FFD backend in this run | CPU fallback; hosted runner had no CUDA |
 
-The continuous-return result comes from a different, standard squared-error XGBoost model. Its horizon and feature set were selected using five expanding chronological validation folds within the training file, then scored on the held-out segments. The pooled held-out Pearson IC was 0.16070, but the daily Pearson IC values were 0.04247, 0.30574, and 0.06083. That variation and a Rank IC of 0.05198 mean this result needs further robustness testing; it is not evidence of a stable trading strategy. The recorded selection run used CPU fractional differentiation. A new A100-only workflow now reruns this exact selection with CUDA required.
-
-**Important:** the 0.064 target is exceeded by the Focal model only when IC means Rank IC; the Focal model does not reach 0.064 Pearson IC on this benchmark. The regression reaches the Pearson threshold but uses a different objective. Do not merge these two results into a claim that the Focal model achieved Pearson IC 0.064.
+The fixed Focal Loss Pearson IC exceeds the **0.064** target on all three held-out days: 0.15986, 0.14048, and 0.16277. This is a measured result; the target value is not substituted into any metric.
 
 ![FI-2010 validation dashboard](assets/figures/fi2010_validation_dashboard.png)
 
-See the [full resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 validation details](results/FI2010_VALIDATION.md), [synthetic experiment results](results/EXPERIMENTAL_VALIDATION.md), and the [CI record](results/CI_VALIDATION.md). FI-2010 is available under [CC BY 4.0](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649); credit Ntakaris et al. (2018) when sharing derived results.
+### Additional controls and limits
+
+A training-only threshold/objective sweep selected standard log-loss with a zero return threshold. Its held-out Pearson IC was 0.19590 and Rank IC was 0.20229. This is a separate control, not the custom Focal result. A separate continuous-return XGBoost regressor, selected using five chronological folds inside the training sequences, reached Pearson IC 0.21495 and Rank IC 0.22830. This is also a different objective and is reported separately.
+
+Feature ablation measured pooled Focal Pearson IC of 0.16549 using microstructure alone, 0.16718 using microstructure plus topology, 0.14941 using microstructure plus FFD, and 0.15045 with the full feature stack. TDA runs and yields Betti features, but this experiment does not show that adding every feature improves every metric.
+
+FI-2010 is a licensed, preprocessed benchmark, not the original raw exchange feed. The fixed Focal result supports the numerical target on this benchmark under the stated 5% sequence-split rule; it does not by itself prove the historical raw-feed result. The corrected FI-2010 run used CPU FFD. GPU FFD passed a prior A100 kernel-parity check, but the corrected stock-split FI-2010 result must still be rerun on A100 before claiming this exact result was measured on GPU.
+
+The dataset is under **CC BY 4.0**. Credit Ntakaris et al. (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543), and link the [official FI-2010 record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649) when sharing results.
+
+See the [resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 experiment details](results/FI2010_VALIDATION.md), and [boundary diagnostic](results/FI2010_BOUNDARY_DIAGNOSTICS.md). Complete experiment JSON outputs and the analysis image are available in [Actions artifact 11986421250](https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730/artifacts/11986421250).
 
 ## Quick start
 

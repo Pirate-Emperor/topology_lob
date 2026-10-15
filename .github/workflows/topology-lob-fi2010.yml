@@ -270,8 +270,8 @@ jobs:
         run: |
           git config user.name "Pirate-Emperor"
           git config user.email "Pirate-Emperor@users.noreply.github.com"
-          git fetch origin main
-          git rebase origin/main
+          # Stage and commit local output before rebasing: the ignored result
+          # files make a pre-commit rebase fail with "unstaged changes".
           git add -f \
             results/fi2010_data_manifest.json \
             results/fi2010_boundary_diagnostics.json \
@@ -287,4 +287,6 @@ jobs:
             exit 0
           fi
           git commit -m "data: record verified FI-2010 experiment results [skip ci]"
+          git fetch origin main
+          git rebase origin/main
           git push origin HEAD:main

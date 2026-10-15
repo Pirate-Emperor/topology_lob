@@ -1,109 +1,94 @@
-# Resume-target validation record
+# Resume-target validation — corrected FI-2010 run
 
-**Scope:** verify the three stated project targets against reproducible runs, using a licensed public limit-order-book benchmark. This record distinguishes a test result from a training/validation score and does not replace a measurement with the target number.
+**Scope:** test the stated Topology LOB objectives against a licensed public limit-order-book benchmark. Pearson IC and Rank IC are both reported. FI-2010 is a proxy for the original raw-feed experiment, not a substitute for it.
 
-## Dataset and split
+## Dataset, license, and split
 
-The experiments used FI-2010 Decimal-Precision files from the public [FI-2010 dataset record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649). The dataset is available under **Creative Commons Attribution 4.0 (CC BY 4.0)**. Cite Ntakaris, Magris, Kanniainen, Gabbouj and Iosifidis (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543).
+The run used the FI-2010 Decimal-Precision files from the [official data record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649), licensed under **Creative Commons Attribution 4.0 (CC BY 4.0)**. Cite Ntakaris et al. (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543).
 
-| Split | Events |
+| File | Events |
 |---|---:|
 | Train CF_7 | 254,750 |
-| Test CF_7 (day 8) | 55,478 |
-| Test CF_8 (day 9) | 52,172 |
-| Test CF_9 (day 10) | 31,937 |
-| Combined | 394,337 |
+| Test CF_7 / day 8 | 55,478 |
+| Test CF_8 / day 9 | 52,172 |
+| Test CF_9 / day 10 | 31,937 |
+| Total | 394,337 |
 
-FI-2010 is a preprocessed benchmark, not a raw live exchange feed. Its source files do not supply usable exchange wall-clock timestamps. Raw market data is not committed. The run manifest records file sizes and SHA-256 checksums.
+The public files do not provide usable exchange timestamps or ticker IDs. A diagnostic found four adjacent mid-price jumps above 5% in each file (roughly 27%–182%), consistent with five stock streams concatenated together. The pipeline uses a fixed, price-only 5% jump rule to infer sequence boundaries: five sequences per file and 16 cuts across the four files. This rule does not read labels or future returns. It is a documented assumption because security IDs are missing.
 
-Forward returns are calculated inside each file segment; labels are not allowed to cross segment boundaries. The fixed Focal Loss run uses a 10-event horizon, a 0.0005 forward log-return threshold, and a 50-event purge at the train/test boundary.
+Rolling features, fractional differentiation, topology values, and forward-return labels now restart at inferred sequence boundaries. Purge gaps are applied at sequence edges. The fixed 10-event Focal benchmark uses a 0.0005 forward log-return label threshold and a 50-event purge.
 
 ## Target 1 — Topological liquidity features
 
-**Result: implemented and exercised.**
+**Result: implemented and exercised on FI-2010.** Giotto-TDA ran Vietoris–Rips persistent homology for H0/H1 on normalized L2 liquidity point clouds. The output includes Betti-0 and Betti-1 counts at five radii and H1 persistence features.
 
-Giotto-TDA ran Vietoris–Rips persistent homology on normalized L2 liquidity point clouds. The measured feature set contains Betti-0 and Betti-1 counts at five radii, plus H1 persistence features.
+| Item | Corrected CPU benchmark |
+|---|---:|
+| TDA backend | Giotto-TDA |
+| Topology clouds | 403 |
+| Homology | H0 and H1 |
+| Selected fractional-differencing order | d = 0.2 |
 
-| Run | TDA backend | Topology clouds | Homology |
-|---|---|---:|---|
-| CPU benchmark run | giotto-tda | 396 | H0, H1 |
-| A100 benchmark run | giotto-tda | 395 | H0, H1 |
-
-The cloud count differs slightly across runs because the run revisions and segment-edge filtering differed. These are measured cloud counts, not counts inferred from a figure.
+Feature ablation confirms the topology path was exercised, but not that every feature improves every score. Pooled Focal Pearson IC was 0.16549 for microstructure-only, 0.16718 for microstructure plus topology, 0.14941 for microstructure plus FFD, and 0.15045 for the full stack.
 
 ## Target 2 — GPU fractional differentiation
 
-**Result: GPU path and numerical parity verified on hardware.**
+**Result: GPU kernel parity was previously verified on A100 hardware; the corrected FI-2010 score in this record used CPU.**
 
-The A100 workflow confirmed two NVIDIA A100-SXM4-40GB GPUs, ran the fractional-differentiation kernel, and compared its output to the CPU reference. The maximum absolute difference in the 200,000-event benchmark was \(2.22\times10^{-15}\). The end-to-end demo reported gpu_used=true and fractional_diff_backend=numba-cuda.
+The prior A100 kernel check reported maximum absolute difference of approximately 2.22e-15 between CUDA and CPU output. A separate older A100 demo reported gpu_used=true and numba-cuda, but it preceded the stock-sequence correction.
 
-The A100 FI-2010 benchmark also reported gpu_used=true, fractional_diff_backend=numba-cuda, and selected_d=0.3. The hosted CPU FI-2010 run used cpu-fallback:no-cuda; CPU results are not counted as GPU evidence.
+The corrected FI-2010 benchmark reports gpu_used=false and cpu-fallback:no-cuda because it ran on a hosted CPU runner. Therefore the results below validate the corrected split and model on CPU, not the exact corrected benchmark on A100. The separate A100 workflow requires CUDA, checks GPU hardware and parity, and reruns FI-2010.
 
 ## Target 3 — Out-of-sample Information Coefficient of 0.064
 
-Pearson IC and Rank IC are both shown because “IC” by itself does not specify which correlation is intended. Both were calculated on held-out rows. No reported metric was set to the target value.
+**Result: the fixed custom Focal Loss model exceeds the 0.064 target for Pearson IC on the corrected FI-2010 holdout.**
 
-### Custom Focal Loss classifier: fixed benchmark
+The fixed model uses the custom binary Focal Loss objective, full feature stack, training-only d = 0.2, a 10-event horizon, and a 0.0005 label threshold. The setup was not chosen by searching the held-out files.
 
-| Held-out metric | Measured result | Threshold 0.064 |
+| Held-out metric | Measured result | Target |
 |---|---:|---|
-| Pooled Pearson IC (score vs continuous forward return) | 0.00283 | Not reached |
-| Pooled Rank IC (score vs continuous forward return) | 0.16034 | Reached |
-| Mean daily Rank IC | 0.16165 | Reached |
-| Daily Rank IC standard deviation | 0.01395 | — |
+| Pooled Pearson IC (score vs continuous forward return) | **0.151940** | Reached |
+| Pooled Rank IC | 0.154200 | Reached |
+| Mean daily Pearson IC | 0.154368 | Reached |
+| Daily Pearson IC standard deviation | 0.012118 | — |
+| Mean daily Rank IC | 0.155689 | Reached |
 
-Per-day results:
-
-| Test segment | Pearson IC | Rank IC | ROC-AUC |
+| Held-out file | Pearson IC | Rank IC | ROC-AUC |
 |---|---:|---:|---:|
-| Day 8 | 0.00837 | 0.17253 | 0.72308 |
-| Day 9 | -0.00224 | 0.14592 | 0.69097 |
-| Day 10 | 0.00199 | 0.16651 | 0.70409 |
+| Day 8 | 0.159861 | 0.162500 | 0.716958 |
+| Day 9 | 0.140476 | 0.145006 | 0.694572 |
+| Day 10 | 0.162768 | 0.159560 | 0.707603 |
 
-The A100 run independently reproduced this pattern: pooled Focal Pearson IC **0.00202** and pooled Focal Rank IC **0.15887**, with GPU fractional differentiation and Giotto-TDA enabled. Thus the 0.064 target **is exceeded when IC means Rank IC**, but **is not reached when IC means Pearson IC** for this Focal Loss classifier.
+The target is exceeded on each of the three held-out files for both Pearson and Rank IC. This is benchmark evidence, not proof of profitability or a direct reproduction of the original raw-feed experiment.
 
-### Training-only selection checks
+### Separate controls — not the Focal Loss claim
 
-The threshold/objective sweep chose a 0.0001 label threshold and the log-loss objective using an inner chronological validation split. Its validation Pearson IC was 0.13487, but the held-out Pearson IC was only **0.00116**; the held-out Rank IC was **0.20670**. The validation number is not an out-of-sample result.
+A training-only threshold/objective sweep selected standard log-loss with a zero return threshold. Held-out Pearson IC was 0.195903 and Rank IC was 0.202290. This is a control model with a different objective.
 
-A separate Focal Loss horizon/feature selection run picked horizon 1,000 with microstructure plus fractional-difference features. On its held-out rows it scored Pearson IC **0.00844** and Rank IC **0.05194**, so that selected Focal configuration did not reach 0.064 under either definition.
+A separate continuous-return XGBoost model, selected using five chronological validation folds confined to training sequences, obtained held-out Pearson IC 0.214955 and Rank IC 0.228299. Its selected horizon was 10 events and its feature set was microstructure plus topology. It is a regression model, not the Focal Loss classifier.
 
-### Continuous-return regression control
+A separate Focal horizon/feature sweep selected a 1,000-event horizon during training validation and scored Pearson IC 0.067445 overall, but day 10 was negative. The fixed 10-event Focal result and the per-day scores above remain the main metric evidence.
 
-A separate experiment selected a standard squared-error XGBoost regressor—not the Focal Loss classifier—by mean Pearson IC over five expanding chronological folds confined to the training file. It evaluated 32 candidates (eight horizons × four feature sets). Each validation fold has a chronological gap, and the final test segments were scored only after the configuration had been selected.
+## Data-boundary correction
 
-| Item | Measured result |
-|---|---:|
-| Selected horizon | 500 events |
-| Selected features | Microstructure + fractional differentiation |
-| Mean Pearson IC over five training-only validation folds | 0.06214 |
-| Validation-fold Pearson IC standard deviation | 0.10374 |
-| Positive validation folds | 4 / 5 |
-| Held-out pooled Pearson IC | 0.16070 |
-| Held-out pooled Rank IC | 0.05198 |
-| Held-out direction hit rate | 0.49526 |
-
-The pooled held-out Pearson IC exceeds 0.064, but this is a **different objective** from Focal Loss. It is also not uniform by segment: daily Pearson IC values were 0.04247, 0.30574, and 0.06083. The large variation and weak pooled Rank IC mean this should be treated as benchmark evidence requiring further robustness checks, not evidence of a stable trading strategy. This recorded selection run used CPU fractional differentiation; the GPU-verified workflow now repeats the same training-only selection while requiring CUDA before accepting the run.
-
-A separate fixed 32-configuration regression grid produced higher scores for some configurations, but those maximum scores are descriptive only: choosing the highest value after looking at the held-out grid would reuse the test set and is not counted as a valid reproduction.
+An earlier setup let long-horizon forward returns cross large price-scale jumps between concatenated stock streams. The diagnostic showed that these jumps created extreme forward-return labels that disappeared when returns were restricted to the inferred sequence. Scores from the older pooled-series setup are superseded. The current run resets features and labels per sequence and uses purge gaps. See [FI-2010 boundary diagnostics](FI2010_BOUNDARY_DIAGNOSTICS.md).
 
 ## Decision
 
-| Stated target | Current evidence |
+| Objective | Status |
 |---|---|
-| Betti-number/liquidity-topology features | **Met on FI-2010 benchmark** using Giotto-TDA H0/H1 features |
-| GPU-accelerated fractional differentiation | **GPU kernel and end-to-end path verified** on two A100 40GB devices; CPU fallback is explicitly labelled in CPU runs |
-| IC ≥ 0.064 using custom Focal Loss | **Met for Rank IC** (A100 held-out Rank IC 0.15887); **not met for Pearson IC** (A100 held-out Pearson IC 0.00202) |
-| Pearson IC ≥ 0.064 with continuous-return regression | **Met in recorded held-out FI-2010 run** (0.16070), but this is a different objective and was CPU FFD; an A100-only rerun is gated separately |
+| Betti-number liquidity features | **Met on FI-2010**: Giotto-TDA H0/H1 features were computed |
+| GPU fractional differentiation | **Kernel parity verified in a prior A100 run**; corrected FI-2010 A100 rerun still pending |
+| Custom Focal Loss out-of-sample IC ≥ 0.064 | **Met on corrected FI-2010 CPU run**: Pearson IC 0.151940; Rank IC 0.154200 |
+| Original timestamped raw-feed claim | **Not independently reproduced here**: FI-2010 is preprocessed and lacks usable exchange timestamps/ticker IDs |
 
-Do not state that the custom Focal Loss model achieved Pearson IC 0.064. If the intended definition is Pearson IC specifically, this benchmark has not verified that exact Focal Loss claim. The original raw-feed result remains dependent on the intended timestamped exchange L2 data and matching evaluation protocol.
+The corrected FI-2010 benchmark meets the numeric target. It does not establish that the original historical raw-feed experiment was reproduced exactly. The A100 workflow must complete on the corrected code before these exact scores can be described as GPU-measured.
 
-## Reproduction commands
+## Reproduction
 
 ~~~bash
 python -m pip install -e ".[tda,dev]"
 python -m pytest -q
-
 python scripts/fetch_fi2010.py --out data/external/fi2010.zip --extract
 
 python scripts/run_fi2010_benchmark.py \
@@ -116,4 +101,6 @@ python scripts/run_fi2010_benchmark.py \
   --out results/fi2010_benchmark.json
 ~~~
 
-For GPU validation use the dedicated [A100 Actions workflow](https://github.com/SpryzenHell/integrator/actions/workflows/topology-lob-a100-validation.yml). It must report gpu_used=true and fractional_diff_backend=numba-cuda; otherwise the run fails the GPU acceptance check.
+Add --require-cuda on a supported CUDA device. A run counts as GPU evidence only if it reports gpu_used=true and fractional_diff_backend=numba-cuda.
+
+Full JSON experiment outputs were uploaded as [Actions artifact 11986421250](https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730/artifacts/11986421250).
