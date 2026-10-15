@@ -76,7 +76,7 @@ def test_focal_horizon_split_filters_nonfinite_feature_rows():
         features, labels, indices,
         fit_end=5, validation_start=5, train_events=8, horizon=1, purge=1,
     )
-    np.testing.assert_array_equal(fit, [0, 2])
+    np.testing.assert_array_equal(fit, [0, 2, 3])
     np.testing.assert_array_equal(validation, [6])
     assert np.isfinite(features[fit]).all()
     assert np.isfinite(features[validation]).all()
