@@ -51,6 +51,36 @@ def validate_candidate(candidate: dict) -> None:
         raise ValueError("unsupported feature set")
 
 
+def split_positions(
+    features: np.ndarray,
+    labels: np.ndarray,
+    indices: np.ndarray,
+    *,
+    fit_end: int,
+    validation_start: int,
+    train_events: int,
+    horizon: int,
+    purge: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return finite-feature fit/validation positions with a chronological purge."""
+    X = np.asarray(features, dtype=float)
+    y = np.asarray(labels)
+    idx = np.asarray(indices, dtype=int)
+    if X.ndim != 2 or y.ndim != 1 or idx.ndim != 1:
+        raise ValueError("features must be 2-D and labels/indices must be 1-D")
+    if len(X) != len(y) or len(y) != len(idx):
+        raise ValueError("features, labels, and indices must have matching lengths")
+    feature_finite = np.isfinite(X).all(axis=1)
+    row_valid = (y >= 0) & feature_finite
+    fit = row_valid & (idx < fit_end - purge)
+    validation = (
+        row_valid
+        & (idx >= validation_start + purge)
+        & (idx < train_events - horizon)
+    )
+    return np.flatnonzero(fit), np.flatnonzero(validation)
+
+
 def run(args) -> dict:
     started = time.perf_counter()
     bundle = build_features(args)
@@ -69,31 +99,29 @@ def run(args) -> dict:
     for horizon in args.horizons:
         future = forward_returns(future_log_mid, boundaries, horizon)
         labels = direction_labels(future, args.label_threshold)
-        valid_labels = labels >= 0
         purge = max(args.purge, horizon)
-        fit_mask = (
-            (indices < fit_cut - purge)
-            & valid_labels
-        )
-        validation_mask = (
-            (indices >= validation_start + purge)
-            & (indices < train_events - horizon)
-            & valid_labels
-        )
-        fit_positions = np.flatnonzero(fit_mask)
-        validation_positions = np.flatnonzero(validation_mask)
-        if len(fit_positions) < args.minimum_fit_rows or len(validation_positions) < args.minimum_validation_rows:
-            raise RuntimeError(
-                f"not enough inner split rows for horizon={horizon}: "
-                f"fit={len(fit_positions)}, validation={len(validation_positions)}"
-            )
-        if len(np.unique(labels[fit_positions])) != 2:
-            raise RuntimeError(f"single-class inner training labels for horizon={horizon}")
 
         for feature_index, feature_set in enumerate(FEATURE_SETS):
             X_all, feature_names = X_sets[feature_set]
-            if not np.isfinite(X_all[fit_positions]).all() or not np.isfinite(X_all[validation_positions]).all():
-                raise ValueError("feature matrix has non-finite values after split filtering")
+            fit_positions, validation_positions = split_positions(
+                X_all,
+                labels,
+                indices,
+                fit_end=fit_cut,
+                validation_start=validation_start,
+                train_events=train_events,
+                horizon=horizon,
+                purge=purge,
+            )
+            if len(fit_positions) < args.minimum_fit_rows or len(validation_positions) < args.minimum_validation_rows:
+                raise RuntimeError(
+                    f"not enough inner split rows for horizon={horizon}, feature_set={feature_set}: "
+                    f"fit={len(fit_positions)}, validation={len(validation_positions)}"
+                )
+            if len(np.unique(labels[fit_positions])) != 2:
+                raise RuntimeError(
+                    f"single-class inner training labels for horizon={horizon}, feature_set={feature_set}"
+                )
 
             model = fit_focal_xgb(
                 X_all[fit_positions],
