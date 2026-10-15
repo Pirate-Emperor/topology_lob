@@ -83,6 +83,15 @@ jobs:
           out.write_text(json.dumps(manifest, indent=2))
           print(json.dumps(manifest, indent=2))
           PY
+      - name: Diagnose large adjacent price jumps and horizon sensitivity
+        run: |
+          python scripts/diagnose_fi2010_boundaries.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --out results/fi2010_boundary_diagnostics.json
       - name: Run real-data TDA benchmark
         run: |
           python scripts/run_fi2010_benchmark.py \
