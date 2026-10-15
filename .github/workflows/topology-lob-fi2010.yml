@@ -2,6 +2,15 @@ name: topology-lob-fi2010
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/topology-lob-fi2010.yml"
+      - "scripts/run_fi2010_benchmark.py"
+      - "scripts/run_fi2010_ablation.py"
+      - "scripts/run_fi2010_ic_sweep.py"
+      - "fi2010.py"
+      - "topology_lob.py"
 
 permissions:
   contents: read
@@ -47,6 +56,36 @@ jobs:
               /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
             --require-gtda --tda-stride 1000 \
             --out results/fi2010_ablation.json
+      - name: Run threshold/objective sweep with internal validation
+        run: |
+          python scripts/run_fi2010_ic_sweep.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_ic_sweep.json
+      - name: Validate measured target status and save summary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("results/fi2010_ic_sweep.json")
+          r = json.loads(p.read_text())
+          selected = r["heldout_pooled"]["validation_selected"]
+          reference = r["heldout_pooled"]["fixed_reference"]
+          assert r["internal_validation"]["selected"]["threshold"] in [0.0, 0.0001, 0.00025, 0.0005, 0.001]
+          assert selected["rows"] > 0 and reference["rows"] > 0
+          assert r["target_metric_status"]["pearson_ic_at_least_0_064"] == (selected["pearson_ic"] >= 0.064)
+          assert r["target_metric_status"]["rank_ic_at_least_0_064"] == (selected["rank_ic"] >= 0.064)
+          print(json.dumps({
+              "selected_config": r["internal_validation"]["selected"],
+              "heldout_selected": selected,
+              "heldout_fixed_reference": reference,
+              "target_metric_status": r["target_metric_status"],
+          }, indent=2))
+          PY
       - name: Upload benchmark outputs
         uses: actions/upload-artifact@v4
         with:
@@ -54,3 +93,4 @@ jobs:
           path: |
             results/fi2010_benchmark.json
             results/fi2010_ablation.json
+            results/fi2010_ic_sweep.json
