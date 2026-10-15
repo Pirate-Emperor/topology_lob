@@ -56,13 +56,14 @@ def split_positions(
     labels: np.ndarray,
     indices: np.ndarray,
     *,
-    fit_end: int,
-    validation_start: int,
+    fit_fraction: float,
+    validation_fraction: float,
     train_events: int,
     horizon: int,
     purge: int,
+    sequence_boundaries: list[tuple[int, int]],
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Return finite-feature fit/validation positions with a chronological purge."""
+    """Split each training-stock sequence forward in time with a purge gap."""
     X = np.asarray(features, dtype=float)
     y = np.asarray(labels)
     idx = np.asarray(indices, dtype=int)
@@ -70,14 +71,26 @@ def split_positions(
         raise ValueError("features must be 2-D and labels/indices must be 1-D")
     if len(X) != len(y) or len(y) != len(idx):
         raise ValueError("features, labels, and indices must have matching lengths")
-    feature_finite = np.isfinite(X).all(axis=1)
-    row_valid = (y >= 0) & feature_finite
-    fit = row_valid & (idx < fit_end - purge)
-    validation = (
-        row_valid
-        & (idx >= validation_start + purge)
-        & (idx < train_events - horizon)
-    )
+    if not 0 < fit_fraction < validation_fraction < 1:
+        raise ValueError("require 0 < fit_fraction < validation_fraction < 1")
+    row_valid = (y >= 0) & np.isfinite(X).all(axis=1)
+    fit = np.zeros(len(idx), dtype=bool)
+    validation = np.zeros(len(idx), dtype=bool)
+    gap = max(purge, horizon)
+    used = 0
+    for start, end in sequence_boundaries:
+        if start >= train_events:
+            continue
+        if start < 0 or end > train_events or start >= end:
+            raise ValueError(f"invalid training stock sequence: {(start, end)}")
+        length = end - start
+        fit_end = start + int(length * fit_fraction)
+        validation_start = start + int(length * validation_fraction)
+        fit |= row_valid & (idx >= start) & (idx < fit_end - gap)
+        validation |= row_valid & (idx >= validation_start + gap) & (idx < end - horizon)
+        used += 1
+    if used == 0:
+        raise ValueError("no training stock sequences were available")
     return np.flatnonzero(fit), np.flatnonzero(validation)
 
 
@@ -89,11 +102,8 @@ def run(args) -> dict:
     indices = np.arange(raw_events)
     future_log_mid = bundle["micro"]["log_mid"].to_numpy(dtype=float)
     boundaries = bundle["boundaries"]
+    file_boundaries = bundle["file_boundaries"]
     X_sets = bundle["feature_arrays"]
-
-    # Keep a five-percent gap between the inner fit and validation periods.
-    fit_cut = int(train_events * args.fit_fraction)
-    validation_start = int(train_events * args.validation_fraction)
     candidate_rows = []
 
     for horizon in args.horizons:
@@ -107,11 +117,12 @@ def run(args) -> dict:
                 X_all,
                 labels,
                 indices,
-                fit_end=fit_cut,
-                validation_start=validation_start,
+                fit_fraction=args.fit_fraction,
+                validation_fraction=args.validation_fraction,
                 train_events=train_events,
                 horizon=horizon,
                 purge=purge,
+                sequence_boundaries=boundaries,
             )
             if len(fit_positions) < args.minimum_fit_rows or len(validation_positions) < args.minimum_validation_rows:
                 raise RuntimeError(
@@ -163,7 +174,11 @@ def run(args) -> dict:
     X_all, feature_names = X_sets[selected_feature_set]
     selected_purge = max(args.purge, selected_horizon)
     valid = np.isfinite(X_all).all(axis=1) & np.isfinite(future) & (labels >= 0)
-    final_train_positions = np.flatnonzero(valid & (indices < train_events - selected_purge))
+    final_train_mask = valid & (indices < train_events)
+    for seq_start, seq_end in boundaries:
+        if seq_end <= train_events:
+            final_train_mask[max(seq_start, seq_end - selected_purge):seq_end] = False
+    final_train_positions = np.flatnonzero(final_train_mask)
     test_positions = np.flatnonzero(valid & (indices >= train_events))
     if len(final_train_positions) < args.minimum_fit_rows or len(test_positions) < args.minimum_test_rows:
         raise RuntimeError(
@@ -195,7 +210,7 @@ def run(args) -> dict:
         control, X_all[test_positions], labels[test_positions], future[test_positions]
     )
     heldout_days = []
-    for segment, (start, end) in enumerate(boundaries[1:], start=8):
+    for segment, (start, end) in enumerate(file_boundaries[1:], start=8):
         local = np.flatnonzero((indices[test_positions] >= start) & (indices[test_positions] < end))
         if len(local) == 0:
             continue
@@ -224,8 +239,14 @@ def run(args) -> dict:
         "target_resume_ic": 0.064,
         "fit_fraction": args.fit_fraction,
         "validation_fraction": args.validation_fraction,
-        "fit_cut_event": int(fit_cut),
-        "validation_start_event": int(validation_start),
+        "fit_fraction_per_stock": float(args.fit_fraction),
+        "validation_fraction_per_stock": float(args.validation_fraction),
+        "sequence_jump_threshold_pct": 5.0,
+        "sequence_cuts": bundle["sequence_cut_records"],
+        "stock_sequences_per_file": [
+            int(sum(1 for b in boundaries if file_start <= b[0] and b[1] <= file_end))
+            for file_start, file_end in file_boundaries
+        ],
         "train_events": int(train_events),
         "test_events": [int(len(f)) for f in bundle["frames"][1:]],
         "candidate_count": int(len(candidate_rows)),
