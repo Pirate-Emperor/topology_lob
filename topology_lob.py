@@ -845,24 +845,65 @@ def run_walk_forward(cfg):
     }
 
 
-def benchmark_fd(events=200000, width=256, d=0.45):
+def benchmark_fd(events=200000, width=256, d=0.45, gpu_repeats=3):
+    if not isinstance(events, (int, np.integer)) or events < 1:
+        raise ValueError("events must be a positive integer")
+    if not isinstance(width, (int, np.integer)) or width < 1 or width > events:
+        raise ValueError("width must be a positive integer no greater than events")
+    if not np.isfinite(d) or d < 0:
+        raise ValueError("d must be finite and non-negative")
+    if not isinstance(gpu_repeats, (int, np.integer)) or gpu_repeats < 1:
+        raise ValueError("gpu_repeats must be a positive integer")
+
     rng = np.random.default_rng(7)
     x = np.log(100 + np.cumsum(rng.normal(0, 0.01, events)))
     t0 = time.perf_counter()
     cpu = fractional_diff_cpu(x, d, width)
-    cpu_seconds = time.perf_counter() - t0
+    cpu_seconds = max(time.perf_counter() - t0, 1e-12)
+
+    # The first GPU call warms/compiles the Numba kernel. Timed calls measure
+    # the public API end-to-end, including host/device copies and sync.
     backend, used, backend_name = fractional_diff_gpu(x, d, width)
+    timed_seconds = []
+    if used:
+        for _ in range(gpu_repeats):
+            t0 = time.perf_counter()
+            candidate, used_now, name_now = fractional_diff_gpu(x, d, width)
+            elapsed = time.perf_counter() - t0
+            if not used_now or name_now != "numba-cuda":
+                backend, used, backend_name = candidate, False, name_now
+                timed_seconds = []
+                break
+            backend = candidate
+            timed_seconds.append(max(elapsed, 1e-12))
+
+    if used and timed_seconds:
+        backend_seconds = float(np.median(timed_seconds))
+        timing_mode = "median of warmed end-to-end CUDA calls including transfers"
+        timed_repeats = len(timed_seconds)
+    else:
+        # Do not label a CPU fallback time as GPU throughput.
+        backend_seconds = cpu_seconds
+        timing_mode = "CPU fallback; GPU throughput not measured"
+        timed_repeats = 0
+
     valid = np.isfinite(cpu) & np.isfinite(backend)
     max_error = float(np.max(np.abs(cpu[valid] - backend[valid]))) if valid.any() else None
+    measured_events = events - width + 1
     return {
-        "events": events,
-        "width": width,
-        "d": d,
+        "events": int(events),
+        "width": int(width),
+        "d": float(d),
         "cpu_elapsed_s": cpu_seconds,
-        "backend_elapsed_s": None if used else cpu_seconds,
+        "backend_elapsed_s": backend_seconds,
         "backend": backend_name,
-        "gpu_used": used,
-        "events_per_s_cpu": (events - width + 1) / cpu_seconds,
+        "gpu_used": bool(used),
+        "gpu_warmup_calls": 1 if used else 0,
+        "gpu_timed_repeats": timed_repeats,
+        "timing_mode": timing_mode,
+        "events_per_s_cpu": measured_events / cpu_seconds,
+        "events_per_s_backend": measured_events / backend_seconds,
+        "speedup_vs_cpu": cpu_seconds / backend_seconds,
         "checksum": float(cpu[-1]),
         "backend_max_abs_error": max_error,
     }
