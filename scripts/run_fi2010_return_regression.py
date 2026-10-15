@@ -277,7 +277,7 @@ def main():
     parser.add_argument("--train", required=True)
     parser.add_argument("--test", nargs=3, required=True)
     parser.add_argument("--out", default="results/fi2010_regression_sweep.json")
-    parser.add_argument("--horizons", nargs="+", type=int, default=[10, 20, 30, 50, 100])
+    parser.add_argument("--horizons", nargs="+", type=int, default=[10, 20, 30, 50, 100, 200, 500, 1000])
     parser.add_argument("--purge", type=int, default=50)
     parser.add_argument("--ffd-width", type=int, default=256)
     parser.add_argument("--tda-stride", type=int, default=1000)
