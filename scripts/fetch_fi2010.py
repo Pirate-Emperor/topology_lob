@@ -110,7 +110,9 @@ def _fetch_range(
         },
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
-        status = getattr(response, "status", response.getcode())
+        status = getattr(response, "status", None)
+        if status is None:
+            status = response.getcode()
         if status != 206:
             raise DownloadError(
                 f"Server did not honor byte range {start}-{end}; HTTP status {status}"
