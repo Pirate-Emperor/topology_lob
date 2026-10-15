@@ -258,15 +258,15 @@ jobs:
           git config user.email "Pirate-Emperor@users.noreply.github.com"
           git fetch origin main
           git rebase origin/main
-          git add \
+          git add -f \
             results/fi2010_data_manifest.json \
             results/fi2010_benchmark.json \
             results/fi2010_ablation.json \
             results/fi2010_ic_sweep.json \
             results/fi2010_regression_sweep.json \
             results/fi2010_focal_horizon_selection.json \
-            results/fi2010_return_regression_selection.json \
-            assets/figures/fi2010_return_regression_selection.png
+            results/fi2010_return_regression_selection.json
+          git add assets/figures/fi2010_return_regression_selection.png
           if git diff --cached --quiet; then
             echo "No new FI-2010 evidence"
             exit 0
