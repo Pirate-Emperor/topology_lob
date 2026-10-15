@@ -268,10 +268,10 @@ def run(args) -> dict[str, Any]:
     }
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result, indent=2))
     image_path = Path(args.dashboard) if args.dashboard else out.with_suffix(".png")
     dashboard(image_path, candidate_rows, {"horizon": horizon, "feature_set": feature_set}, day_rows, args.target_ic)
     result["dashboard_path"] = str(image_path)
+    out.write_text(json.dumps(result, indent=2))
     print(json.dumps(result, indent=2))
     return result
 
