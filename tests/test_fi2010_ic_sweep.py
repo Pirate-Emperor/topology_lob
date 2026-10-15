@@ -80,3 +80,26 @@ def test_focal_horizon_split_filters_nonfinite_feature_rows():
     np.testing.assert_array_equal(validation, [6])
     assert np.isfinite(features[fit]).all()
     assert np.isfinite(features[validation]).all()
+
+
+from scripts.fi2010_feature_helpers import microstructure_by_segment, topology_by_segment
+from topology_lob import make_synthetic_lob
+
+
+def test_segment_microstructure_and_topology_do_not_carry_across_files():
+    frames = [
+        make_synthetic_lob(140, 10, 801),
+        make_synthetic_lob(140, 10, 802),
+    ]
+    micro, boundaries = microstructure_by_segment(frames, depth_levels=5)
+    start2, end2 = boundaries[1]
+    assert micro.loc[start2, "ret_1"] == 0.0
+    assert micro.loc[start2, "ofi"] == 0.0
+
+    topo, meta, indices = topology_by_segment(
+        frames, boundaries, np.asarray([0.5, 1.0, 1.5]),
+        horizon=10, stride=1000, levels=10, require_gtda=False, n_jobs=1,
+    )
+    assert meta["segment_cloud_counts"] == [1, 1]
+    assert np.isnan(topo.iloc[start2].to_numpy(float)).all()
+    assert np.isfinite(topo.iloc[start2 + 50].to_numpy(float)).all()
