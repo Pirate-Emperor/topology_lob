@@ -84,7 +84,7 @@ A distinct search over Focal horizons selected a 1,000-event horizon with pooled
 
 ## CI, images, and reproduction
 
-The latest general CI run, [run #188](https://github.com/SpryzenHell/topology_lob/actions/runs/38868078512), passed package build, all **51 Python tests** (13 warnings), extended numerical/data experiments, the C++ CPU build and benchmark, and image refresh. The 200,000-event C++ CPU benchmark measured about 5.23 million events/s; do not compare this directly with the CUDA end-to-end FFD number without accounting for implementation and timing differences.
+The latest general CI run, [run #198](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156), passed package build, all **55 Python tests** (13 library warnings), extended numerical/data experiments, the C++ CPU build and benchmark, and image refresh. The 200,000-event C++ CPU benchmark measured about 6.05 million events/s; do not compare this directly with the CUDA end-to-end FFD number without accounting for implementation and timing differences.
 
 To reproduce the real-data run, follow [the run guide](../docs/REAL_DATA_RUN.md) and [the reproducibility checklist](../docs/REPRODUCIBILITY.md). Add `--require-cuda` and `--require-gtda` for GPU-evidenced results; a CPU fallback must not be described as an A100 run.
 

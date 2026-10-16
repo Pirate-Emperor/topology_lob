@@ -1,6 +1,6 @@
 # Supported-environment CI validation
 
-This record captures the latest supported-environment validation from [GitHub Actions run #188](https://github.com/SpryzenHell/topology_lob/actions/runs/38868078512) on `main`.
+This record captures the latest full CI validation from [GitHub Actions run #198](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156) on `main`. It covers the new SVG dashboard checks and report-image links.
 
 ## Execution environment
 
@@ -22,7 +22,7 @@ This record captures the latest supported-environment validation from [GitHub Ac
 
 ## Test and integration gates
 
-- Unit and integration test suite: **51 passed in 3.87s, 13 warnings**
+- Unit and integration test suite: **55 passed in 4.84s, 13 warnings**
 - Synthetic demo with `--require-gtda`: **passed**
 - TDA backend assertion: **Giotto-TDA**
 - Extended evidence generation: **passed**
@@ -66,8 +66,8 @@ The supported CI runner measured:
 
 ```text
 events=200000 width=256 d=0.450000
-elapsed_s=0.038156
-events_per_s=5234958.963971
+elapsed_s=0.032996
+events_per_s=6053625.768610
 checksum=0.390931
 ```
 
@@ -75,5 +75,5 @@ This is a CPU micro-benchmark of the standalone implementation, not a trading-la
 
 ## CI artifact
 
-The latest extended-evidence artifact was uploaded successfully from [workflow run #188](https://github.com/SpryzenHell/topology_lob/actions/runs/38868078512), with the current validation report uploaded in the run. It contains the experiment JSON, markdown record, analysis dashboards, and readable report preview.
+The latest extended-evidence artifact was uploaded successfully from [workflow run #198](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156), artifact [12034616792](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156/artifacts/12034616792). It contains the experiment JSON, markdown record, analysis dashboards, and readable report preview.
 
