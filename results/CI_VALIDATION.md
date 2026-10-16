@@ -1,6 +1,6 @@
 # Supported-environment CI validation
 
-This record captures the latest supported-environment validation from [GitHub Actions run #187](https://github.com/SpryzenHell/topology_lob/actions/runs/38866764989) on `main`.
+This record captures the latest supported-environment validation from [GitHub Actions run #188](https://github.com/SpryzenHell/topology_lob/actions/runs/38868078512) on `main`.
 
 ## Execution environment
 
@@ -75,5 +75,5 @@ This is a CPU micro-benchmark of the standalone implementation, not a trading-la
 
 ## CI artifact
 
-The latest extended-evidence artifact was uploaded successfully from [workflow run #187](https://github.com/SpryzenHell/topology_lob/actions/runs/38866764989), artifact [12031516995](https://github.com/SpryzenHell/topology_lob/actions/runs/38866764989/artifacts/12031516995). It contains the experiment JSON, markdown record, analysis dashboards, and readable report preview.
+The latest extended-evidence artifact was uploaded successfully from [workflow run #188](https://github.com/SpryzenHell/topology_lob/actions/runs/38868078512), with the current validation report uploaded in the run. It contains the experiment JSON, markdown record, analysis dashboards, and readable report preview.
 
