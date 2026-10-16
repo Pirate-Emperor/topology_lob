@@ -53,7 +53,7 @@ The earlier pooled-series setup created extreme long-horizon returns across appa
 
 ## Independent CPU replay
 
-[CPU workflow run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 steps. It independently reproduced the main Focal Pearson IC and selected return-regression ICs to the recorded precision. It used CPU FFD, so the CUDA speed and parity claims remain based only on A100 run #13.
+[CPU workflow run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 steps. A second replay, [run #170](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885), also completed successfully, including final training-only selection checks, artifact upload, and result publication. Its [artifact 12039460485](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885/artifacts/12039460485) again recorded the fixed Focal pooled Pearson IC 0.151939 and selected return-regression ICs 0.214955 / 0.228103. Both replay runs used CPU FFD, so the CUDA speed and parity claims remain based only on A100 run #13.
 
 The dataset is preprocessed, and inferred boundaries are based on a fixed price-only rule because usable ticker IDs are missing. These results meet the numeric target on this public proxy; they do not prove profitability or reproduce the original raw exchange feed in full.
 
