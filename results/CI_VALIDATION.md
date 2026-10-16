@@ -1,12 +1,12 @@
 # Supported-environment CI validation
 
-This record captures the latest full CI validation from [GitHub Actions run #198](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156) on `main`. It covers the new SVG dashboard checks and report-image links.
+The latest full CI run, [GitHub Actions run #199](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918), passed on the commit that added a regression test for the README's measured IC claims. All Python, package-build, extended-experiment, and image-refresh jobs succeeded. The current source and test files have not changed since that run; later commits were documentation-only.
 
 ## Execution environment
 
 | Item | Value |
 |---|---|
-| Python | 3.11.16 |
+| Python | 3.11.17 |
 | NumPy | 1.26.4 |
 | pandas | 2.2.2 |
 | SciPy | 1.11.4 |
@@ -22,35 +22,23 @@ This record captures the latest full CI validation from [GitHub Actions run #198
 
 ## Test and integration gates
 
-- Unit and integration test suite: **55 passed in 4.84s, 13 warnings**
-- Synthetic demo with `--require-gtda`: **passed**
-- TDA backend assertion: **Giotto-TDA**
-- Extended evidence generation: **passed**
-- Extended evidence validation: **passed**
-- Evidence artifact upload: **passed**
-- C++ CPU build: **passed**
-- C++ benchmark: **passed**
-- Raster asset validation: **passed**
-- README asset refresh commit: **passed**
+- Unit and integration tests: **56 passed in 3.92 seconds; 13 warnings**.
+- Python package build and wheel/source archive checks: **passed**.
+- Synthetic end-to-end demo requiring Giotto-TDA: **passed**.
+- Full TDA backend assertion: **passed**.
+- Extended evidence generation and output validation: **passed**.
+- Numerical checks for the custom Focal Loss gradient and Hessian: **passed**.
+- C++ CPU build and benchmark: **passed**.
+- Raster and SVG figure validation, required dashboard labels, title/description, and README image links: **passed**.
+- Refresh of readable report images: **passed**.
 
-The extended evidence run covers five ablation variants, six synthetic seeds, five chronological walk-forward folds, a label-permutation placebo, Focal Loss gradient/Hessian finite-difference checks, malformed L2 rejection, common-price translation invariance, and causal fractional-differentiation prefix invariance.
+The extended evidence run checks five ablation variants, six synthetic seeds, five chronological walk-forward folds, a label-permutation placebo, malformed L2 rejection, common-price translation invariance, and causal fractional-differentiation prefix invariance.
 
 ## Supported-environment synthetic result
 
-The current supported-environment run used 6,000 deterministic synthetic L2 events and produced:
+The demo uses 6,000 generated L2 events and a chronological holdout with a purge gap. The saved example has 5,735 model rows, 3,994 training rows and 1,721 test rows. The selected fractional-differencing order is d = 0.1, with Giotto-TDA enabled.
 
-| Item | Value |
-|---|---:|
-| Model rows | 5,735 |
-| Train rows | 3,994 |
-| Test rows | 1,721 |
-| Purge gap | 20 |
-| Topology clouds | 743 |
-| Selected d | 0.1 |
-| TDA backend | giotto-tda |
-| FFD backend | CPU fallback (no CUDA on runner) |
-
-| Metric | Focal | Log-loss control |
+| Metric | Focal Loss | Log-loss control |
 |---|---:|---:|
 | Pearson IC | 0.073292 | 0.095368 |
 | Rank IC | 0.039856 | 0.036762 |
@@ -58,22 +46,27 @@ The current supported-environment run used 6,000 deterministic synthetic L2 even
 | PR-AUC | 0.244568 | 0.242809 |
 | Log loss | 0.516779 | 0.561761 |
 
-These are synthetic engineering results. They are not a historical or live-market performance claim and do not establish the resume target of 0.064.
+These are engineering results on synthetic data, not market results and not evidence of the FI-2010 target.
 
 ## Standalone C++ benchmark
 
 The supported CI runner measured:
 
-```text
+~~~text
 events=200000 width=256 d=0.450000
-elapsed_s=0.032996
-events_per_s=6053625.768610
+elapsed_s=0.038120
+events_per_s=5239926.706871
 checksum=0.390931
-```
+~~~
 
-This is a CPU micro-benchmark of the standalone implementation, not a trading-latency result.
+This is a CPU micro-benchmark of the standalone implementation, not an end-to-end trading-latency measurement. Runtime varies with the hosted runner.
+
+## Dashboard and report checks
+
+The A100 dashboard passed the asset validator with a 1600 × 1120 canvas, viewBox 0 0 1600 1120, 63 text nodes, a title and description, and all required labels present. The report uses high-contrast text rather than a terminal capture. The image-refresh job completed successfully.
 
 ## CI artifact
 
-The latest extended-evidence artifact was uploaded successfully from [workflow run #198](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156), artifact [12034616792](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156/artifacts/12034616792). It contains the experiment JSON, markdown record, analysis dashboards, and readable report preview.
+The run uploaded [extended evidence artifact 12038625972](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918/artifacts/12038625972). It contains synthetic experiment JSON, figures, and the readable report preview.
 
+The independent real-data FI-2010 workflow is tracked separately; its result should be considered complete only after all benchmark, sweep, validation, artifact-upload, and publish steps finish.
