@@ -105,8 +105,8 @@ jobs:
           python scripts/validate_assets.py
       - name: Commit refreshed image assets
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Pirate-Emperor"
+          git config user.email "Pirate-Emperor@users.noreply.github.com"
           git add assets/figures assets/screenshots
           if git diff --cached --quiet; then
             echo "No image changes"
