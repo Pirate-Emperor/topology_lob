@@ -30,7 +30,7 @@ def test_a100_dashboard_is_valid_and_keeps_key_metrics_readable() -> None:
 
 def test_readme_local_image_links_resolve() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    targets = re.findall(r"!\\[[^\\]]*\\]\\(([^)]+)\\)", readme)
+    targets = re.findall(r"!\[[^\]]*\]\(([^)]+)\)", readme)
     assert targets, "README should show its analysis images"
     for target in targets:
         if target.startswith(("http://", "https://")):
