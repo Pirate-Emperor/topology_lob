@@ -77,7 +77,7 @@ The pooled Pearson IC is **2.37×** the 0.064 target. Each held-out file is abov
 
 ### Independent CPU results and controls
 
-The earlier corrected CPU benchmark summary reported pooled Focal Pearson IC 0.151940 and pooled margin Rank IC 0.154200. The independent CPU replay [run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 workflow steps and reproduced the main Focal Pearson IC and selected return-regression ICs to the recorded precision. Its FFD ran on CPU; it is not a second GPU throughput result. See [CPU replay artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
+The earlier corrected CPU benchmark summary reported pooled Focal Pearson IC 0.151940 and pooled margin Rank IC 0.154200. The independent CPU replay [run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 workflow steps and reproduced the main Focal Pearson IC and selected return-regression ICs to recorded precision. The second independent replay [run #170](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885) also completed successfully and uploaded [artifact 12039460485](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885/artifacts/12039460485). Both runs used CPU FFD; neither is a second GPU throughput result. See also [CPU replay artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
 
 A training-only threshold/objective sweep selected standard log-loss with a zero return threshold. The earlier CPU benchmark's held-out Pearson IC was 0.195903 and Rank IC was 0.202290. It is a control with a different objective, not the Focal Loss result.
 
