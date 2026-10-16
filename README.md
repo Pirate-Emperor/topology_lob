@@ -22,7 +22,7 @@ This is a result on FI-2010 Decimal-Precision, a licensed but preprocessed publi
 
 ## FI-2010 A100 results
 
-The A100 workflow downloaded the FI-2010 Decimal-Precision files under the dataset's **CC BY 4.0** terms, checked the files, ran CUDA fractional differentiation and Giotto-TDA, completed the fixed Focal benchmark and additional model searches, and uploaded its full experiment bundle. [Workflow run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328) completed all 25 steps successfully. The input includes 394,337 events: 254,750 training events and 139,587 events across the three held-out files.
+The A100 workflow downloaded the FI-2010 Decimal-Precision files under the dataset's **CC BY 4.0** terms, checked the files, ran CUDA fractional differentiation and Giotto-TDA, completed the fixed Focal benchmark and additional model searches, and uploaded its full experiment bundle. [Workflow run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328) completed all 25 steps successfully. The full A100 experiment bundle is [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300). The input includes 394,337 events: 254,750 training events and 139,587 events across the three held-out files.
 
 ### Fixed custom Focal Loss model
 
@@ -129,6 +129,8 @@ The fixed Focal experiment selected d = 0.2 using training-only stationarity che
 
 The independent [CPU replay run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 workflow steps, including data/license checks, TDA, ablations, IC/objective sweeps, model selection, and result checks. It reproduced the main Focal Pearson IC and selected return-regression IC values to the recorded precision. It used CPU FFD, so it is not a second A100 throughput measurement. [CPU replay artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
 
+![CPU FI-2010 reference benchmark](assets/figures/fi2010_validation_dashboard.png)
+
 ## CI and test results
 
 The latest full supported-environment CI run [#199](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918) passed:
@@ -143,6 +145,8 @@ The latest full supported-environment CI run [#199](https://github.com/SpryzenHe
 The CI synthetic result uses 6,000 generated L2 events, a 20-event purge gap, and 5,735 model rows. It measured Pearson IC 0.073292 for Focal Loss and 0.095368 for standard log-loss. These are engineering checks on synthetic data, not market results.
 
 [Full CI validation record](results/CI_VALIDATION.md) · [Latest CI artifact 12038625972](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918/artifacts/12038625972) · [A100 validation report](results/A100_VALIDATION.md) · [Resume-target validation](results/RESUME_TARGET_VALIDATION.md) · [FI-2010 details](results/FI2010_VALIDATION.md) · [Price-boundary diagnostics](results/FI2010_BOUNDARY_DIAGNOSTICS.md) · [Machine-readable A100 summary](results/a100_fi2010_validation_summary.json).
+
+Machine-readable CPU experiment outputs: [benchmark](results/fi2010_benchmark.json), [feature ablation](results/fi2010_ablation.json), [threshold/objective sweep](results/fi2010_ic_sweep.json), [horizon/feature regression sweep](results/fi2010_regression_sweep.json), [Focal horizon search](results/fi2010_focal_horizon_selection.json), [walk-forward regression selection](results/fi2010_return_regression_selection.json), and [boundary diagnostics](results/fi2010_boundary_diagnostics.json).
 
 ## Dataset and source
 
@@ -223,6 +227,8 @@ These figures show model results and data checks, not terminal captures.
 - [Figure notes](assets/README.md)
 
 The A100 dashboard uses high-contrast text and a fixed canvas; CI checks the SVG size, required labels, title/description, and image links. The incomplete main.png banner is intentionally removed. Only one code-license file, LICENSE, is kept.
+
+![Readable experiment-report snapshot](assets/screenshots/report_preview.png)
 
 ## Author
 
