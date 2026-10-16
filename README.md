@@ -10,9 +10,28 @@ The project focuses on three goals:
 
 The current evidence is based on the public FI-2010 Decimal-Precision benchmark. The fixed custom Focal Loss model measured **0.151939 pooled Pearson IC**, compared with the target of **0.064**. This clears the numerical target on this benchmark; it does not prove trading profitability or establish the same result on an original raw exchange feed.
 
-![Measured FI-2010 held-out Pearson and Rank IC by day, with the 0.064 target line](assets/figures/benchmark_summary.svg)
+## Benchmark plot gallery
 
-*Measured values from A100 workflow run #13. The plot uses the same white background, blue/orange series, grey grid, and plain labels as the other figures in this repository. CPU/A100 throughput is kept in the performance section below rather than mixed into the IC chart.*
+These **seven charts** are generated from the recorded result files with `scripts/generate_readme_plots.py`. They use simple Matplotlib plots with several built-in styles. The gallery separates the Focal classifier, the return regressor, CPU feature ablations, GPU throughput, and stationarity checks instead of mixing unrelated results into one figure.
+
+<table>
+  <tr>
+    <td align="center"><img src="assets/figures/readme_daily_ic.svg" alt="Pearson and Rank IC by held-out day with the 0.064 target line" width="480"/><br/><strong>1. Daily held-out IC</strong></td>
+    <td align="center"><img src="assets/figures/readme_daily_auc.svg" alt="Daily ROC-AUC for the fixed Focal Loss model" width="480"/><br/><strong>2. Daily ROC-AUC</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/figures/readme_ffd_throughput.svg" alt="CPU and A100 CUDA fractional differentiation throughput" width="480"/><br/><strong>3. CPU vs A100 throughput</strong></td>
+    <td align="center"><img src="assets/figures/readme_feature_ablation.svg" alt="Pearson and Rank IC for CPU FI-2010 feature ablations" width="480"/><br/><strong>4. Feature ablation</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/figures/readme_robustness.svg" alt="Pooled Pearson IC with the moving-block bootstrap interval and target" width="480"/><br/><strong>5. IC uncertainty check</strong></td>
+    <td align="center"><img src="assets/figures/readme_return_regression.svg" alt="Per-day Pearson and Rank IC for the selected return regressor" width="480"/><br/><strong>6. Return-regression results</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/figures/readme_stationarity.svg" alt="Training-only stationarity p-values and price-retention correlations for two fractional-differencing orders" width="480"/><br/><strong>7. Stationarity trade-off</strong></td>
+    <td align="center"><p><strong>How to read the gallery</strong></p><p>Plots 1–3 use A100-run measurements. Plot 4 is the CPU reference ablation. Plot 5 shows a 95% moving-block bootstrap interval. Plot 6 is a separate return-regression objective. Plot 7 shows the documented training-only stationarity sweep. The synthetic engineering figures below are labelled separately.</p></td>
+  </tr>
+</table>
 
 ## Contents
 
@@ -301,6 +320,7 @@ The output includes `metrics.json`, `test_scores.csv`, Betti curves, a fractiona
 
 ```bash
 python scripts/generate_evidence.py --events 6000 --out results/evidence --require-gtda
+python scripts/generate_readme_plots.py
 python run.py ablation --config configs/demo.json --out results/ablation
 python run.py walk-forward --config configs/demo.json --out results/walk_forward.json
 python run.py ffd-benchmark --events 200000 --width 256 --d 0.45
@@ -436,9 +456,14 @@ For original-feed claims, keep separate securities and trading sessions correctl
 
 ## Figures and reports
 
-The first figure is a regular data plot in the same style as the other charts in this repository: white background, standard axes, grey grid lines, blue/orange series, and no decorative banner. The larger dashboard is retained as a secondary figure for readers who want more context.
-
-- [Simple measured-data plot](assets/figures/benchmark_summary.svg)
+The seven-image gallery near the top is generated with `python scripts/generate_readme_plots.py`. Its SVG plots are committed so they display directly in GitHub; the script can rebuild them from the checked-in result JSON. The detailed dashboard and earlier engineering figures remain available below.
+- [Daily held-out IC plot](assets/figures/readme_daily_ic.svg)
+- [Daily ROC-AUC plot](assets/figures/readme_daily_auc.svg)
+- [CPU vs A100 throughput plot](assets/figures/readme_ffd_throughput.svg)
+- [Feature ablation plot](assets/figures/readme_feature_ablation.svg)
+- [Bootstrap robustness plot](assets/figures/readme_robustness.svg)
+- [Return-regression plot](assets/figures/readme_return_regression.svg)
+- [Stationarity trade-off plot](assets/figures/readme_stationarity.svg)
 - [Detailed A100 validation dashboard](assets/figures/a100_fi2010_validation_dashboard.svg)
 - [CPU FI-2010 results](assets/figures/fi2010_validation_dashboard.png)
 - [Walk-forward regression selection](assets/figures/fi2010_return_regression_selection.png)
