@@ -309,7 +309,7 @@ cmake --build build --config Release
 ./build/fractional_diff_cpu
 ```
 
-On a machine that supports CUDA, use the FFD benchmark's CUDA requirement option and verify both `gpu_used=true` and `backend=numba-cuda` in the resulting JSON before recording it as a GPU result.
+The `ffd-benchmark` command records the backend it actually used but does not expose a separate `--require-cuda` switch. On a supported CUDA machine, run it and verify `gpu_used=true` and `backend=numba-cuda` in the resulting JSON; do not record a CPU fallback as a GPU result. The `demo` command does support `--require-cuda` and exits if CUDA was not used.
 
 ## Reproduce the FI-2010 experiment
 
