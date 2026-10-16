@@ -58,7 +58,7 @@ This hosted CPU micro-benchmark varies between runners and is not full-applicati
 
 ## Plot and asset checks
 
-The README summary plot is a 1400 × 650 SVG with labelled daily Pearson/Rank IC bars, a dashed 0.064 reference line, and CPU/A100 FFD throughput. The detailed A100 dashboard remains available as a secondary figure. Asset validation completed with `Asset validation: PASS`; the refresh job found no generated image changes to commit.
+The README summary plot is a 1400 × 650 SVG with labelled daily Pearson/Rank IC bars, a dashed 0.064 reference line, and the measured IC target line. The detailed A100 dashboard remains available as a secondary figure. Asset validation completed with `Asset validation: PASS`; the refresh job found no generated image changes to commit.
 
 ## Artifacts
 
