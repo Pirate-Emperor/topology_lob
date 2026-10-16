@@ -1,78 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="650" viewBox="0 0 1400 650" role="img" aria-labelledby="title desc">
-<title id="title">Topology LOB: measured FI-2010 A100 benchmark results</title>
-<desc id="desc">A plain data chart showing Pearson and Rank Information Coefficient on three held-out FI-2010 files with the 0.064 target line, and CPU versus A100 fractional-differentiation throughput.</desc>
-<rect width="1400" height="650" fill="#ffffff"/>
-<g font-family="Arial, Helvetica, sans-serif" fill="#202b38">
-  <text x="56" y="54" font-size="30" font-weight="700">Topology LOB — measured benchmark results</text>
-  <text x="56" y="84" font-size="17" fill="#526171">FI-2010 Decimal-Precision · A100 run #13 · fixed 10-event custom Focal Loss model</text>
-  <line x1="56" y1="108" x2="1344" y2="108" stroke="#d9e0e7" stroke-width="1"/>
-  <text x="72" y="145" font-size="21" font-weight="700">Held-out Information Coefficient</text>
-  <text x="72" y="170" font-size="14" fill="#526171">Pearson and Rank IC by test file; dashed line = 0.064 target</text>
-  <text x="820" y="145" font-size="21" font-weight="700">Fractional differentiation throughput</text>
-  <text x="820" y="170" font-size="14" fill="#526171">200,000 events · width 256 · d = 0.45</text>
-</g>
-<!-- Left plot grid: x 115..728, baseline 500, top 205, range 0..0.20 -->
-<g stroke="#e6ebf0" stroke-width="1">
-  <line x1="115" y1="500" x2="728" y2="500"/>
-  <line x1="115" y1="426.25" x2="728" y2="426.25"/>
-  <line x1="115" y1="352.5" x2="728" y2="352.5"/>
-  <line x1="115" y1="278.75" x2="728" y2="278.75"/>
-  <line x1="115" y1="205" x2="728" y2="205"/>
-</g>
-<g font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#526171" text-anchor="end">
-  <text x="102" y="504">0.00</text>
-  <text x="102" y="430">0.05</text>
-  <text x="102" y="356">0.10</text>
-  <text x="102" y="283">0.15</text>
-  <text x="102" y="209">0.20</text>
-</g>
-<line x1="115" y1="405.6" x2="728" y2="405.6" stroke="#9a5b00" stroke-width="2" stroke-dasharray="7 5"/>
-<rect x="594" y="388" width="124" height="24" rx="3" fill="#fff" stroke="#e7d4b8"/>
-<text x="656" y="404" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#835000">Target = 0.064</text>
-<!-- Pearson blue series and Rank IC orange series, baseline=500, scale=1475 units per IC -->
-<g>
-  <rect x="190" y="264.20" width="48" height="235.80" fill="#3977b8"/>
-  <rect x="241" y="260.53" width="48" height="239.47" fill="#e18a36"/>
-  <rect x="376" y="292.04" width="48" height="207.96" fill="#3977b8"/>
-  <rect x="427" y="285.77" width="48" height="214.23" fill="#e18a36"/>
-  <rect x="562" y="259.62" width="48" height="240.38" fill="#3977b8"/>
-  <rect x="613" y="264.87" width="48" height="235.13" fill="#e18a36"/>
-</g>
-<g font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#202b38" text-anchor="middle">
-  <text x="214" y="251">0.1599</text><text x="265" y="247">0.1623</text>
-  <text x="400" y="279">0.1405</text><text x="451" y="273">0.1447</text>
-  <text x="586" y="247">0.1628</text><text x="637" y="252">0.1594</text>
-  <text x="239" y="526" font-size="15">Day 8</text>
-  <text x="425" y="526" font-size="15">Day 9</text>
-  <text x="611" y="526" font-size="15">Day 10</text>
-</g>
-<g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#202b38">
-  <rect x="180" y="551" width="14" height="14" fill="#3977b8"/><text x="201" y="563">Pearson IC</text>
-  <rect x="326" y="551" width="14" height="14" fill="#e18a36"/><text x="347" y="563">Rank IC</text>
-  <text x="72" y="600" font-size="14" fill="#526171">Pooled Pearson IC: 0.151939 · each held-out day exceeds 0.064</text>
-</g>
-<!-- Right plot -->
-<g stroke="#e6ebf0" stroke-width="1">
-  <line x1="870" y1="500" x2="1310" y2="500"/>
-  <line x1="870" y1="426.25" x2="1310" y2="426.25"/>
-  <line x1="870" y1="352.5" x2="1310" y2="352.5"/>
-  <line x1="870" y1="278.75" x2="1310" y2="278.75"/>
-  <line x1="870" y1="205" x2="1310" y2="205"/>
-</g>
-<g font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#526171" text-anchor="end">
-  <text x="858" y="504">0</text><text x="858" y="430">20</text><text x="858" y="356">40</text><text x="858" y="283">60</text><text x="858" y="209">80</text>
-</g>
-<text x="833" y="354" transform="rotate(-90 833 354)" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#526171" text-anchor="middle">Million events per second</text>
-<rect x="957" y="498.47" width="108" height="1.53" fill="#e18a36"/>
-<rect x="1144" y="273.35" width="108" height="226.65" fill="#3977b8"/>
-<g font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#202b38" text-anchor="middle">
-  <text x="1011" y="481">0.415 M/s</text>
-  <text x="1198" y="259" font-weight="700">61.34 M/s</text>
-  <text x="1011" y="526">CPU</text>
-  <text x="1198" y="526">A100 CUDA</text>
-</g>
-<text x="1095" y="562" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#202b38">147.83× measured speedup</text>
-<text x="1095" y="587" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#526171">Maximum CPU/CUDA absolute difference: 2.22 × 10⁻¹⁵</text>
-<line x1="56" y1="618" x2="1344" y2="618" stroke="#d9e0e7"/>
-<text x="56" y="640" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#526171">Source: results/a100_fi2010_validation_summary.json · GPU timings include data transfers; this is a micro-benchmark, not trading latency.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title desc">
+<title id="title">FI-2010 A100 holdout: fixed Focal Loss information coefficient</title>
+<desc id="desc">A standard white-background chart using blue and orange bars, thin grey grid lines and a dashed target line. It shows Pearson and Rank Information Coefficient for each of three held-out FI-2010 files. Every bar is above the 0.064 target.</desc>
+<rect width="1000" height="600" fill="white"/>
+<style>
+text{font-family:Arial,Helvetica,sans-serif;fill:#222}
+.title{font-size:28px;font-weight:600}
+.sub{font-size:16px;fill:#666}
+.axis{stroke:#333}
+.grid{stroke:#e6e6e6}
+.pearson{fill:#1f77b4}
+.rank{fill:#ff7f0e}
+.small{font-size:14px;fill:#555}
+.value{font-size:14px;fill:#333}
+</style>
+<text x="40" y="50" class="title">FI-2010 A100 holdout: fixed Focal Loss IC</text>
+<text x="40" y="78" class="sub">Pearson and Rank IC by held-out file · target = 0.064 · pooled Pearson IC = 0.151939</text>
+<rect x="665" y="103" width="16" height="12" class="pearson"/><text x="690" y="114" class="small">Pearson IC</text>
+<rect x="795" y="103" width="16" height="12" class="rank"/><text x="820" y="114" class="small">Rank IC</text>
+<line x1="120" y1="500" x2="940" y2="500" class="axis"/>
+<line x1="120" y1="195" x2="120" y2="500" class="axis"/>
+<line x1="120" y1="423.75" x2="940" y2="423.75" class="grid"/>
+<line x1="120" y1="347.5" x2="940" y2="347.5" class="grid"/>
+<line x1="120" y1="271.25" x2="940" y2="271.25" class="grid"/>
+<line x1="120" y1="195" x2="940" y2="195" class="grid"/>
+<text x="108" y="505" text-anchor="end" class="small">0.00</text>
+<text x="108" y="428.75" text-anchor="end" class="small">0.05</text>
+<text x="108" y="352.5" text-anchor="end" class="small">0.10</text>
+<text x="108" y="276.25" text-anchor="end" class="small">0.15</text>
+<text x="108" y="200" text-anchor="end" class="small">0.20</text>
+<line x1="120" y1="402.4" x2="940" y2="402.4" stroke="#555" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="128" y="384" width="150" height="23" fill="white"/>
+<text x="134" y="400" class="small">Target IC = 0.064</text>
+<!-- Day 8 -->
+<rect x="190" y="256.21" width="62" height="243.79" class="pearson"/>
+<rect x="260" y="252.42" width="62" height="247.58" class="rank"/>
+<text x="221" y="244" text-anchor="middle" class="value">0.1599</text>
+<text x="291" y="240" text-anchor="middle" class="value">0.1623</text>
+<!-- Day 9 -->
+<rect x="445" y="285.27" width="62" height="214.73" class="pearson"/>
+<rect x="515" y="278.75" width="62" height="221.25" class="rank"/>
+<text x="476" y="273" text-anchor="middle" class="value">0.1405</text>
+<text x="546" y="266" text-anchor="middle" class="value">0.1447</text>
+<!-- Day 10 -->
+<rect x="700" y="251.78" width="62" height="248.22" class="pearson"/>
+<rect x="770" y="256.90" width="62" height="243.10" class="rank"/>
+<text x="731" y="239" text-anchor="middle" class="value">0.1628</text>
+<text x="801" y="244" text-anchor="middle" class="value">0.1594</text>
+<text x="256" y="529" text-anchor="middle" class="small">Day 8</text>
+<text x="511" y="529" text-anchor="middle" class="small">Day 9</text>
+<text x="766" y="529" text-anchor="middle" class="small">Day 10</text>
+<text x="500" y="570" text-anchor="middle" class="small">Fixed 10-event horizon · 50-event purge · measured on A100 run #13</text>
 </svg>
