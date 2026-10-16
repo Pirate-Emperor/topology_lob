@@ -4564,6 +4564,6 @@
     "pearson_ic_at_least_target": true,
     "rank_ic_at_least_target": true
   },
-  "elapsed_seconds": 120.20834089199997,
+  "elapsed_seconds": 120.246375123,
   "dashboard_path": "assets/figures/fi2010_return_regression_selection.png"
 }
