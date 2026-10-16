@@ -104,6 +104,8 @@ A separate fixed 32-configuration horizon/feature sweep observed a held-out Pear
 
 These are results from the independent CPU FI-2010 benchmark run. They show that the topology features help one tested configuration, while adding every feature does not improve every metric.
 
+The next two dashboards summarize deterministic synthetic stress tests and robustness checks; their scores are not FI-2010 results.
+
 ![Feature and objective experiments](assets/figures/experimental_validation_dashboard.png)
 
 ![Robustness checks](assets/figures/robustness_dashboard.png)
