@@ -1,12 +1,12 @@
 # Supported-environment CI validation
 
-The latest full CI run, [GitHub Actions run #204](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175), passed all three jobs on 16 October 2026. It checked the plain benchmark plot and expanded README along with the package, numerical, integration, C++, and image tests.
+The latest full CI run, [GitHub Actions run #208](https://github.com/SpryzenHell/topology_lob/actions/runs/38906104659), passed all three jobs on 16 October 2026. This run validated the revised opening plot and its style/data assertions alongside package, numerical, integration, C++, and asset checks.
 
 ## Test and build results
 
 | Check | Result |
 |---|---|
-| Python unit and integration tests | **58 passed in 5.69 seconds** |
+| Python unit and integration tests | **58 passed in 3.86 seconds** |
 | Non-blocking dependency warnings | 13 |
 | Python package build | Passed |
 | Synthetic end-to-end demo with Giotto-TDA required | Passed |
@@ -19,13 +19,13 @@ The latest full CI run, [GitHub Actions run #204](https://github.com/SpryzenHell
 | SVG/raster asset validation | Passed |
 | Analysis-image refresh | Passed |
 
-The workflow tested commit `06646b30ee6da9dc19a208fc5d6466d00b79b40c`. The only subsequent code-tree change was README wording that clarifies which CLI command supports `--require-cuda`; Python code and tests were unchanged.
+The workflow tested commit `a7811878632c62c75c25886a1e0a4a30667c293b`. All three jobs completed successfully.
 
 ## Test coverage
 
 The suite checks malformed L2 input, Focal Loss gradient and Hessian values against finite differences, common-price translation invariance, causal fractional-differentiation prefix behaviour, FI-2010 boundary handling, model-selection helpers, sweep timing, report images, and README/repository requirements.
 
-The new plot tests validate that `assets/figures/benchmark_summary.svg` is well-formed SVG, carries the measured per-day IC values and target line, shows CPU/A100 throughput, and includes a title and description. Other tests confirm local README image links resolve, `main.png` stays absent, only one code-license file remains, and author metadata reads `Pirate-Emperor`.
+The opening plot tests validate that `assets/figures/benchmark_summary.svg` is well-formed SVG, has a 1000 × 600 canvas, uses the project's existing white-background Arial/blue/orange/grey-grid style, and contains the measured per-day IC labels and target line. Other tests confirm that local README image links resolve, `main.png` stays absent, only one code-license file remains, and author metadata reads `Pirate-Emperor`.
 
 The extended synthetic evidence run includes five ablation variants, six deterministic seeds, five chronological walk-forward folds, a label-permutation placebo, malformed-book checks, translation invariance, and causal FFD-prefix checks. Custom Focal gradient and Hessian absolute errors were approximately `7.41e-12` and `1.06e-11`; translation and causal-prefix checks had zero recorded error.
 
@@ -49,8 +49,8 @@ The latest CI run recorded the following for 200,000 events, width 256, and `d=0
 
 ```text
 events=200000 width=256 d=0.450000
-elapsed_s=0.038110
-events_per_s=5241207.866915
+elapsed_s=0.038267
+events_per_s=5219708.177691
 checksum=0.390931
 ```
 
@@ -58,12 +58,14 @@ This hosted CPU micro-benchmark varies between runners and is not full-applicati
 
 ## Plot and asset checks
 
-The README summary plot is a 1400 × 650 SVG with labelled daily Pearson/Rank IC bars, a dashed 0.064 reference line, and the measured IC target line. The detailed A100 dashboard remains available as a secondary figure. Asset validation completed with `Asset validation: PASS`; the refresh job found no generated image changes to commit.
+The opening plot uses a white background, black/grey text and axes, light-grey grid lines, blue Pearson bars, orange Rank bars, and a dashed 0.064 target line. It shows only the held-out information-coefficient values; the CPU/A100 throughput comparison stays in the detailed performance report rather than being combined with unrelated metrics.
+
+The detailed A100 dashboard remains available as a secondary figure. Asset validation completed with `Asset validation: PASS`; the refresh job found no generated image changes to commit.
 
 ## Artifacts
 
-- [Latest extended-evidence artifact 12046718253](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175/artifacts/12046718253)
-- [Latest full CI run #204](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175)
+- [Latest extended-evidence artifact 12047459548](https://github.com/SpryzenHell/topology_lob/actions/runs/38906104659/artifacts/12047459548)
+- [Latest full CI run #208](https://github.com/SpryzenHell/topology_lob/actions/runs/38906104659)
 - [A100 FI-2010 validation report](A100_VALIDATION.md)
 - [FI-2010 validation report](FI2010_VALIDATION.md)
 
