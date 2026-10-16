@@ -1,89 +1,94 @@
 # Topology LOB
 
-A reproducible research pipeline for Level-2 limit-order-book data. It combines microstructure features, topological data analysis, fractional differentiation, and XGBoost to study short-horizon price changes.
+Topology LOB is a research pipeline for high-frequency Level-2 (L2) limit-order-book data. It combines microstructure features, topological data analysis (TDA), fractional differentiation, and XGBoost models to study short-horizon returns.
 
-## Current benchmark result
+The project focuses on three goals:
 
-The corrected FI-2010 experiment on the A100 runner measured **0.151939 pooled Pearson IC** for the fixed custom Focal Loss model, above the stated **0.064** target. Each of the three held-out files also exceeded 0.064 for Pearson IC and Rank IC.
+1. **Liquidity structure:** use Betti numbers and persistent homology to describe the shape of liquidity across book levels.
+2. **Stationarity:** apply fractional differentiation causally, including a CUDA implementation for accelerated processing.
+3. **Prediction:** evaluate a custom Focal Loss classifier out of sample and compare it with standard log-loss and continuous-return regression controls.
 
-![A100 FI-2010 results](assets/figures/a100_fi2010_validation_dashboard.svg)
+The current evidence is based on the public FI-2010 Decimal-Precision benchmark. The fixed custom Focal Loss model measured **0.151939 pooled Pearson IC**, compared with the target of **0.064**. This clears the numerical target on this benchmark; it does not prove trading profitability or establish the same result on an original raw exchange feed.
 
-This is a result on FI-2010 Decimal-Precision, a licensed but preprocessed public benchmark. It is not the original timestamped exchange feed and does not prove profitability. See the limitations and sequence-boundary rule below before interpreting the numbers.
+![Plain plot of measured FI-2010 held-out IC and CPU/A100 fractional-differentiation throughput](assets/figures/benchmark_summary.svg)
 
-## What the pipeline does
+*The plot contains measured values from A100 workflow run #13. It shows Pearson and Rank IC by held-out file and the CPU/A100 FFD micro-benchmark. Per-day IC values and throughput are reported separately so the chart does not mix different model objectives.*
 
-1. Checks L2 snapshots, timestamps, prices, and order sizes.
-2. Builds spread, imbalance, microprice, order-flow, and volatility features.
-3. Converts each order book into a normalized liquidity point cloud.
-4. Computes H0/H1 persistent-homology and Betti-count features with Giotto-TDA.
-5. Selects fractional-differencing order on training data, then applies the filter causally on CPU or CUDA.
-6. Trains a custom binary Focal Loss XGBoost model and standard log-loss controls.
-7. Scores chronological held-out data after a purge gap; reports Pearson IC, Rank IC, ROC-AUC, PR-AUC, and log loss.
+## Contents
 
-## FI-2010 A100 results
+- [At a glance](#at-a-glance)
+- [Measured results](#measured-results)
+- [Project goals](#project-goals)
+- [Pipeline and design](#pipeline-and-design)
+- [Dataset, license, and boundaries](#dataset-license-and-boundaries)
+- [Experiments and controls](#experiments-and-controls)
+- [Validation and test coverage](#validation-and-test-coverage)
+- [Quick start](#quick-start)
+- [Reproduce the FI-2010 experiment](#reproduce-the-fi-2010-experiment)
+- [Run with a real L2 feed](#run-with-a-real-l2-feed)
+- [Code and output map](#code-and-output-map)
+- [Figures and reports](#figures-and-reports)
+- [Limits and interpretation](#limits-and-interpretation)
+- [Citation and license](#citation-and-license)
 
-The A100 workflow downloaded the FI-2010 Decimal-Precision files under the dataset's **CC BY 4.0** terms, checked the files, ran CUDA fractional differentiation and Giotto-TDA, completed the fixed Focal benchmark and additional model searches, and uploaded its full experiment bundle. [Workflow run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328) completed all 25 steps successfully. The full A100 experiment bundle is [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300). The input includes 394,337 events: 254,750 training events and 139,587 events across the three held-out files.
+## At a glance
 
-### Fixed custom Focal Loss model
+| Item | Details |
+|---|---|
+| Main language | Python |
+| Performance component | C++ fractional-differentiation implementation |
+| Model | XGBoost |
+| Topology library | Giotto-TDA |
+| GPU FFD backend | Numba CUDA |
+| Main public benchmark | FI-2010 Decimal-Precision |
+| Dataset license | CC BY 4.0; code license is separate |
+| Test environment | Python 3.11 |
+| Main result report | [A100 validation report](results/A100_VALIDATION.md) |
+| Detailed goal-by-goal report | [Resume-target validation](results/RESUME_TARGET_VALIDATION.md) |
 
-| Held-out file | Rows | Pearson IC | Rank IC | ROC-AUC | PR-AUC | Log loss |
-|---|---:|---:|---:|---:|---:|---:|
-| Day 8 | 54,153 | 0.159861 | 0.162348 | 0.716959 | 0.242247 | 0.631763 |
-| Day 9 | 50,847 | 0.140476 | 0.144745 | 0.694573 | 0.224194 | 0.643348 |
-| Day 10 | 30,612 | 0.162768 | 0.159412 | 0.707603 | 0.249820 | 0.634142 |
-| **Pooled Pearson IC** | **135,612** | **0.151939** | — | — | — | — |
+## Measured results
 
-Other measured scores for this A100 run:
+### Fixed custom Focal Loss classifier — A100 run
 
-| Metric | Result |
+This is the primary result for the stated IC target. The model configuration was fixed before scoring the held-out files: custom binary Focal Loss, a 10-event forward-return horizon, a 0.0005 label threshold, a 50-event purge gap, and fractional-differencing order (d=0.2) selected from training data only.
+
+| Held-out file | Scored rows | Pearson IC | Rank IC | ROC-AUC |
+|---|---:|---:|---:|---:|
+| Day 8 | 54,153 | 0.159861 | 0.162348 | 0.716959 |
+| Day 9 | 50,847 | 0.140476 | 0.144745 | 0.694573 |
+| Day 10 | 30,612 | 0.162768 | 0.159412 | 0.707603 |
+| **Pooled probability Pearson IC** | **135,612** | **0.151939** | — | — |
+
+| Additional A100 measure | Measured result |
 |---|---:|
 | Pooled margin Pearson IC | 0.151199 |
 | Pooled margin Rank IC | 0.154008 |
-| Target | 0.064 |
-| Pooled Pearson IC / target | 2.37× |
-| Topology point clouds | 403 |
-| TDA backend | Giotto-TDA |
-| FFD backend | numba-cuda |
-| Selected FFD order for fixed Focal model | d = 0.2 |
-| Forward-return horizon | 10 events |
-| Label threshold | 0.0005 |
-| Purge gap | 50 events |
+| IC target | 0.064 |
+| Pooled Pearson IC divided by target | 2.37× |
+| TDA point clouds evaluated | 403 |
+| Homology dimensions | H0 and H1 |
+| Betti radii | 0.5, 1.0, 1.5, 2.0, 2.5 |
+| FFD backend | `numba-cuda` |
+| TDA backend | `giotto-tda` |
 
-The table distinguishes the pooled margin-based rank measure from the per-day Rank IC values. The earlier corrected CPU reference report recorded pooled margin Rank IC 0.154200. The A100 figure above comes from A100 run #13; the independent CPU replay is recorded separately below. Small score differences between runs are kept visible rather than blended into one number.
+**Metric note:** the daily Rank IC values above are computed per held-out file. The pooled margin Rank IC is a separate calculation using the model margin, so the values should not be treated as interchangeable. The earlier CPU reference reported pooled margin Rank IC 0.154200; the A100 measurement reported 0.154008.
 
-### Robustness checks
+The A100 workflow completed all 25 steps and checked that the GPU backend was actually used. See [workflow run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328) and its [full experiment bundle](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300).
 
-- All **15 of 15** inferred held-out sequences had positive Pearson IC; mean sequence IC was 0.215726 and median was 0.218067.
-- A moving-block bootstrap with 500 resamples and 500-event blocks gave a **95% interval of 0.135663–0.167179** for pooled Pearson IC.
-- A 499-replicate, within-sequence circular-shift placebo gave **two-sided p = 0.002**; the 95th percentile of the null absolute IC was 0.013229.
-- A separate training-only Focal horizon search selected 1,000 events. Its pooled Pearson IC was 0.066806 and Rank IC was 0.097197, but Day 10 was negative on both measures. It is less stable; the fixed 10-event model above is the main target check.
+### Separate continuous-return regression
 
-These checks support a non-zero score/return relationship on this benchmark. They do not establish trading profitability.
+This XGBoost regressor predicts continuous forward returns. It has a different objective from the binary Focal Loss classifier, so these numbers are reported separately and are **not** substituted for the custom Focal result.
 
-### GPU fractional differentiation
-
-The dedicated A100 micro-benchmark processed 200,000 events with width 256 and d = 0.45. CUDA timing includes data transfers.
-
-| Measure | CPU | A100 CUDA |
-|---|---:|---:|
-| Elapsed time | 0.481428 s | 0.003257 s |
-| Throughput | 0.415 million events/s | 61.34 million events/s |
-
-The measured speedup was **147.83×**. The maximum absolute CPU/CUDA difference was **2.22 × 10⁻¹⁵**. There was one warm-up and three timed CUDA calls. This is an FFD micro-benchmark, not end-to-end trading latency.
-
-### Separate continuous-return XGBoost model
-
-This is a different objective from the custom Focal Loss classifier. The training-only search considered **32 candidates** over **five expanding chronological folds** within the training file; the held-out files were not used to select the model.
+The selector considered 32 candidates and used five expanding chronological validation folds entirely inside the training data. The final model used a 10-event horizon, 20 microstructure-plus-topology features, and (d=0.3).
 
 | Metric | Result |
 |---|---:|
-| Selected horizon | 10 events |
-| Selected features | 20 microstructure + topology features |
 | Mean validation Pearson IC | 0.198856 ± 0.075433 |
 | Mean validation Rank IC | 0.248313 ± 0.028288 |
-| Validation folds with positive Pearson IC | 5 / 5 |
-| Held-out Pearson IC | 0.214955 |
-| Held-out Rank IC | 0.228103 |
+| Folds with positive validation Pearson IC | 5 / 5 |
+| Held-out rows | 138,687 |
+| **Held-out Pearson IC** | **0.214955** |
+| **Held-out Rank IC** | **0.228103** |
 | Held-out direction hit rate | 0.571741 |
 
 | Held-out file | Rows | Pearson IC | Rank IC |
@@ -92,23 +97,92 @@ This is a different objective from the custom Focal Loss classifier. The trainin
 | Day 9 | 51,872 | 0.201933 | 0.220425 |
 | Day 10 | 31,637 | 0.249459 | 0.240102 |
 
-Do not present these regression metrics as the Focal Loss result: the model objective is different.
+### GPU fractional-differentiation benchmark
 
-A separate fixed 32-configuration horizon/feature sweep observed a held-out Pearson IC of 0.237371 and Rank IC of 0.232550 for the 10-event microstructure-plus-FFD candidate. This is a descriptive-only test-set comparison, not a model-selection score; choosing a winner from this table would use held-out outcomes. The headline regressor above was selected using training-only walk-forward folds.
+The dedicated A100 test processed 200,000 events with width 256 and (d=0.45). The CUDA timing includes host/device data transfers.
 
-![Walk-forward-selected return regressor](assets/figures/fi2010_return_regression_selection.png)
+| Measure | CPU | A100 CUDA |
+|---|---:|---:|
+| Elapsed time | 0.481428 s | 0.003257 s |
+| Throughput | 0.415 million events/s | 61.34 million events/s |
 
-## Additional experiments and controls
+- **Measured speedup:** 147.83×.
+- **Maximum absolute CPU/CUDA difference:** (2.22\times 10^{-15}).
+- **Timing method:** one warm-up and three timed CUDA calls, reporting the CUDA median.
+- **Scope:** this is an FFD micro-benchmark, not full-pipeline latency or trading execution speed.
 
-### Feature ablation
+The run checked both `gpu_used=true` and the `numba-cuda` backend. CPU fallback is not accepted as proof of GPU performance.
 
-These are results from the independent CPU FI-2010 benchmark run. They show that the topology features help one tested configuration, while adding every feature does not improve every metric.
+## Project goals
 
-The next two dashboards summarize deterministic synthetic stress tests and robustness checks; their scores are not FI-2010 results.
+### 1. Find liquidity structure with topological data analysis
 
-![Feature and objective experiments](assets/figures/experimental_validation_dashboard.png)
+A single order-book snapshot can contain gaps, dense areas, and disconnected regions across price and size levels. The code maps book state into a normalized point cloud and uses persistent homology to measure its shape. It extracts H0/H1 information and Betti counts across five radii. These values add a description of the structure of the book to more direct features such as spread and imbalance.
 
-![Robustness checks](assets/figures/robustness_dashboard.png)
+This benchmark confirms that the TDA path runs and produces features. The ablation results below show that adding topology does not improve every metric in every configuration, so the README does not claim that the full feature set is always best.
+
+### 2. Apply fractional differentiation without future leakage
+
+Fractional differentiation seeks a useful balance between reducing slow trends and retaining information in the original price series. The candidate order is selected on training prefixes. The filter itself is applied causally: a value at time (t) must not depend on observations after (t).
+
+The implementation provides a CPU path and a Numba CUDA path. The A100 workflow compares their numerical output before running the real-data experiment. A run counts as GPU evidence only when the metadata confirms CUDA use.
+
+### 3. Test the custom Focal Loss objective out of sample
+
+The fixed binary classifier is scored on three chronological FI-2010 held-out files. Pearson IC measures the linear association between the prediction score and continuous forward return. Rank IC measures their rank association. ROC-AUC, precision-recall AUC, and log loss are also tracked where those values were recorded.
+
+The IC threshold of 0.064 is treated as a target, not as an input value, a default, or a value filled into missing results.
+
+## Pipeline and design
+
+The main processing path is:
+
+1. **Read and validate the data.** Check ordering, prices, sizes, missing values, timestamps/event order, and book consistency.
+2. **Create microstructure features.** Build spread, imbalance, microprice, order-flow, and volatility-related features.
+3. **Build liquidity point clouds.** Convert a book snapshot to a normalized representation suitable for topology calculations.
+4. **Extract topology.** Run Giotto-TDA for H0/H1 and Betti counts at the configured radii.
+5. **Choose and apply fractional differentiation.** Select (d) using training-only stationarity checks and filter the series causally.
+6. **Create forward-return labels.** Calculate targets within each permitted sequence, using a fixed horizon, threshold, and purge gap.
+7. **Fit comparison models.** Train the custom Focal Loss classifier and comparison models with clearly separated objectives.
+8. **Evaluate the holdout.** Report per-file and pooled scores. Do not use held-out outcomes to choose a configuration.
+9. **Save evidence.** Store machine-readable JSON, a readable plot, and Markdown records so the result can be checked later.
+
+### Why sequence boundaries matter
+
+The FI-2010 Decimal-Precision files do not expose usable ticker IDs or exchange timestamps. A diagnostic found four adjacent mid-price jumps above 5% in each of the four files (one training file plus three test files). The pipeline applies a fixed, price-only 5% jump rule to infer five sequences in each file, giving 16 cuts total. Feature windows and forward-return labels restart at those boundaries, and purge gaps are applied at sequence edges.
+
+This is a transparent workaround, **not confirmed security metadata**. It reduces obviously invalid returns across large price-scale changes, but the inferred sequence assignments must be checked against a source with known security IDs before claiming exact raw-feed replication.
+
+## Dataset, license, and boundaries
+
+The benchmark is **FI-2010 Decimal-Precision**. Its published files contain 254,750 training events and three held-out files containing 55,478, 52,172, and 31,937 events, respectively, for 394,337 events in total.
+
+| Split | File | Events |
+|---|---|---:|
+| Training | `Train_Dst_NoAuction_DecPre_CF_7.txt` | 254,750 |
+| Held out — day 8 | `Test_Dst_NoAuction_DecPre_CF_7.txt` | 55,478 |
+| Held out — day 9 | `Test_Dst_NoAuction_DecPre_CF_8.txt` | 52,172 |
+| Held out — day 10 | `Test_Dst_NoAuction_DecPre_CF_9.txt` | 31,937 |
+| **Total** | | **394,337** |
+
+The benchmark is preprocessed and normalized. It provides event ordering rather than usable exchange wall-clock timestamps and does not expose usable ticker IDs in these files. Consequently:
+
+- Use the published event order for chronology within each file.
+- Do not create forward-return labels that cross a file boundary.
+- The price-jump sequence split is a heuristic and remains a study limitation.
+- This benchmark is suitable for a reproducible public-data check, but it is not the original raw timestamped exchange feed.
+
+### License and credit
+
+The FI-2010 dataset is listed under **Creative Commons Attribution 4.0 International (CC BY 4.0)**. When reporting or sharing results, credit Ntakaris et al. (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543), and link the [official FI-2010 data record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649).
+
+Dataset terms are separate from the repository's MIT code license. The scripts keep downloaded data out of the Git repository and record checksums in the experiment manifest.
+
+## Experiments and controls
+
+### Feature ablation — CPU reference run
+
+These ablation results are from the independent CPU FI-2010 reference experiment. The goal is to check what each feature group contributes, not to assume the full stack always wins.
 
 | Feature set | Pearson IC | Rank IC | ROC-AUC |
 |---|---:|---:|---:|
@@ -117,127 +191,282 @@ The next two dashboards summarize deterministic synthetic stress tests and robus
 | Microstructure + topology | 0.167184 | 0.172098 | 0.702709 |
 | Full feature stack | 0.150447 | 0.152992 | 0.706917 |
 
-### Objective and threshold control
+In this run, microstructure plus topology gave the highest Pearson and Rank IC among these four listed variants. The full feature stack did not, and the ROC-AUC ranking differed. These results show why feature groups should be measured rather than assumed to help.
 
-A separate A100 training-only threshold/objective sweep selected standard log-loss with a return threshold of 0.0001. Its held-out Pearson IC was 0.196630 and Rank IC was 0.202747. This is a separate control, not the fixed custom Focal Loss result. The earlier CPU reference sweep selected standard log-loss with a zero return threshold and measured held-out Pearson IC 0.195903 and Rank IC 0.202290.
+### Threshold and objective comparison
 
-### Stationarity and sequence-boundary checks
+The real-data workflow compares the fixed Focal model with standard log-loss under a threshold/objective search whose configuration is chosen using an internal training validation split. The A100 run selected standard log-loss with a 0.0001 return threshold; its held-out Pearson IC was 0.196630 and Rank IC was 0.202747. This is a separate control model, not the fixed Focal result.
 
-The fixed Focal experiment selected d = 0.2 using training-only stationarity checks: the median ADF p-value was 0.015357, all 5 of 5 tested training prefixes were below 0.05, and correlation with the original price series was 0.995689. A separate training-prefix sweep selected d = 0.3 by median ADF p-value (0.002453; 5 of 5 prefixes below 0.05) with price correlation 0.979516. This shows the trade-off between stationarity and retaining the original price series. FI-2010 has no usable ticker IDs or exchange timestamps. The pipeline therefore uses a fixed, price-only **5% adjacent mid-price jump rule** to infer five sequences per file and 16 cuts total. Features and forward-return labels restart at those boundaries, with a purge gap at sequence edges. These are inferred boundaries, not source-provided stock IDs.
+An earlier CPU reference sweep selected standard log-loss at a zero return threshold and measured held-out Pearson IC 0.195903 and Rank IC 0.202290. The threshold and scores differ slightly between these recorded runs; the values are kept attached to their respective run rather than averaged.
 
-![FI-2010 data diagnostics](assets/figures/data_diagnostics_dashboard.png)
+### Focal horizon search
 
-### Independent CPU replay
+A separate search compared 10, 20, 30, 50, 100, 200, 500, and 1,000 event horizons using training-only selection. The A100 search selected a 1,000-event horizon and reported pooled Pearson IC 0.066806 and Rank IC 0.097197. Day 10 was negative for both measures (Pearson −0.045135 and Rank −0.042798). That secondary result is less stable across held-out files, so the fixed 10-event result remains the primary check of the 0.064 target.
 
-The independent [CPU replay run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 workflow steps, including data/license checks, TDA, ablations, IC/objective sweeps, model selection, and result checks. It reproduced the main Focal Pearson IC and selected return-regression IC values to the recorded precision. [CPU replay artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
+### Walk-forward return-regression selection
 
-A second independent CPU rerun, [run #170](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885), also completed successfully, including five-fold regression selection, final metric checks, artifact upload, and result publication. It reproduced the fixed Focal pooled Pearson IC **0.151939** and walk-forward-selected regression ICs **0.214955 Pearson / 0.228103 Rank**. The new result bundle is [artifact 12039460485](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885/artifacts/12039460485). Both CPU runs use CPU FFD; neither is a second A100 throughput measurement.
+The continuous-return selection script evaluates 32 candidate combinations with five expanding chronological folds inside the training file. The held-out files are scored only after selection and refitting. The saved output contains the chosen horizon, feature set, validation scores, per-day holdout values, and dataset hash details.
 
-![CPU FI-2010 reference benchmark](assets/figures/fi2010_validation_dashboard.png)
+A separate fixed 32-configuration sweep also contains descriptive results for configurations evaluated on the held-out files. Those rows should not be used to choose the final model: selecting a winner by test score would turn the holdout into training data. The headline regression numbers reported above are from training-only walk-forward selection.
 
-## CI and test results
+### Stationarity order check
 
-The latest full supported-environment CI run [#199](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918) passed:
+The fixed Focal run selected (d=0.2): the median ADF p-value was 0.015357, all five tested training prefixes were below 0.05, and the correlation with the original price series was 0.995689. A separate training-prefix order sweep selected (d=0.3) by median ADF p-value (0.002453, with all five prefixes below 0.05) but reduced correlation with the original price series to 0.979516. This is the stationarity-versus-information-retention trade-off, not evidence that one order is universally best.
 
-- **56 Python tests** (13 non-blocking library warnings).
-- Package build and a synthetic end-to-end demo requiring Giotto-TDA.
-- Extended experiment generation and result validation: five ablation variants, six synthetic seeds, five chronological walk-forward folds, and a label-permutation placebo.
-- Focal Loss gradient and Hessian finite-difference checks, malformed-book rejection, common-price translation invariance, and causal fractional-differentiation prefix checks.
-- C++ CPU build and benchmark; the 200,000-event benchmark measured about **5.24 million events/s** on this run (hosted-runner timings vary).
-- Raster image and SVG dashboard checks, including dimensions, readable labels, report titles and descriptions, and working README image links.
+### Robustness on the fixed A100 Focal result
 
-The CI synthetic result uses 6,000 generated L2 events, a 20-event purge gap, and 5,735 model rows. It measured Pearson IC 0.073292 for Focal Loss and 0.095368 for standard log-loss. These are engineering checks on synthetic data, not market results.
+| Check | Recorded result |
+|---|---:|
+| Inferred held-out sequences with positive Pearson IC | 15 / 15 |
+| Mean sequence Pearson IC | 0.215726 |
+| Median sequence Pearson IC | 0.218067 |
+| Moving-block bootstrap replicates | 500 |
+| Block length | 500 events |
+| 95% bootstrap interval for pooled Pearson IC | [0.135663, 0.167179] |
+| Circular-shift placebo replicates | 499 |
+| Two-sided circular-shift p-value | 0.002 |
+| 95th percentile of null absolute IC | 0.013229 |
 
-[Full CI validation record](results/CI_VALIDATION.md) · [Latest CI artifact 12038625972](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918/artifacts/12038625972) · [A100 validation report](results/A100_VALIDATION.md) · [Resume-target validation](results/RESUME_TARGET_VALIDATION.md) · [FI-2010 details](results/FI2010_VALIDATION.md) · [Price-boundary diagnostics](results/FI2010_BOUNDARY_DIAGNOSTICS.md) · [Machine-readable A100 summary](results/a100_fi2010_validation_summary.json).
+The sequence-level averages are not the same statistic as the pooled IC: the average of within-sequence correlations and the correlation over all pooled rows have different weighting. Both are recorded to make that distinction clear. The placebo and bootstrap results support a non-zero association in this benchmark but do not establish future profitability.
 
-Machine-readable CPU experiment outputs: [benchmark](results/fi2010_benchmark.json), [feature ablation](results/fi2010_ablation.json), [threshold/objective sweep](results/fi2010_ic_sweep.json), [horizon/feature regression sweep](results/fi2010_regression_sweep.json), [Focal horizon search](results/fi2010_focal_horizon_selection.json), [walk-forward regression selection](results/fi2010_return_regression_selection.json), and [boundary diagnostics](results/fi2010_boundary_diagnostics.json).
+### CPU replay consistency
 
-## Dataset and source
+Two separate CPU FI-2010 workflow runs completed successfully:
 
-The benchmark is **FI-2010 Decimal-Precision**, licensed under **Creative Commons Attribution 4.0 (CC BY 4.0)**. Credit Ntakaris et al. (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543), and link the [official FI-2010 data record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649) when sharing results.
+- [Run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177), artifact [12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
+- [Run #170](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885), artifact [12039460485](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885/artifacts/12039460485).
 
-The benchmark is preprocessed and does not expose usable ticker IDs or exchange timestamps. The 5% split is an assumption to avoid making returns across apparent price-scale changes. Use raw, timestamped L2 data with security IDs for claims about the original raw-feed setup. No pretrained model is required; the XGBoost models are trained on the benchmark.
+The later replay passed the data checks, TDA benchmark, ablation, objective/threshold sweep, multi-horizon regression coverage, training-only Focal horizon selection, five-fold return-regression selection, result validation, artifact upload, and result publication. It reproduced the fixed Focal pooled Pearson IC (0.151939) and selected regression scores (0.214955 Pearson / 0.228103 Rank) to the recorded precision. The CPU runs used CPU FFD and are not GPU throughput tests.
+
+## Validation and test coverage
+
+The latest full CI run, [run #199](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918), passed all three jobs. It ran the code and tests at commit `2a0d05814f8b02c421aceacb81af8b6c5d3ef6b8`; the later edits in this report are documentation and figure changes. The updated chart and its checks are included in the current README work and are being tested by the follow-on CI triggered by this commit.
+
+Recorded CI results:
+
+- **56 Python tests passed** in 3.92 seconds, with 13 non-blocking dependency warnings.
+- Python package build and wheel/source archive check passed.
+- Synthetic end-to-end demo with Giotto-TDA required and verified passed.
+- Extended evidence generation and validation passed.
+- C++ CPU build and benchmark passed.
+- Image validation passed for the dashboard canvas, title, description, required labels, raster images, and local README image links.
+
+The test suite covers malformed L2 input rejection, Focal Loss gradient and Hessian numerical checks, common-price translation invariance, causal fractional-differentiation prefix behaviour, timing validation, FI-2010 boundary handling, selector behaviour, required output files, author metadata, the removed `main.png`, and the single retained code-license file.
+
+### Synthetic engineering experiment
+
+The deterministic CI demo used 6,000 synthetic events, a chronological holdout, a 20-event purge gap, and 5,735 model rows (3,994 train and 1,721 test). It reported:
+
+| Metric | Focal Loss | Log-loss control |
+|---|---:|---:|
+| Pearson IC | 0.073292 | 0.095368 |
+| Rank IC | 0.039856 | 0.036762 |
+| ROC-AUC | 0.531075 | 0.528676 |
+| PR-AUC | 0.244568 | 0.242809 |
+| Log loss | 0.516779 | 0.561761 |
+
+The extended evidence run also used five ablation variants, six deterministic seeds, five chronological walk-forward folds, and a label-permutation placebo. The custom Focal gradient and Hessian were compared with finite differences; the measured absolute errors were approximately (7.41\times10^{-12}) and (1.06\times10^{-11}). Translation and causal-prefix checks had zero recorded error.
+
+**These are engineering checks on synthetic data, not market results.** They must not be presented as evidence that the FI-2010 IC target has been met.
+
+### C++ CPU benchmark
+
+The latest recorded CI timing for 200,000 events at width 256 and (d=0.45) was about 5.24 million events/s, with checksum 0.390931. A previous hosted-runner result was about 6.05 million events/s. Hosted CPU timing varies, and the C++ benchmark is not directly comparable to the Python/CUDA FFD result because the implementations and timing paths differ.
+
+The latest CI evidence bundle is [artifact 12038625972](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918/artifacts/12038625972).
 
 ## Quick start
 
 Python 3.11 is recommended.
 
-~~~bash
+### Create an environment and run tests
+
+```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[tda,dev]"
 python -m pytest -q
-~~~
+```
 
-Run the deterministic demo with the full Giotto-TDA backend:
+### Run the synthetic end-to-end demo
 
-~~~bash
+```bash
 python run.py demo --config configs/demo.json --out results/demo --require-gtda
-~~~
+```
 
-Outputs include metrics.json, test_scores.csv, Betti curves, a fractional-stationarity plot, and index.html. Add --require-cuda to require CUDA fractional differentiation; the command exits rather than silently falling back to CPU.
+The output includes `metrics.json`, `test_scores.csv`, Betti curves, a fractional-stationarity plot, and `index.html`. Add `--require-cuda` on a supported CUDA machine to make the demo fail rather than silently falling back to CPU.
 
-Run extended experiments and the C++ benchmark:
+### Run extra experiments
 
-~~~bash
+```bash
 python scripts/generate_evidence.py --events 6000 --out results/evidence --require-gtda
 python run.py ablation --config configs/demo.json --out results/ablation
 python run.py walk-forward --config configs/demo.json --out results/walk_forward.json
 python run.py ffd-benchmark --events 200000 --width 256 --d 0.45
-cmake -S . -B build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ./build/fractional_diff_cpu
-~~~
+```
 
-## Run FI-2010
+On a machine that supports CUDA, use the FFD benchmark's CUDA requirement option and verify both `gpu_used=true` and `backend=numba-cuda` in the resulting JSON before recording it as a GPU result.
 
-The fetch script downloads the public Decimal-Precision files locally; raw dataset files are not committed.
+## Reproduce the FI-2010 experiment
 
-~~~bash
-python scripts/fetch_fi2010.py --out data/external/fi2010.zip --extract
-python scripts/run_fi2010_benchmark.py --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt --test data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt --tda-stride 1000 --require-gtda --out results/fi2010_benchmark.json
-~~~
+### 1. Download and verify the dataset
 
-On a supported CUDA system, add --require-cuda. A result counts as GPU evidence only when it reports gpu_used=true and backend numba-cuda. Review the official dataset terms before redistributing the data.
+```bash
+python scripts/fetch_fi2010.py \
+  --out data/external/fi2010.zip \
+  --extract
+```
 
-## Real L2 input
+The script prints a checksum. The workflow also records SHA-256 hashes and file sizes in `results/fi2010_data_manifest.json`. Avoid committing downloaded raw data into the repository.
 
-The CSV loader expects one row per snapshot and columns for timestamp plus every book level:
+### 2. Run the TDA/Focal benchmark
 
-~~~text
+```bash
+python scripts/run_fi2010_benchmark.py \
+  --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+  --test \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+  --tda-stride 1000 \
+  --require-gtda \
+  --out results/fi2010_benchmark.json
+```
+
+Add `--require-cuda` to require GPU fractional differentiation. On a supported A100 or other compatible CUDA system, the run should report `gpu_used=true` and `fractional_diff_backend=numba-cuda`. Without that flag, CPU fallback may be allowed; do not describe a CPU fallback as a GPU result.
+
+### 3. Run ablation and objective/threshold checks
+
+```bash
+python scripts/run_fi2010_ablation.py \
+  --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+  --test \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+  --require-gtda --tda-stride 1000 \
+  --out results/fi2010_ablation.json
+
+python scripts/run_fi2010_ic_sweep.py \
+  --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+  --test \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+  --require-gtda --tda-stride 1000 \
+  --out results/fi2010_ic_sweep.json
+```
+
+### 4. Run horizon search and walk-forward regression
+
+```bash
+python scripts/run_fi2010_focal_horizon_selection.py \
+  --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+  --test \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+  --horizons 10 20 30 50 100 200 500 1000 \
+  --require-gtda --tda-stride 1000 \
+  --out results/fi2010_focal_horizon_selection.json
+
+python scripts/run_fi2010_return_regression_selection.py \
+  --train data/external/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+  --test \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+    data/external/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+  --horizons 10 20 30 50 100 200 500 1000 \
+  --require-gtda --tda-stride 1000 \
+  --out results/fi2010_return_regression_selection.json \
+  --dashboard assets/figures/fi2010_return_regression_selection.png
+```
+
+The exact command-line options can evolve with the scripts; consult each script's `--help` output if an argument changes. For an archived result, keep the input manifest, configuration, model selection record, and final metrics together.
+
+## Run with a real L2 feed
+
+The CSV loader expects one row per snapshot and a timestamp plus price and size for each bid/ask level:
+
+```text
 timestamp,bid_price_1,bid_size_1,ask_price_1,ask_size_1,...,bid_price_N,bid_size_N,ask_price_N,ask_size_N
-~~~
+```
 
-It sorts by timestamp and rejects duplicate or invalid timestamps, missing or non-finite values, negative sizes, invalid prices, and crossed, locked, or incorrectly ordered books.
+Example:
 
-~~~bash
-python run.py demo --config configs/demo.json --data /absolute/path/to/l2.csv --out results/real_l2 --require-gtda
-~~~
+```bash
+python run.py demo \
+  --config configs/demo.json \
+  --data /absolute/path/to/l2.csv \
+  --out results/real_l2 \
+  --require-gtda
+```
 
-Use correctly timestamped raw L2 data for results intended to represent a live exchange feed.
+The loader sorts by timestamp and rejects duplicate or invalid timestamps, missing or non-finite values, negative sizes, invalid prices, and crossed, locked, or incorrectly ordered books. Confirm that the feed's time zone, event ordering, security identifiers, and treatment of auctions match the experiment before interpreting the result.
+
+For original-feed claims, keep separate securities and trading sessions correctly identified. Do not rely on the FI-2010 5% price-jump heuristic when true security IDs and timestamps are available.
+
+## Code and output map
+
+| Path | Purpose |
+|---|---|
+| `topology_lob.py` | Core feature building, point clouds, persistent features, Focal Loss, evaluation, and fractional differentiation |
+| `fi2010.py` | FI-2010 raw-format loader and conversion to canonical book fields |
+| `run.py` | Command-line entry point for the demo, ablation, walk-forward, and FFD benchmark |
+| `cpp/fractional_diff.cpp` | Standalone C++ CPU fractional-differentiation benchmark |
+| `configs/demo.json` | Settings for the deterministic synthetic example |
+| `configs/fi2010.json` | FI-2010 experiment settings |
+| `scripts/fetch_fi2010.py` | Dataset download and extraction |
+| `scripts/diagnose_fi2010_boundaries.py` | Detect and report large adjacent mid-price jumps |
+| `scripts/run_fi2010_benchmark.py` | Main real-data TDA and Focal Loss benchmark |
+| `scripts/run_fi2010_ablation.py` | Compare feature groups |
+| `scripts/run_fi2010_ic_sweep.py` | Compare thresholds and objectives with internal validation |
+| `scripts/run_fi2010_focal_horizon_selection.py` | Training-only Focal horizon/feature selection |
+| `scripts/run_fi2010_return_regression.py` | Multi-horizon continuous-return candidates |
+| `scripts/run_fi2010_return_regression_selection.py` | Five-fold chronological selection and measured dashboard |
+| `scripts/generate_evidence.py` | Synthetic numerical and data-quality stress tests |
+| `scripts/validate_assets.py` | Validate result figures and report image references |
+| `tests/` | Unit, integration, numerical, boundary, selection, timing and asset tests |
+| `results/*.json` | Machine-readable metrics and diagnostics |
+| `results/*.md` | Human-readable validation and experiment reports |
 
 ## Figures and reports
 
-These figures show model results and data checks, not terminal captures.
+The first figure in this README is the simple benchmark plot. The larger dashboard is retained as a detailed secondary figure for readers who want more context.
 
-- [A100 FI-2010 validation dashboard](assets/figures/a100_fi2010_validation_dashboard.svg)
-- [Synthetic experiment dashboard](assets/figures/experimental_validation_dashboard.png)
-- [Robustness checks](assets/figures/robustness_dashboard.png)
-- [Data diagnostics](assets/figures/data_diagnostics_dashboard.png)
+- [Simple measured-data plot](assets/figures/benchmark_summary.svg)
+- [Detailed A100 validation dashboard](assets/figures/a100_fi2010_validation_dashboard.svg)
 - [CPU FI-2010 results](assets/figures/fi2010_validation_dashboard.png)
-- [Return-regression selection](assets/figures/fi2010_return_regression_selection.png)
-- [Readable report preview](assets/screenshots/report_preview.png)
+- [Walk-forward regression selection](assets/figures/fi2010_return_regression_selection.png)
+- [Synthetic experiment dashboard](assets/figures/experimental_validation_dashboard.png)
+- [Synthetic robustness checks](assets/figures/robustness_dashboard.png)
+- [Data diagnostics](assets/figures/data_diagnostics_dashboard.png)
+- [Report preview](assets/screenshots/report_preview.png)
 - [Figure notes](assets/README.md)
 
-The A100 dashboard uses high-contrast text and a fixed canvas; CI checks the SVG size, required labels, title/description, and image links. The incomplete main.png banner is intentionally removed. Only one code-license file, LICENSE, is kept.
+The synthetic figures illustrate numerical and engineering checks; they are not FI-2010 model-performance figures. There is intentionally no `main.png` banner and no terminal screenshot.
 
-![Readable experiment-report snapshot](assets/screenshots/report_preview.png)
+## Limits and interpretation
 
-## Author
+The evidence supports a measured score/return relationship on the stated FI-2010 experiment. It does not by itself establish:
 
-**Pirate-Emperor**
+- profitability after fees, spread, market impact, and order execution;
+- robustness to different instruments, venues, trading periods, or data vendors;
+- exact reproduction of an experiment on the original timestamped raw L2 feed;
+- correctness of the inferred FI-2010 stock boundaries;
+- that every added feature improves every metric;
+- that a micro-benchmark speedup equals full application or strategy speedup.
 
-## License
+For credible follow-up work, use a raw feed with security IDs and timestamps, split by session and instrument, keep model selection strictly inside training data, model transaction costs, and re-check the result on future untouched periods.
 
-The project code is released under the MIT License; see [LICENSE](LICENSE). Dataset terms are separate from the code license.
+## Citation and license
+
+**Dataset:** Ntakaris et al. (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543). The benchmark is released under CC BY 4.0; see the [official FI-2010 record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649).
+
+**Code:** MIT License; see [LICENSE](LICENSE). Dataset permissions do not replace the code license or the requirement to provide dataset attribution.
+
+**Author:** Pirate-Emperor
