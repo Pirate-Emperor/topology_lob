@@ -115,4 +115,4 @@ def test_readme_has_reproducible_protocol_and_distinguishes_controls() -> None:
         assert heading in readme
     assert "different objective" in readme
     assert "test score would turn the holdout into training data" in readme
-    assert "their held-out files" in readme
+    assert "The held-out files are scored only after selection and refitting." in readme
