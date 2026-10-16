@@ -168,8 +168,16 @@ def fit_model(objective: str, X: np.ndarray, y: np.ndarray, seed: int):
     raise ValueError(f"Unknown objective: {objective}")
 
 
+def elapsed_seconds_since(run_started_at: float) -> float:
+    """Return a checked duration from the monotonic clock."""
+    elapsed = float(time.perf_counter() - run_started_at)
+    if not np.isfinite(elapsed) or elapsed < 0:
+        raise RuntimeError(f"Invalid monotonic elapsed time: {elapsed!r}")
+    return elapsed
+
+
 def run(args) -> dict:
-    start = time.perf_counter()
+    run_started_at = time.perf_counter()
     b = build_features(args)
     X = b["features"]
     indices = b["indices"]
@@ -267,9 +275,7 @@ def run(args) -> dict:
         )
 
     selected_test = pooled["validation_selected"]
-    elapsed_seconds = float(time.perf_counter() - start)
-    if not np.isfinite(elapsed_seconds) or elapsed_seconds < 0:
-        raise RuntimeError(f"Invalid monotonic elapsed time: {elapsed_seconds!r}")
+    elapsed_seconds = elapsed_seconds_since(run_started_at)
     result = {
         "data_source": "FI-2010 Decimal-Precision benchmark",
         "data_license": "CC BY 4.0; attribute Ntakaris et al. (2018)",

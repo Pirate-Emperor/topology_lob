@@ -22,3 +22,20 @@ def test_saved_fi2010_sweep_has_valid_or_explicitly_missing_timing() -> None:
 def test_incomplete_main_png_is_absent() -> None:
     assert not (ROOT / "main.png").exists()
     assert not (ROOT / "assets" / "main.png").exists()
+
+def test_elapsed_seconds_uses_passed_start_time(monkeypatch) -> None:
+    from types import SimpleNamespace
+    from scripts import run_fi2010_ic_sweep as sweep
+
+    monkeypatch.setattr(sweep, "time", SimpleNamespace(perf_counter=lambda: 18.5))
+    assert sweep.elapsed_seconds_since(10.0) == 8.5
+
+
+def test_elapsed_seconds_rejects_negative_duration(monkeypatch) -> None:
+    from types import SimpleNamespace
+    import pytest
+    from scripts import run_fi2010_ic_sweep as sweep
+
+    monkeypatch.setattr(sweep, "time", SimpleNamespace(perf_counter=lambda: 1.0))
+    with pytest.raises(RuntimeError, match="Invalid monotonic elapsed time"):
+        sweep.elapsed_seconds_since(2.0)
