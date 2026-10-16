@@ -10,9 +10,9 @@ The project focuses on three goals:
 
 The current evidence is based on the public FI-2010 Decimal-Precision benchmark. The fixed custom Focal Loss model measured **0.151939 pooled Pearson IC**, compared with the target of **0.064**. This clears the numerical target on this benchmark; it does not prove trading profitability or establish the same result on an original raw exchange feed.
 
-![Plain plot of measured FI-2010 held-out IC and CPU/A100 fractional-differentiation throughput](assets/figures/benchmark_summary.svg)
+![Measured FI-2010 held-out Pearson and Rank IC by day, with the 0.064 target line](assets/figures/benchmark_summary.svg)
 
-*The plot contains measured values from A100 workflow run #13. It shows Pearson and Rank IC by held-out file and the CPU/A100 FFD micro-benchmark. Per-day IC values and throughput are reported separately so the chart does not mix different model objectives.*
+*Measured values from A100 workflow run #13. The plot uses the same white background, blue/orange series, grey grid, and plain labels as the other figures in this repository. CPU/A100 throughput is kept in the performance section below rather than mixed into the IC chart.*
 
 ## Contents
 
@@ -436,7 +436,7 @@ For original-feed claims, keep separate securities and trading sessions correctl
 
 ## Figures and reports
 
-The first figure in this README is the simple benchmark plot. The larger dashboard is retained as a detailed secondary figure for readers who want more context.
+The first figure is a regular data plot in the same style as the other charts in this repository: white background, standard axes, grey grid lines, blue/orange series, and no decorative banner. The larger dashboard is retained as a secondary figure for readers who want more context.
 
 - [Simple measured-data plot](assets/figures/benchmark_summary.svg)
 - [Detailed A100 validation dashboard](assets/figures/a100_fi2010_validation_dashboard.svg)
