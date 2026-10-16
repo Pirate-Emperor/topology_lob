@@ -53,13 +53,19 @@ The fixed Focal Loss Pearson IC exceeds the **0.064** target on all three held-o
 
 A training-only threshold/objective sweep selected standard log-loss with a zero return threshold. Its held-out Pearson IC was 0.19590 and Rank IC was 0.20229. This is a separate control, not the custom Focal result. A separate continuous-return XGBoost regressor, selected using five chronological folds inside the training sequences, reached Pearson IC 0.21495 and Rank IC 0.22830. This is also a different objective and is reported separately.
 
+The corrected CPU rerun completed in [Actions run #167](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026). The run passed its unit tests, real-data TDA and feature checks, training-only sweeps, and final report validation. Its fresh result files are available in [the run's experiment artifact](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
+
+![Walk-forward-selected return regression](assets/figures/fi2010_return_regression_selection.png)
+
+The chart shows training-only walk-forward selection on the left and the separate held-out return-regression score by test day on the right. These are CPU-run values; the A100 workflow is being checked separately.
+
 Feature ablation measured pooled Focal Pearson IC of 0.16549 using microstructure alone, 0.16718 using microstructure plus topology, 0.14941 using microstructure plus FFD, and 0.15045 with the full feature stack. TDA runs and yields Betti features, but this experiment does not show that adding every feature improves every metric.
 
 FI-2010 is a licensed, preprocessed benchmark, not the original raw exchange feed. The fixed Focal result supports the numerical target on this benchmark under the stated 5% sequence-split rule; it does not by itself prove the historical raw-feed result. The corrected FI-2010 run used CPU FFD. GPU FFD passed a prior A100 kernel-parity check, but the corrected stock-split FI-2010 result must still be rerun on A100 before claiming this exact result was measured on GPU.
 
 The dataset is under **CC BY 4.0**. Credit Ntakaris et al. (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543), and link the [official FI-2010 record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649) when sharing results.
 
-See the [resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 experiment details](results/FI2010_VALIDATION.md), and [boundary diagnostic](results/FI2010_BOUNDARY_DIAGNOSTICS.md). Complete experiment JSON outputs and the analysis image are available in [Actions artifact 11986421250](https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730/artifacts/11986421250).
+See the [resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 experiment details](results/FI2010_VALIDATION.md), and [boundary diagnostic](results/FI2010_BOUNDARY_DIAGNOSTICS.md). The latest completed CPU experiment JSON files and selection image are available in [Actions artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
 
 ## Quick start
 
