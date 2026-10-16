@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120" role="img" aria-labelledby="title desc">
+<title id="title">Topology LOB — FI-2010 A100 validation</title>
+<desc id="desc">All 25 steps passed on the A100 runner. The fixed Focal Loss model reached pooled Pearson IC 0.15194, all test days cleared target 0.064, and CUDA FFD reached 61.34 million events per second with CPU parity error 2.22e-15. The five-fold selected regressor reached Pearson IC 0.21495.</desc>
+<defs>
+ <linearGradient id="header" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#102A43"/><stop offset="1" stop-color="#243B53"/></linearGradient>
+ <style>text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#243B53}.muted{fill:#627D98}.white{fill:#fff}.eyebrow{font-size:13px;font-weight:700;letter-spacing:1.5px}.head{font-size:34px;font-weight:750}.sub{font-size:16px}.metric{font-size:33px;font-weight:750}.cardtitle{font-size:19px;font-weight:700}.body{font-size:15px}.small{font-size:13px}.strong{font-weight:700}.green{fill:#167D63}.line{stroke:#D9E2EC;stroke-width:1}.grid{stroke:#E8EEF4;stroke-width:1}.axis{stroke:#9FB3C8;stroke-width:1.2}</style>
+</defs>
+<rect width="1600" height="1120" fill="#F3F6FA"/>
+<rect width="1600" height="132" fill="url(#header)"/>
+<text x="64" y="34" class="eyebrow white">TOPOLOGY LOB / REAL-DATA CHECK</text>
+<text x="64" y="78" class="head white">FI-2010 · A100 validation</text>
+<text x="64" y="108" class="sub white" opacity=".85">Corrected sequence-safe benchmark · CUDA FFD · Giotto-TDA · held-out model checks</text>
+<rect x="1288" y="34" width="248" height="42" rx="21" fill="#D9F3E9"/><circle cx="1312" cy="55" r="6" fill="#167D63"/><text x="1328" y="60" font-size="14" font-weight="750" fill="#116149">ALL 25 CHECKS PASSED</text>
+<text x="1534" y="105" text-anchor="end" class="small white" opacity=".85">Action run #13 · 16 Oct 2026</text>
+<g>
+ <rect x="64" y="158" width="350" height="136" rx="14" fill="#fff"/><rect x="434" y="158" width="350" height="136" rx="14" fill="#fff"/><rect x="804" y="158" width="350" height="136" rx="14" fill="#fff"/><rect x="1174" y="158" width="362" height="136" rx="14" fill="#fff"/>
+</g>
+<text x="88" y="188" class="eyebrow muted">FIXED FOCAL MODEL</text><text x="88" y="232" class="metric green">0.15194</text><text x="88" y="264" class="body muted">Pooled Pearson IC · 2.37× target</text>
+<text x="458" y="188" class="eyebrow muted">95% MOVING-BLOCK INTERVAL</text><text x="458" y="232" font-size="31" font-weight="750">0.13566–0.16718</text><text x="458" y="264" class="body muted">500 resamples · 500-event blocks</text>
+<text x="828" y="188" class="eyebrow muted">HELD-OUT SEQUENCES</text><text x="828" y="232" class="metric green">15 / 15 positive</text><text x="828" y="264" class="body muted">Circular-shift placebo p = 0.002</text>
+<text x="1198" y="188" class="eyebrow muted">5-FOLD SELECTED REGRESSOR</text><text x="1198" y="232" class="metric green">0.21495</text><text x="1198" y="264" class="body muted">Pearson IC · Rank IC 0.22810</text>
+<!-- Main metric plot -->
+<rect x="64" y="320" width="905" height="390" rx="14" fill="#fff"/>
+<text x="92" y="357" class="cardtitle">Fixed Focal Loss · held-out days</text><text x="92" y="382" class="body muted">Pearson and Rank IC both clear the 0.064 target on every test day.</text>
+<rect x="664" y="345" width="18" height="12" rx="2" fill="#2F80ED"/><text x="690" y="356" class="small">Pearson IC</text><rect x="790" y="345" width="18" height="12" rx="2" fill="#16A085"/><text x="816" y="356" class="small">Rank IC</text>
+<line x1="122" y1="638" x2="920" y2="638" class="axis"/><line x1="122" y1="586" x2="920" y2="586" class="grid"/><line x1="122" y1="534" x2="920" y2="534" class="grid"/><line x1="122" y1="482" x2="920" y2="482" class="grid"/><line x1="122" y1="430" x2="920" y2="430" class="grid"/>
+<text x="108" y="643" text-anchor="end" class="small muted">0.00</text><text x="108" y="591" text-anchor="end" class="small muted">0.05</text><text x="108" y="539" text-anchor="end" class="small muted">0.10</text><text x="108" y="487" text-anchor="end" class="small muted">0.15</text><text x="108" y="435" text-anchor="end" class="small muted">0.20</text>
+<line x1="122" y1="571.4" x2="920" y2="571.4" stroke="#C2413B" stroke-width="2" stroke-dasharray="7 5"/><rect x="818" y="552" width="100" height="22" rx="5" fill="#FFF1F0"/><text x="868" y="567" text-anchor="middle" font-size="12" font-weight="700" fill="#A52A25">TARGET .064</text>
+<rect x="218" y="471.75" width="58" height="166.25" rx="5" fill="#2F80ED"/><rect x="282" y="469.14" width="58" height="168.86" rx="5" fill="#16A085"/>
+<rect x="455" y="491.9" width="58" height="146.1" rx="5" fill="#2F80ED"/><rect x="519" y="486.86" width="58" height="151.14" rx="5" fill="#16A085"/>
+<rect x="692" y="468" width="58" height="170" rx="5" fill="#2F80ED"/><rect x="756" y="472.21" width="58" height="165.79" rx="5" fill="#16A085"/>
+<text x="279" y="455" text-anchor="middle" class="small strong">0.1599 / 0.1623</text><text x="516" y="475" text-anchor="middle" class="small strong">0.1405 / 0.1447</text><text x="753" y="451" text-anchor="middle" class="small strong">0.1628 / 0.1594</text>
+<text x="279" y="664" text-anchor="middle" class="body strong">Day 8</text><text x="516" y="664" text-anchor="middle" class="body strong">Day 9</text><text x="753" y="664" text-anchor="middle" class="body strong">Day 10</text>
+<text x="92" y="693" class="small muted">Label: 10-event forward log return · threshold 0.0005 · 50-event purge</text>
+<!-- GPU chart -->
+<rect x="993" y="320" width="543" height="390" rx="14" fill="#fff"/>
+<text x="1021" y="357" class="cardtitle">Fractional differentiation · CUDA</text><text x="1021" y="382" class="body muted">200,000 events · width 256 · d = 0.45</text>
+<text x="1021" y="426" class="body strong">CPU</text><text x="1504" y="426" text-anchor="end" class="body strong">0.415 M events/s</text><rect x="1021" y="440" width="480" height="20" rx="5" fill="#E8EEF4"/><rect x="1021" y="440" width="13" height="20" rx="5" fill="#829AB1"/>
+<text x="1021" y="490" class="body strong">A100 · end-to-end CUDA</text><text x="1504" y="490" text-anchor="end" class="body strong">61.34 M events/s</text><rect x="1021" y="504" width="480" height="20" rx="5" fill="#E8EEF4"/><rect x="1021" y="504" width="480" height="20" rx="5" fill="#16A085"/>
+<rect x="1021" y="548" width="480" height="54" rx="10" fill="#E8F6F1"/><text x="1041" y="571" font-size="14" font-weight="700" fill="#116149">147.8× faster</text><text x="1041" y="590" class="small" fill="#116149">Median of 3 timed calls after 1 warm-up; includes transfers.</text>
+<text x="1021" y="634" class="body strong">CPU/CUDA maximum absolute error</text><text x="1504" y="634" text-anchor="end" class="body strong green">2.22 × 10⁻¹⁵</text><text x="1021" y="665" class="small muted">Measured backend: numba-cuda · gpu_used = true</text><text x="1021" y="687" class="small muted">This is an FFD micro-benchmark, not end-to-end trading latency.</text>
+<!-- Method notes -->
+<rect x="64" y="736" width="718" height="302" rx="14" fill="#fff"/><rect x="804" y="736" width="732" height="302" rx="14" fill="#fff"/>
+<text x="92" y="775" class="cardtitle">What ran</text>
+<circle cx="96" cy="813" r="4" fill="#16A085"/><text x="112" y="818" class="body">FI-2010 Decimal-Precision · CC BY 4.0</text>
+<circle cx="96" cy="847" r="4" fill="#16A085"/><text x="112" y="852" class="body">394,337 events: 254,750 train + 139,587 held-out</text>
+<circle cx="96" cy="881" r="4" fill="#16A085"/><text x="112" y="886" class="body">Giotto-TDA: 403 clouds · H0/H1 Betti features at 5 radii</text>
+<circle cx="96" cy="915" r="4" fill="#16A085"/><text x="112" y="920" class="body">Fixed Focal: d = 0.2 · 10-event horizon · 50-event purge</text>
+<circle cx="96" cy="949" r="4" fill="#16A085"/><text x="112" y="954" class="body">Regression: 32 candidates · 5 expanding train-only folds</text>
+<circle cx="96" cy="983" r="4" fill="#16A085"/><text x="112" y="988" class="body">Selected: 10-event horizon · microstructure + topology</text>
+<text x="832" y="775" class="cardtitle">How to read these results</text>
+<circle cx="836" cy="813" r="4" fill="#D97706"/><text x="852" y="818" class="body">A100 fixed Focal Pearson IC = 0.15194; Rank IC = 0.15401.</text>
+<circle cx="836" cy="847" r="4" fill="#D97706"/><text x="852" y="852" class="body">Regression: Pearson IC = 0.21495, Rank IC = 0.22810.</text>
+<circle cx="836" cy="881" r="4" fill="#D97706"/><text x="852" y="886" class="body">FI-2010 lacks usable ticker IDs; five sequences/file are inferred</text><text x="852" y="906" class="body">with a fixed, price-only 5% adjacent jump rule (16 cuts total).</text>
+<circle cx="836" cy="941" r="4" fill="#D97706"/><text x="852" y="946" class="body">This is a processed public benchmark, not the original raw exchange</text><text x="852" y="966" class="body">feed. It does not prove profitability or a live trading edge.</text>
+<circle cx="836" cy="995" r="4" fill="#D97706"/><text x="852" y="1000" class="body">The separately selected 1,000-event Focal model has a negative Day 10</text><text x="852" y="1020" class="body">IC; the fixed 10-event result above is the main target check.</text>
+<text x="64" y="1080" class="small muted">Author: Pirate-Emperor · FI-2010 (Ntakaris et al., 2018) · Workflow: integrator run #13</text>
+</svg>
