@@ -49,7 +49,7 @@ Other measured scores for this A100 run:
 | Label threshold | 0.0005 |
 | Purge gap | 50 events |
 
-The table distinguishes the pooled margin-based rank measure from the per-day Rank IC values. The independent CPU replay recorded pooled margin Rank IC 0.154200; small score differences between runs are kept visible rather than blended into one number.
+The table distinguishes the pooled margin-based rank measure from the per-day Rank IC values. The earlier corrected CPU reference report recorded pooled margin Rank IC 0.154200. The A100 figure above comes from A100 run #13; the independent CPU replay is recorded separately below. Small score differences between runs are kept visible rather than blended into one number.
 
 ### Robustness checks
 
