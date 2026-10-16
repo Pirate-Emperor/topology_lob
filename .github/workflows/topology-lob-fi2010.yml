@@ -2,7 +2,7 @@ name: topology-lob-fi2010
 
 concurrency:
   group: topology-lob-fi2010-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   workflow_dispatch:
@@ -251,9 +251,11 @@ jobs:
           }, indent=2))
           PY
       - name: Upload benchmark outputs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: topology-lob-fi2010-results
+          if-no-files-found: warn
           path: |
             results/fi2010_benchmark.json
             results/fi2010_ablation.json

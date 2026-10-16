@@ -5,7 +5,7 @@ permissions:
 
 concurrency:
   group: topology-lob-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   push:

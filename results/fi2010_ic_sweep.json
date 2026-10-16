@@ -5,7 +5,7 @@
   "dataset_record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
   "seed": 2010,
   "train_events": 254750,
-  "sequence_jump_threshold_pct": 5.0,
+  "sequence_jump_threshold_pct": 5,
   "sequence_cuts": [
     {
       "file_index": 0,
@@ -137,12 +137,12 @@
   "stationarity": {
     "candidates": [
       {
-        "d": 0.0,
+        "d": 0,
         "adf_pvalue": 0.5261301200245369,
         "median_adf_pvalue": 0.5261301200245369,
         "segments_tested": 5,
         "segments_p_below_threshold": 0,
-        "corr_with_price": 1.0,
+        "corr_with_price": 1,
         "segment_adf_pvalues": [
           0.5261301200245369,
           0.696257008734027,
@@ -198,17 +198,17 @@
       },
       {
         "d": 0.4,
-        "adf_pvalue": 1.3136483579376646e-06,
-        "median_adf_pvalue": 1.3136483579376646e-06,
+        "adf_pvalue": 0.0000013136483579376646,
+        "median_adf_pvalue": 0.0000013136483579376646,
         "segments_tested": 5,
         "segments_p_below_threshold": 5,
         "corr_with_price": 0.9386685112243942,
         "segment_adf_pvalues": [
           0.0001001181083118795,
-          1.3136483579376646e-06,
-          3.1685283909246747e-07,
-          6.1293670798845e-09,
-          1.4394809250576672e-05
+          0.0000013136483579376646,
+          3.1685283909246747e-7,
+          6.1293670798845e-9,
+          0.000014394809250576672
         ]
       },
       {
@@ -243,62 +243,62 @@
       },
       {
         "d": 0.7000000000000001,
-        "adf_pvalue": 0.0,
-        "median_adf_pvalue": 0.0,
+        "adf_pvalue": 0,
+        "median_adf_pvalue": 0,
         "segments_tested": 5,
         "segments_p_below_threshold": 5,
         "corr_with_price": 0.34920259036650864,
         "segment_adf_pvalues": [
           8.258879297460874e-29,
-          0.0,
+          0,
           3.3357183542980896e-30,
-          0.0,
-          0.0
+          0,
+          0
         ]
       },
       {
         "d": 0.8,
-        "adf_pvalue": 0.0,
-        "median_adf_pvalue": 0.0,
+        "adf_pvalue": 0,
+        "median_adf_pvalue": 0,
         "segments_tested": 5,
         "segments_p_below_threshold": 5,
         "corr_with_price": 0.15347290245270304,
         "segment_adf_pvalues": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0,
+          0,
+          0
         ]
       },
       {
         "d": 0.9,
-        "adf_pvalue": 0.0,
-        "median_adf_pvalue": 0.0,
+        "adf_pvalue": 0,
+        "median_adf_pvalue": 0,
         "segments_tested": 5,
         "segments_p_below_threshold": 5,
         "corr_with_price": 0.052400911978303384,
         "segment_adf_pvalues": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0,
+          0,
+          0
         ]
       },
       {
-        "d": 1.0,
-        "adf_pvalue": 0.0,
-        "median_adf_pvalue": 0.0,
+        "d": 1,
+        "adf_pvalue": 0,
+        "median_adf_pvalue": 0,
         "segments_tested": 5,
         "segments_p_below_threshold": 5,
         "corr_with_price": 0.008022207353987277,
         "segment_adf_pvalues": [
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0,
+          0,
+          0
         ]
       }
     ],
@@ -340,9 +340,9 @@
     "n_clouds": 403,
     "radii": [
       0.5,
-      1.0,
+      1,
       1.5,
-      2.0,
+      2,
       2.5
     ],
     "feature_names": [
@@ -395,7 +395,7 @@
     "selection_metric": "Pearson IC on internal chronological validation",
     "candidates": [
       {
-        "threshold": 0.0,
+        "threshold": 0,
         "objective": "focal",
         "eligible": true,
         "validation": {
@@ -408,7 +408,7 @@
         }
       },
       {
-        "threshold": 0.0,
+        "threshold": 0,
         "objective": "logloss",
         "eligible": true,
         "validation": {
@@ -625,5 +625,5 @@
     "rank_ic_at_least_0_064": true,
     "warning": "These flags are measured on held-out data; the target value is never substituted into the results."
   },
-  "elapsed_seconds": -380582.440392198
+  "timing_note": "The saved duration was negative and is not reliable. Rerun the experiment to record a valid elapsed time."
 }

@@ -267,6 +267,9 @@ def run(args) -> dict:
         )
 
     selected_test = pooled["validation_selected"]
+    elapsed_seconds = float(time.perf_counter() - start)
+    if not np.isfinite(elapsed_seconds) or elapsed_seconds < 0:
+        raise RuntimeError(f"Invalid monotonic elapsed time: {elapsed_seconds!r}")
     result = {
         "data_source": "FI-2010 Decimal-Precision benchmark",
         "data_license": "CC BY 4.0; attribute Ntakaris et al. (2018)",
@@ -301,7 +304,7 @@ def run(args) -> dict:
             "rank_ic_at_least_0_064": bool(selected_test["rank_ic"] >= 0.064),
             "warning": "These flags are measured on held-out data; the target value is never substituted into the results.",
         },
-        "elapsed_seconds": float(time.perf_counter() - start),
+        "elapsed_seconds": elapsed_seconds,
     }
     return result
 
