@@ -49,7 +49,7 @@
 <circle cx="96" cy="949" r="4" fill="#16A085"/><text x="112" y="954" class="body">Regression: 32 candidates · 5 expanding train-only folds</text>
 <circle cx="96" cy="983" r="4" fill="#16A085"/><text x="112" y="988" class="body">Selected: 10-event horizon · microstructure + topology</text>
 <text x="832" y="775" class="cardtitle">How to read these results</text>
-<circle cx="836" cy="813" r="4" fill="#D97706"/><text x="852" y="818" class="body">A100 fixed Focal Pearson IC = 0.15194; Rank IC = 0.15401.</text>
+<circle cx="836" cy="813" r="4" fill="#D97706"/><text x="852" y="818" class="body">A100 fixed Focal Pearson IC = 0.15194; pooled margin Rank IC = 0.15401.</text>
 <circle cx="836" cy="847" r="4" fill="#D97706"/><text x="852" y="852" class="body">Regression: Pearson IC = 0.21495, Rank IC = 0.22810.</text>
 <circle cx="836" cy="881" r="4" fill="#D97706"/><text x="852" y="886" class="body">FI-2010 lacks usable ticker IDs; five sequences/file are inferred</text><text x="852" y="906" class="body">with a fixed, price-only 5% adjacent jump rule (16 cuts total).</text>
 <circle cx="836" cy="941" r="4" fill="#D97706"/><text x="852" y="946" class="body">This is a processed public benchmark, not the original raw exchange</text><text x="852" y="966" class="body">feed. It does not prove profitability or a live trading edge.</text>
