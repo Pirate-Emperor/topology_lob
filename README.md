@@ -22,16 +22,16 @@ This is a result on FI-2010 Decimal-Precision, a licensed but preprocessed publi
 
 ## FI-2010 A100 results
 
-The A100 workflow downloaded the FI-2010 Decimal-Precision files under the dataset's **CC BY 4.0** terms, checked the files, ran CUDA fractional differentiation and Giotto-TDA, completed the fixed Focal benchmark and additional model searches, and uploaded its full experiment bundle. [Workflow run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328) completed all 25 steps successfully.
+The A100 workflow downloaded the FI-2010 Decimal-Precision files under the dataset's **CC BY 4.0** terms, checked the files, ran CUDA fractional differentiation and Giotto-TDA, completed the fixed Focal benchmark and additional model searches, and uploaded its full experiment bundle. [Workflow run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328) completed all 25 steps successfully. The input includes 394,337 events: 254,750 training events and 139,587 events across the three held-out files.
 
 ### Fixed custom Focal Loss model
 
-| Held-out file | Rows | Pearson IC | Rank IC | ROC-AUC |
-|---|---:|---:|---:|---:|
-| Day 8 | 54,153 | 0.159861 | 0.162348 | 0.716959 |
-| Day 9 | 50,847 | 0.140476 | 0.144745 | 0.694573 |
-| Day 10 | 30,612 | 0.162768 | 0.159412 | 0.707603 |
-| **Pooled Pearson IC** | **135,612** | **0.151939** | — | — |
+| Held-out file | Rows | Pearson IC | Rank IC | ROC-AUC | PR-AUC | Log loss |
+|---|---:|---:|---:|---:|---:|---:|
+| Day 8 | 54,153 | 0.159861 | 0.162348 | 0.716959 | 0.242247 | 0.631763 |
+| Day 9 | 50,847 | 0.140476 | 0.144745 | 0.694573 | 0.224194 | 0.643348 |
+| Day 10 | 30,612 | 0.162768 | 0.159412 | 0.707603 | 0.249820 | 0.634142 |
+| **Pooled Pearson IC** | **135,612** | **0.151939** | — | — | — | — |
 
 Other measured scores for this A100 run:
 
@@ -94,11 +94,19 @@ This is a different objective from the custom Focal Loss classifier. The trainin
 
 Do not present these regression metrics as the Focal Loss result: the model objective is different.
 
+A separate fixed 32-configuration horizon/feature sweep observed a held-out Pearson IC of 0.237371 and Rank IC of 0.232550 for the 10-event microstructure-plus-FFD candidate. This is a descriptive-only test-set comparison, not a model-selection score; choosing a winner from this table would use held-out outcomes. The headline regressor above was selected using training-only walk-forward folds.
+
+![Walk-forward-selected return regressor](assets/figures/fi2010_return_regression_selection.png)
+
 ## Additional experiments and controls
 
 ### Feature ablation
 
 These are results from the independent CPU FI-2010 benchmark run. They show that the topology features help one tested configuration, while adding every feature does not improve every metric.
+
+![Feature and objective experiments](assets/figures/experimental_validation_dashboard.png)
+
+![Robustness checks](assets/figures/robustness_dashboard.png)
 
 | Feature set | Pearson IC | Rank IC | ROC-AUC |
 |---|---:|---:|---:|
@@ -109,11 +117,13 @@ These are results from the independent CPU FI-2010 benchmark run. They show that
 
 ### Objective and threshold control
 
-A training-only threshold/objective sweep selected standard log-loss with a zero return threshold. Its held-out Pearson IC was 0.195903 and Rank IC was 0.202290. This is a control model, not the custom Focal Loss result.
+A separate A100 training-only threshold/objective sweep selected standard log-loss with a return threshold of 0.0001. Its held-out Pearson IC was 0.196630 and Rank IC was 0.202747. This is a separate control, not the fixed custom Focal Loss result. The earlier CPU reference sweep selected standard log-loss with a zero return threshold and measured held-out Pearson IC 0.195903 and Rank IC 0.202290.
 
 ### Stationarity and sequence-boundary checks
 
-The fixed Focal experiment selected d = 0.2 using training-only stationarity checks. A separate order sweep found d = 0.3 had a lower median ADF p-value but a larger change to the original price series, so the selected order depends on the stationarity-versus-price-retention trade-off. FI-2010 has no usable ticker IDs or exchange timestamps. The pipeline therefore uses a fixed, price-only **5% adjacent mid-price jump rule** to infer five sequences per file and 16 cuts total. Features and forward-return labels restart at those boundaries, with a purge gap at sequence edges. These are inferred boundaries, not source-provided stock IDs.
+The fixed Focal experiment selected d = 0.2 using training-only stationarity checks: the median ADF p-value was 0.015357, all 5 of 5 tested training prefixes were below 0.05, and correlation with the original price series was 0.995689. A separate training-prefix sweep selected d = 0.3 by median ADF p-value (0.002453; 5 of 5 prefixes below 0.05) with price correlation 0.979516. This shows the trade-off between stationarity and retaining the original price series. FI-2010 has no usable ticker IDs or exchange timestamps. The pipeline therefore uses a fixed, price-only **5% adjacent mid-price jump rule** to infer five sequences per file and 16 cuts total. Features and forward-return labels restart at those boundaries, with a purge gap at sequence edges. These are inferred boundaries, not source-provided stock IDs.
+
+![FI-2010 data diagnostics](assets/figures/data_diagnostics_dashboard.png)
 
 ### Independent CPU replay
 
@@ -121,18 +131,18 @@ The independent [CPU replay run #169](https://github.com/SpryzenHell/topology_lo
 
 ## CI and test results
 
-The full supported-environment CI run [#198](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894156) passed:
+The latest full supported-environment CI run [#199](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918) passed:
 
-- **55 Python tests** (13 non-blocking library warnings).
+- **56 Python tests** (13 non-blocking library warnings).
 - Package build and a synthetic end-to-end demo requiring Giotto-TDA.
 - Extended experiment generation and result validation: five ablation variants, six synthetic seeds, five chronological walk-forward folds, and a label-permutation placebo.
 - Focal Loss gradient and Hessian finite-difference checks, malformed-book rejection, common-price translation invariance, and causal fractional-differentiation prefix checks.
-- C++ CPU build and benchmark; the 200,000-event benchmark measured about **6.05 million events/s**.
+- C++ CPU build and benchmark; the 200,000-event benchmark measured about **5.24 million events/s** on this run (hosted-runner timings vary).
 - Raster image and SVG dashboard checks, including dimensions, readable labels, report titles and descriptions, and working README image links.
 
 The CI synthetic result uses 6,000 generated L2 events, a 20-event purge gap, and 5,735 model rows. It measured Pearson IC 0.073292 for Focal Loss and 0.095368 for standard log-loss. These are engineering checks on synthetic data, not market results.
 
-[Full CI validation record](results/CI_VALIDATION.md) · [A100 validation report](results/A100_VALIDATION.md) · [Resume-target validation](results/RESUME_TARGET_VALIDATION.md) · [FI-2010 details](results/FI2010_VALIDATION.md) · [Price-boundary diagnostics](results/FI2010_BOUNDARY_DIAGNOSTICS.md) · [Machine-readable A100 summary](results/a100_fi2010_validation_summary.json).
+[Full CI validation record](results/CI_VALIDATION.md) · [Latest CI artifact 12038625972](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918/artifacts/12038625972) · [A100 validation report](results/A100_VALIDATION.md) · [Resume-target validation](results/RESUME_TARGET_VALIDATION.md) · [FI-2010 details](results/FI2010_VALIDATION.md) · [Price-boundary diagnostics](results/FI2010_BOUNDARY_DIAGNOSTICS.md) · [Machine-readable A100 summary](results/a100_fi2010_validation_summary.json).
 
 ## Dataset and source
 
