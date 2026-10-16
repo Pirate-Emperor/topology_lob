@@ -240,11 +240,11 @@ The later replay passed the data checks, TDA benchmark, ablation, objective/thre
 
 ## Validation and test coverage
 
-The latest full CI run, [run #199](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918), passed all three jobs. It ran the code and tests at commit `2a0d05814f8b02c421aceacb81af8b6c5d3ef6b8`; the later edits in this report are documentation and figure changes. The updated chart and its checks are included in the current README work and are being tested by the follow-on CI triggered by this commit.
+The latest full CI run, [run #204](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175), passed all three jobs. It validated the plain summary plot, expanded README, new plot/content checks, package build, extended experiment generation, C++ benchmark, and report-image refresh. The tested workflow commit was `06646b30ee6da9dc19a208fc5d6466d00b79b40c`; the only subsequent code-tree change was a documentation wording correction for the actual CUDA CLI options.
 
 Recorded CI results:
 
-- **56 Python tests passed** in 3.92 seconds, with 13 non-blocking dependency warnings.
+- **58 Python tests passed** in 5.69 seconds, with 13 non-blocking dependency warnings.
 - Python package build and wheel/source archive check passed.
 - Synthetic end-to-end demo with Giotto-TDA required and verified passed.
 - Extended evidence generation and validation passed.
@@ -271,9 +271,9 @@ The extended evidence run also used five ablation variants, six deterministic se
 
 ### C++ CPU benchmark
 
-The latest recorded CI timing for 200,000 events at width 256 and (d=0.45) was about 5.24 million events/s, with checksum 0.390931. A previous hosted-runner result was about 6.05 million events/s. Hosted CPU timing varies, and the C++ benchmark is not directly comparable to the Python/CUDA FFD result because the implementations and timing paths differ.
+The latest recorded CI timing for 200,000 events at width 256 and (d=0.45) was 5.241 million events/s, with checksum 0.390931. An earlier hosted-runner result measured about 6.05 million events/s. Hosted CPU timing varies, and the C++ benchmark is not directly comparable to the Python/CUDA FFD result because the implementations and timing paths differ.
 
-The latest CI evidence bundle is [artifact 12038625972](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918/artifacts/12038625972).
+The latest CI evidence bundle is [artifact 12046718253](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175/artifacts/12046718253).
 
 ## Quick start
 
