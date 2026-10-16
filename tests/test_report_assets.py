@@ -22,15 +22,20 @@ def test_simple_summary_plot_is_valid_and_uses_measured_values() -> None:
         if node.tag.endswith("text")
     ]
     joined = " ".join(texts)
+    svg_source = SUMMARY_PLOT.read_text(encoding="utf-8")
     assert any(node.tag.endswith("title") for node in root.iter())
     assert any(node.tag.endswith("desc") for node in root.iter())
+    assert 'fill="white"' in svg_source
+    assert "#1f77b4" in svg_source
+    assert "#ff7f0e" in svg_source
+    assert "#e6e6e6" in svg_source
     for label in (
         "Pearson IC",
         "Rank IC",
         "Day 8",
         "Day 9",
         "Day 10",
-        "Target IC = 0.064",
+        "Target = 0.064",
         "pooled Pearson IC = 0.151939",
         "0.1599",
         "0.1623",
