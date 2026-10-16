@@ -1097,5 +1097,5 @@
   "topology_clouds": 383,
   "ffd_backend": "cpu-fallback:no-cuda",
   "gpu_used": false,
-  "elapsed_seconds": 101.49926137699998
+  "elapsed_seconds": 102.032175553
 }
