@@ -129,7 +129,9 @@ The fixed Focal experiment selected d = 0.2 using training-only stationarity che
 
 ### Independent CPU replay
 
-The independent [CPU replay run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 workflow steps, including data/license checks, TDA, ablations, IC/objective sweeps, model selection, and result checks. It reproduced the main Focal Pearson IC and selected return-regression IC values to the recorded precision. It used CPU FFD, so it is not a second A100 throughput measurement. [CPU replay artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
+The independent [CPU replay run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 workflow steps, including data/license checks, TDA, ablations, IC/objective sweeps, model selection, and result checks. It reproduced the main Focal Pearson IC and selected return-regression IC values to the recorded precision. [CPU replay artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
+
+A second independent CPU rerun, [run #170](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885), also completed successfully, including five-fold regression selection, final metric checks, artifact upload, and result publication. It reproduced the fixed Focal pooled Pearson IC **0.151939** and walk-forward-selected regression ICs **0.214955 Pearson / 0.228103 Rank**. The new result bundle is [artifact 12039460485](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483885/artifacts/12039460485). Both CPU runs use CPU FFD; neither is a second A100 throughput measurement.
 
 ![CPU FI-2010 reference benchmark](assets/figures/fi2010_validation_dashboard.png)
 
