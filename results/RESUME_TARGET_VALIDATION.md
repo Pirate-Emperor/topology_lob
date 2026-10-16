@@ -1,4 +1,4 @@
-# Resume-target validation — corrected FI-2010 run
+# Resume-target validation — corrected FI-2010 CPU and A100 runs
 
 **Scope:** test the stated Topology LOB objectives against a licensed public limit-order-book benchmark. Pearson IC and Rank IC are both reported. FI-2010 is a proxy for the original raw-feed experiment, not a substitute for it.
 
@@ -33,11 +33,7 @@ Feature ablation confirms the topology path was exercised, but not that every fe
 
 ## Target 2 — GPU fractional differentiation
 
-**Result: GPU kernel parity was previously verified on A100 hardware; the corrected FI-2010 score in this record used CPU.**
-
-The prior A100 kernel check reported maximum absolute difference of approximately 2.22e-15 between CUDA and CPU output. A separate older A100 demo reported gpu_used=true and numba-cuda, but it preceded the stock-sequence correction.
-
-The corrected FI-2010 benchmark reports gpu_used=false and cpu-fallback:no-cuda because it ran on a hosted CPU runner. Therefore the results below validate the corrected split and model on CPU, not the exact corrected benchmark on A100. The separate A100 workflow requires CUDA, checks GPU hardware and parity, and reruns FI-2010.
+**Result: met on the corrected A100 FI-2010 run.** [Workflow run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328) completed all 25 checks on `integrator-1`, required CUDA, and confirmed `gpu_used=true` with backend `numba-cuda`. The 200,000-event FFD test measured 61.34 million events/s against 0.415 million events/s on CPU (147.83×) with maximum CPU/CUDA absolute error 2.22 × 10⁻¹⁵. The full run is preserved in [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300).
 
 ## Target 3 — Out-of-sample Information Coefficient of 0.064
 
@@ -78,11 +74,11 @@ An earlier setup let long-horizon forward returns cross large price-scale jumps 
 | Objective | Status |
 |---|---|
 | Betti-number liquidity features | **Met on FI-2010**: Giotto-TDA H0/H1 features were computed |
-| GPU fractional differentiation | **Kernel parity verified in a prior A100 run**; corrected FI-2010 A100 rerun still pending |
-| Custom Focal Loss out-of-sample IC ≥ 0.064 | **Met on corrected FI-2010 CPU run**: Pearson IC 0.151940; Rank IC 0.154200 |
+| GPU fractional differentiation | **Met on corrected A100 run**: numba-cuda, 147.83× in the measured FFD micro-benchmark, max error 2.22 × 10⁻¹⁵ |
+| Custom Focal Loss out-of-sample IC ≥ 0.064 | **Met on corrected A100 run**: pooled Pearson IC 0.151939; pooled margin Rank IC 0.154008; all three held-out days pass both IC thresholds |
 | Original timestamped raw-feed claim | **Not independently reproduced here**: FI-2010 is preprocessed and lacks usable exchange timestamps/ticker IDs |
 
-The corrected FI-2010 benchmark meets the numeric target. It does not establish that the original historical raw-feed experiment was reproduced exactly. The A100 workflow must complete on the corrected code before these exact scores can be described as GPU-measured.
+The corrected FI-2010 benchmark meets the numeric target on A100. It does not establish that the original historical raw-feed experiment was reproduced exactly or prove profitability. FI-2010 has no usable ticker IDs or exchange timestamps, so a fixed price-jump rule infers sequence boundaries.
 
 ## Reproduction
 
@@ -103,4 +99,9 @@ python scripts/run_fi2010_benchmark.py \
 
 Add --require-cuda on a supported CUDA device. A run counts as GPU evidence only if it reports gpu_used=true and fractional_diff_backend=numba-cuda.
 
-Full JSON experiment outputs were uploaded as [Actions artifact 11986421250](https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730/artifacts/11986421250).
+Full A100 JSON experiment outputs are in [Actions artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300); the corrected CPU bundle is in [artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876). See also [the A100 validation report](A100_VALIDATION.md).
+
+
+## A100 fixed-model robustness
+
+The fixed custom Focal result had pooled Pearson IC 0.151939 and 95% moving-block bootstrap interval [0.135663, 0.167179] (500 resamples; block size 500). All 15 inferred held-out sequences had positive Pearson IC, and a 499-replicate within-sequence circular-shift placebo gave two-sided p = 0.002. A separate training-only 5-fold XGBoost return regression selected a 10-event horizon and microstructure + topology features; its held-out Pearson IC was 0.214955 and Rank IC 0.228103. It is a different objective from Focal Loss.
