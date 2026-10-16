@@ -1,6 +1,6 @@
 # FI-2010 benchmark validation — corrected sequence split
 
-This report summarizes [GitHub Actions run 38760696730](https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730). The download, tests, experiments, validation checks, and artifact upload succeeded. The final automatic commit step alone failed because another workflow updated main while the results were being published; artifact **11986421250** contains the full experiment JSON and result image.
+This report records both the corrected CPU experiment ([run #167](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026)) and the corrected A100 experiment ([run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328)). The complete A100 JSON and images are in [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300); the CPU bundle is in [artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
 
 ## Data checks
 
@@ -45,10 +45,17 @@ The fixed Focal scores above are the main comparison for the custom-objective ta
 
 ## GPU status
 
-A prior A100 kernel test matched CPU FFD to about 2.22e-15 maximum absolute error. This corrected FI-2010 run used cpu-fallback:no-cuda. The updated A100 workflow reruns the corrected sequence-safe pipeline while requiring CUDA; until that run completes, do not describe these particular FI-2010 scores as measured on GPU.
+The corrected FI-2010 run completed on A100 in [integrator run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328). It reported `gpu_used=true`, FFD backend `numba-cuda`, and Giotto-TDA. The 200,000-event FFD benchmark processed about 61.34 million events/s on CUDA versus 0.415 million events/s on CPU (147.83× in this measured run); maximum CPU/CUDA absolute error was 2.22 × 10⁻¹⁵. Timing was one warm-up plus three timed end-to-end calls including transfers.
+
+For the fixed custom Focal result, pooled Pearson IC was 0.151939 and each of the three held-out files exceeded 0.064. See the [full A100 report](A100_VALIDATION.md) and [dashboard](../assets/figures/a100_fi2010_validation_dashboard.svg).
 
 ## Boundary diagnostic
 
 The earlier pooled-series setup created extreme long-horizon returns across apparent stock transitions. For held-out files, the absolute-return 99th percentile at a 1,000-event horizon was about 101.7%–103.3% before sequence cuts and 1.35%–1.80% afterwards. Returns of magnitude at least 10% fell from 4,000 to zero per file. See [the full boundary diagnostic](FI2010_BOUNDARY_DIAGNOSTICS.md).
 
 Full experiment JSON outputs are in [Actions artifact 11986421250](https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730/artifacts/11986421250). Data attribution: Ntakaris et al. (2018), [official FI-2010 record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649), CC BY 4.0.
+
+
+## Corrected A100 result
+
+The exact corrected sequence-safe pipeline passed all 25 workflow steps. The fixed 10-event Focal model reached pooled Pearson IC 0.151939, with 0.159861 / 0.140476 / 0.162768 on days 8–10. The separately selected continuous-return model passed five train-only chronological folds and reached held-out Pearson IC 0.214955 and Rank IC 0.228103. These are separate objectives and should remain labelled separately. The preprocessed dataset and inferred stock boundaries limit what can be claimed about the original raw-feed experiment.
