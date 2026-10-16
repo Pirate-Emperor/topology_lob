@@ -57,3 +57,12 @@ def test_project_author_is_pirate_emperor() -> None:
     assert 'authors = [{ name = "Pirate-Emperor" }]' in pyproject
     author_section = readme.split("## Author", 1)[1].split("## ", 1)[0]
     assert "**Pirate-Emperor**" in author_section
+
+
+def test_readme_reports_measured_focal_target_and_data_scope() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert "0.151939 pooled Pearson IC" in readme
+    assert "| Pooled margin Rank IC | 0.154008 |" in readme
+    assert "not a measured result for the runs below" not in readme
+    assert "These are engineering checks on synthetic data, not market results." in readme
+    assert "does not prove profitability" in readme
