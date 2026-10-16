@@ -259,16 +259,15 @@ The later replay passed the data checks, TDA benchmark, ablation, objective/thre
 
 ## Validation and test coverage
 
-The latest full CI run, [run #208](https://github.com/SpryzenHell/topology_lob/actions/runs/38906104659), passed all three jobs. It validated the plain summary plot, expanded README, new plot/content checks, package build, extended experiment generation, C++ benchmark, and report-image refresh. The tested workflow commit was `a7811878632c62c75c25886a1e0a4a30667c293b`; the only subsequent code-tree change was a documentation wording correction for the actual CUDA CLI options.
+The latest full CI run, [run #215](https://github.com/SpryzenHell/topology_lob/actions/runs/38915647841), passed all three jobs. It generated the seven README plots, ran all test and numerical checks, built the package and C++ benchmark, and validated then committed the plot assets.
 
 Recorded CI results:
 
-- **58 Python tests passed** in 3.86 seconds, with 13 non-blocking dependency warnings.
-- Python package build and wheel/source archive check passed.
-- Synthetic end-to-end demo with Giotto-TDA required and verified passed.
-- Extended evidence generation and validation passed.
-- C++ CPU build and benchmark passed.
-- Image validation passed for the dashboard canvas, title, description, required labels, raster images, and local README image links.
+- **58 Python tests passed** in 3.11 seconds, with 13 non-blocking dependency warnings.
+- All seven gallery SVGs were generated from the checked-in A100 and CPU result files.
+- Python package build, synthetic Giotto-TDA demo, extended experiment generation, and C++ build/benchmark passed.
+- SVG asset validation reported `Asset validation: PASS`; all seven gallery plots passed their required-label checks.
+- All seven HTML image links in the README resolve to files in the repository.
 
 The test suite covers malformed L2 input rejection, Focal Loss gradient and Hessian numerical checks, common-price translation invariance, causal fractional-differentiation prefix behaviour, timing validation, FI-2010 boundary handling, selector behaviour, required output files, author metadata, the removed `main.png`, and the single retained code-license file.
 
@@ -290,9 +289,9 @@ The extended evidence run also used five ablation variants, six deterministic se
 
 ### C++ CPU benchmark
 
-The latest recorded CI timing for 200,000 events at width 256 and (d=0.45) was 5.220 million events/s, with checksum 0.390931. An earlier hosted-runner result measured about 6.05 million events/s. Hosted CPU timing varies, and the C++ benchmark is not directly comparable to the Python/CUDA FFD result because the implementations and timing paths differ.
+The latest CI run measured 4.490 million events/s for 200,000 events at width 256 and (d=0.45), with checksum 0.390931. Hosted CPU timings vary between runs; this is a micro-benchmark, not trading latency. Hosted CPU timing varies, and the C++ benchmark is not directly comparable to the Python/CUDA FFD result because the implementations and timing paths differ.
 
-The latest CI evidence bundle is [artifact 12047459548](https://github.com/SpryzenHell/topology_lob/actions/runs/38906104659/artifacts/12047459548).
+The latest CI evidence bundle is [artifact 12052800538](https://github.com/SpryzenHell/topology_lob/actions/runs/38915647841/artifacts/12052800538).
 
 ## Quick start
 
