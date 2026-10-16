@@ -53,7 +53,7 @@ The fixed Focal Loss Pearson IC exceeds the **0.064** target on all three held-o
 
 A training-only threshold/objective sweep selected standard log-loss with a zero return threshold. Its held-out Pearson IC was 0.19590 and Rank IC was 0.20229. This is a separate control, not the custom Focal result. A separate continuous-return XGBoost regressor, selected using five chronological folds inside the training sequences, reached Pearson IC 0.21495 and Rank IC 0.22830. This is also a different objective and is reported separately.
 
-The corrected CPU rerun completed in [Actions run #167](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026). The run passed its unit tests, real-data TDA and feature checks, training-only sweeps, and final report validation. Its fresh result files are available in [the run's experiment artifact](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
+The independent CPU replay completed successfully in [Actions run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177), including data/license checks, TDA, ablation, threshold sweeps and five-fold model selection. It reproduced the fixed Focal IC and selected return-regression IC to the reported precision. The full CPU result bundle is [artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
 
 ![Walk-forward-selected return regression](assets/figures/fi2010_return_regression_selection.png)
 
@@ -67,7 +67,7 @@ The dataset is under **CC BY 4.0**. Credit Ntakaris et al. (2018), *Journal of F
 
 ![A100 FI-2010 validation dashboard](assets/figures/a100_fi2010_validation_dashboard.svg)
 
-The corrected A100 workflow completed all 25 steps in [run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328). Its full JSON, CUDA benchmark, Focal horizon sweep, regression sweep and walk-forward selection image are preserved in [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300). See the [A100 validation report](results/A100_VALIDATION.md), [resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 experiment details](results/FI2010_VALIDATION.md), and [boundary diagnostic](results/FI2010_BOUNDARY_DIAGNOSTICS.md). The earlier CPU experiment files remain in [artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
+The corrected A100 workflow completed all 25 steps in [run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328). Its full JSON, CUDA benchmark, Focal horizon sweep, regression sweep and walk-forward selection image are preserved in [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300). See the [A100 validation report](results/A100_VALIDATION.md), [resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 experiment details](results/FI2010_VALIDATION.md), and [boundary diagnostic](results/FI2010_BOUNDARY_DIAGNOSTICS.md). The independent CPU replay bundle is [artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
 
 ## Quick start
 

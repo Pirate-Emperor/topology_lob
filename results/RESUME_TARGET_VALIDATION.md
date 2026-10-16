@@ -99,7 +99,7 @@ python scripts/run_fi2010_benchmark.py \
 
 Add --require-cuda on a supported CUDA device. A run counts as GPU evidence only if it reports gpu_used=true and fractional_diff_backend=numba-cuda.
 
-Full A100 JSON experiment outputs are in [Actions artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300); the corrected CPU bundle is in [artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876). See also [the A100 validation report](A100_VALIDATION.md).
+Full A100 JSON experiment outputs are in [Actions artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300); the independent CPU replay is in [artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429). The CPU replay matched the fixed Focal and selected regression ICs to the recorded precision but used CPU FFD. See also [the A100 validation report](A100_VALIDATION.md).
 
 
 ## A100 fixed-model robustness

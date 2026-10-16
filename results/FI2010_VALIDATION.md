@@ -1,6 +1,6 @@
 # FI-2010 benchmark validation — corrected sequence split
 
-This report records both the corrected CPU experiment ([run #167](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026)) and the corrected A100 experiment ([run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328)). The complete A100 JSON and images are in [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300); the CPU bundle is in [artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
+This report records the corrected A100 experiment ([run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328)) and the independent CPU replay ([run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177)). The complete A100 JSON and images are in [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300); the latest CPU bundle is [artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).
 
 ## Data checks
 
@@ -59,3 +59,8 @@ Full experiment JSON outputs are in [Actions artifact 11986421250](https://githu
 ## Corrected A100 result
 
 The exact corrected sequence-safe pipeline passed all 25 workflow steps. The fixed 10-event Focal model reached pooled Pearson IC 0.151939, with 0.159861 / 0.140476 / 0.162768 on days 8–10. The separately selected continuous-return model passed five train-only chronological folds and reached held-out Pearson IC 0.214955 and Rank IC 0.228103. These are separate objectives and should remain labelled separately. The preprocessed dataset and inferred stock boundaries limit what can be claimed about the original raw-feed experiment.
+
+
+## Independent CPU replay
+
+A later CPU run completed all 23 workflow steps successfully. It reproduced the fixed Focal pooled Pearson IC (0.151939), per-day Focal ICs (0.159861 / 0.140476 / 0.162768), and selected continuous-return regression ICs (Pearson 0.214955; Rank 0.228103) to the precision recorded in the A100 artifact. This confirms the score calculations and train-only selection are reproducible. It used CPU FFD, so the CUDA speed and parity claims remain based on A100 run #13. See [run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) and [artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429).

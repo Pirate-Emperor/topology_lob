@@ -91,3 +91,8 @@ To reproduce the real-data run, follow [the run guide](../docs/REAL_DATA_RUN.md)
 **Scope note:** FI-2010 is preprocessed benchmark data, not the original timestamped raw exchange feed. The target is met on this public proxy; this does not independently reproduce the original historical raw-feed experiment or prove a live trading edge.
 
 Maintainer: Pirate-Emperor
+
+
+## Independent CPU replay
+
+[CPU workflow run #169](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177) passed all 23 steps, then published [artifact 12035175429](https://github.com/SpryzenHell/topology_lob/actions/runs/38873894177/artifacts/12035175429). It reproduced the fixed Focal pooled Pearson IC (0.151939), the day-level values, and the selected return-regression Pearson/Rank IC (0.214955 / 0.228103) to the recorded precision. That run used CPU FFD, so the GPU throughput and CPU/CUDA parity figures in this report are from the A100 workflow only.
