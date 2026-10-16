@@ -87,6 +87,31 @@ def check(path: Path, expected_size: tuple[int, int] | None) -> dict:
     }
 
 
+GALLERY_SVG_EXPECTED = {
+    "figures/readme_daily_ic.svg": (
+        "Pearson IC", "Rank IC", "Target = 0.064", "Day 8", "Day 9", "Day 10",
+    ),
+    "figures/readme_daily_auc.svg": (
+        "ROC-AUC", "Chance reference = 0.50", "Day 8", "Day 9", "Day 10",
+    ),
+    "figures/readme_ffd_throughput.svg": (
+        "Fractional-differentiation throughput", "CPU", "A100 CUDA", "147.8",
+    ),
+    "figures/readme_feature_ablation.svg": (
+        "Feature ablation", "Microstructure", "Micro + FFD", "Micro + topology", "Full stack",
+    ),
+    "figures/readme_robustness.svg": (
+        "Moving-block bootstrap interval", "Pooled Pearson IC", "Target = 0.064", "95% CI",
+    ),
+    "figures/readme_return_regression.svg": (
+        "Walk-forward selected return regressor", "Day 8", "Day 9", "Day 10",
+    ),
+    "figures/readme_stationarity.svg": (
+        "Median ADF p-value", "Correlation with original price", "d = 0.2", "d = 0.3",
+    ),
+}
+
+
 def main() -> None:
     failures = []
     for relative, expected in EXPECTED.items():
@@ -112,6 +137,27 @@ def main() -> None:
         print(f"assets/{relative}", result)
         if not result["size_ok"] or not result["title_and_description"] or not result["required_labels_present"] or result["text_nodes"] < 35:
             failures.append(f"bad SVG dashboard: assets/{relative}: {result}")
+
+    for relative, required_labels in GALLERY_SVG_EXPECTED.items():
+        path = ASSETS / relative
+        if not path.is_file():
+            failures.append(f"missing README gallery plot: assets/{relative}")
+            continue
+        try:
+            root = ET.parse(path).getroot()
+        except (ET.ParseError, OSError) as exc:
+            failures.append(f"bad gallery SVG: assets/{relative}: {exc}")
+            continue
+        text_nodes = [
+            "".join(node.itertext()).strip()
+            for node in root.iter()
+            if node.tag.endswith("text")
+        ]
+        joined = " ".join(text_nodes)
+        passed = root.tag.endswith("svg") and all(label in joined for label in required_labels)
+        print(f"assets/{relative}", {"valid_svg": root.tag.endswith("svg"), "text_nodes": len(text_nodes), "required_labels_present": passed})
+        if not passed or len(text_nodes) < 8:
+            failures.append(f"bad README gallery plot: assets/{relative}")
 
     for path in (ROOT / "main.png", ASSETS / "main.png"):
         if path.exists():
