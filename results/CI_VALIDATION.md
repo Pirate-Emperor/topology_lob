@@ -1,42 +1,37 @@
 # Supported-environment CI validation
 
-The latest full CI run, [GitHub Actions run #199](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918), passed on the commit that added a regression test for the README's measured IC claims. All Python, package-build, extended-experiment, and image-refresh jobs succeeded. The current source and test files have not changed since that run; later commits were documentation-only.
+The latest full CI run, [GitHub Actions run #204](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175), passed all three jobs on 16 October 2026. It checked the plain benchmark plot and expanded README along with the package, numerical, integration, C++, and image tests.
 
-## Execution environment
+## Test and build results
 
-| Item | Value |
+| Check | Result |
 |---|---|
-| Python | 3.11.17 |
-| NumPy | 1.26.4 |
-| pandas | 2.2.2 |
-| SciPy | 1.11.4 |
-| scikit-learn | 1.3.2 |
-| statsmodels | 0.14.4 |
-| XGBoost | 2.1.4 |
-| imbalanced-learn | 0.12.4 |
-| Numba | 0.59.1 |
-| Matplotlib | 3.8.4 |
-| Giotto-TDA | 0.6.2 |
-| Pillow | 12.3.0 |
-| pytest | 8.4.2 |
+| Python unit and integration tests | **58 passed in 5.69 seconds** |
+| Non-blocking dependency warnings | 13 |
+| Python package build | Passed |
+| Synthetic end-to-end demo with Giotto-TDA required | Passed |
+| TDA backend assertion | Passed |
+| Extended numerical/data evidence | Passed |
+| Evidence output validation | Passed |
+| Evidence artifact upload | Passed |
+| C++ CPU build | Passed |
+| C++ fractional-differentiation benchmark | Passed |
+| SVG/raster asset validation | Passed |
+| Analysis-image refresh | Passed |
 
-## Test and integration gates
+The workflow tested commit `06646b30ee6da9dc19a208fc5d6466d00b79b40c`. The only subsequent code-tree change was README wording that clarifies which CLI command supports `--require-cuda`; Python code and tests were unchanged.
 
-- Unit and integration tests: **56 passed in 3.92 seconds; 13 warnings**.
-- Python package build and wheel/source archive checks: **passed**.
-- Synthetic end-to-end demo requiring Giotto-TDA: **passed**.
-- Full TDA backend assertion: **passed**.
-- Extended evidence generation and output validation: **passed**.
-- Numerical checks for the custom Focal Loss gradient and Hessian: **passed**.
-- C++ CPU build and benchmark: **passed**.
-- Raster and SVG figure validation, required dashboard labels, title/description, and README image links: **passed**.
-- Refresh of readable report images: **passed**.
+## Test coverage
 
-The extended evidence run checks five ablation variants, six synthetic seeds, five chronological walk-forward folds, a label-permutation placebo, malformed L2 rejection, common-price translation invariance, and causal fractional-differentiation prefix invariance.
+The suite checks malformed L2 input, Focal Loss gradient and Hessian values against finite differences, common-price translation invariance, causal fractional-differentiation prefix behaviour, FI-2010 boundary handling, model-selection helpers, sweep timing, report images, and README/repository requirements.
 
-## Supported-environment synthetic result
+The new plot tests validate that `assets/figures/benchmark_summary.svg` is well-formed SVG, carries the measured per-day IC values and target line, shows CPU/A100 throughput, and includes a title and description. Other tests confirm local README image links resolve, `main.png` stays absent, only one code-license file remains, and author metadata reads `Pirate-Emperor`.
 
-The demo uses 6,000 generated L2 events and a chronological holdout with a purge gap. The saved example has 5,735 model rows, 3,994 training rows and 1,721 test rows. The selected fractional-differencing order is d = 0.1, with Giotto-TDA enabled.
+The extended synthetic evidence run includes five ablation variants, six deterministic seeds, five chronological walk-forward folds, a label-permutation placebo, malformed-book checks, translation invariance, and causal FFD-prefix checks. Custom Focal gradient and Hessian absolute errors were approximately `7.41e-12` and `1.06e-11`; translation and causal-prefix checks had zero recorded error.
+
+## Synthetic engineering result
+
+The CI demo uses 6,000 generated events, a chronological holdout, a 20-event purge gap, and 5,735 model rows (3,994 train and 1,721 test).
 
 | Metric | Focal Loss | Log-loss control |
 |---|---:|---:|
@@ -46,27 +41,30 @@ The demo uses 6,000 generated L2 events and a chronological holdout with a purge
 | PR-AUC | 0.244568 | 0.242809 |
 | Log loss | 0.516779 | 0.561761 |
 
-These are engineering results on synthetic data, not market results and not evidence of the FI-2010 target.
+These are engineering checks on synthetic data. They are not FI-2010 results and do not establish that the real-data IC target has been met.
 
-## Standalone C++ benchmark
+## C++ CPU benchmark
 
-The supported CI runner measured:
+The latest CI run recorded the following for 200,000 events, width 256, and `d=0.45`:
 
-~~~text
+```text
 events=200000 width=256 d=0.450000
-elapsed_s=0.038120
-events_per_s=5239926.706871
+elapsed_s=0.038110
+events_per_s=5241207.866915
 checksum=0.390931
-~~~
+```
 
-This is a CPU micro-benchmark of the standalone implementation, not an end-to-end trading-latency measurement. Runtime varies with the hosted runner.
+This hosted CPU micro-benchmark varies between runners and is not full-application or trading latency.
 
-## Dashboard and report checks
+## Plot and asset checks
 
-The A100 dashboard passed the asset validator with a 1600 × 1120 canvas, viewBox 0 0 1600 1120, 63 text nodes, a title and description, and all required labels present. The report uses high-contrast text rather than a terminal capture. The image-refresh job completed successfully.
+The README summary plot is a 1400 × 650 SVG with labelled daily Pearson/Rank IC bars, a dashed 0.064 reference line, and CPU/A100 FFD throughput. The detailed A100 dashboard remains available as a secondary figure. Asset validation completed with `Asset validation: PASS`; the refresh job found no generated image changes to commit.
 
-## CI artifact
+## Artifacts
 
-The run uploaded [extended evidence artifact 12038625972](https://github.com/SpryzenHell/topology_lob/actions/runs/38883483918/artifacts/12038625972). It contains synthetic experiment JSON, figures, and the readable report preview.
+- [Latest extended-evidence artifact 12046718253](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175/artifacts/12046718253)
+- [Latest full CI run #204](https://github.com/SpryzenHell/topology_lob/actions/runs/38903367175)
+- [A100 FI-2010 validation report](A100_VALIDATION.md)
+- [FI-2010 validation report](FI2010_VALIDATION.md)
 
-The independent real-data FI-2010 workflow is tracked separately; its result should be considered complete only after all benchmark, sweep, validation, artifact-upload, and publish steps finish.
+Maintainer: Pirate-Emperor
