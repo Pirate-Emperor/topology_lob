@@ -6,73 +6,82 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DASHBOARD = ROOT / "assets" / "figures" / "a100_fi2010_validation_dashboard.svg"
-SUMMARY_PLOT = ROOT / "assets" / "figures" / "benchmark_summary.svg"
+GALLERY = {
+    "readme_daily_ic.svg": (
+        "Fixed Focal Loss: daily held-out IC", "Pearson IC", "Rank IC",
+        "Target = 0.064", "Day 8", "Day 9", "Day 10",
+    ),
+    "readme_daily_auc.svg": (
+        "Fixed Focal Loss: daily ROC-AUC", "ROC-AUC",
+        "Chance reference = 0.50", "Day 8", "Day 9", "Day 10",
+    ),
+    "readme_ffd_throughput.svg": (
+        "Fractional-differentiation throughput", "CPU", "A100 CUDA",
+        "Million events per second", "147.8", 
+    ),
+    "readme_feature_ablation.svg": (
+        "Feature ablation", "Microstructure", "Micro + FFD",
+        "Micro + topology", "Full stack", "Pearson IC", "Rank IC",
+    ),
+    "readme_robustness.svg": (
+        "Moving-block bootstrap interval", "Pooled Pearson IC",
+        "Target = 0.064", "95% CI",
+    ),
+    "readme_return_regression.svg": (
+        "Walk-forward selected return regressor", "Day 8", "Day 9",
+        "Day 10", "Pearson IC", "Rank IC",
+    ),
+    "readme_stationarity.svg": (
+        "Median ADF p-value", "Correlation with original price",
+        "d = 0.2", "d = 0.3",
+    ),
+}
 
 
-def test_simple_summary_plot_is_valid_and_uses_measured_values() -> None:
-    root = ET.parse(SUMMARY_PLOT).getroot()
-    assert root.tag.endswith("svg")
-    assert root.attrib["width"] == "1000"
-    assert root.attrib["height"] == "600"
-    assert root.attrib["viewBox"] == "0 0 1000 600"
-
-    texts = [
+def text_from_svg(path: Path) -> tuple[ET.Element, str]:
+    root = ET.parse(path).getroot()
+    text_nodes = [
         "".join(node.itertext()).strip()
         for node in root.iter()
         if node.tag.endswith("text")
     ]
-    joined = " ".join(texts)
-    svg_source = SUMMARY_PLOT.read_text(encoding="utf-8")
-    assert any(node.tag.endswith("title") for node in root.iter())
-    assert any(node.tag.endswith("desc") for node in root.iter())
-    assert 'fill="white"' in svg_source
-    assert "#1f77b4" in svg_source
-    assert "#ff7f0e" in svg_source
-    assert "#e6e6e6" in svg_source
-    for label in (
-        "Pearson IC",
-        "Rank IC",
-        "Day 8",
-        "Day 9",
-        "Day 10",
-        "Target = 0.064",
-        "pooled Pearson IC = 0.151939",
-        "0.1599",
-        "0.1623",
-        "0.1405",
-        "0.1447",
-        "0.1628",
-        "0.1594",
-        "Pearson IC",
-        "Rank IC",
-    ):
-        assert label in joined, f"missing label from benchmark plot: {label}"
+    return root, " ".join(text_nodes)
+
+
+def test_readme_plot_gallery_contains_seven_valid_data_charts() -> None:
+    assert len(GALLERY) == 7
+    for filename, labels in GALLERY.items():
+        path = ROOT / "assets" / "figures" / filename
+        assert path.is_file(), f"missing generated README chart: {filename}"
+        assert path.stat().st_size > 1000, f"chart output looks incomplete: {filename}"
+        root, joined = text_from_svg(path)
+        assert root.tag.endswith("svg"), filename
+        assert root.get("width"), filename
+        assert root.get("height"), filename
+        for label in labels:
+            assert label in joined, f"{filename} is missing expected label {label!r}"
 
 
 def test_a100_dashboard_is_valid_and_keeps_key_metrics_readable() -> None:
-    root = ET.parse(DASHBOARD).getroot()
+    root, joined = text_from_svg(DASHBOARD)
     assert root.tag.endswith("svg")
     assert root.attrib["width"] == "1600"
     assert root.attrib["height"] == "1120"
     assert root.attrib["viewBox"] == "0 0 1600 1120"
-
-    texts = [
-        "".join(node.itertext()).strip()
-        for node in root.iter()
-        if node.tag.endswith("text")
-    ]
-    joined = " ".join(texts)
-    assert len(texts) >= 35
-    assert any(node.tag.endswith("title") for node in root.iter())
-    assert any(node.tag.endswith("desc") for node in root.iter())
+    assert len([node for node in root.iter() if node.tag.endswith("text")]) >= 35
+    assert any(node.tag.endswith("title") and "".join(node.itertext()).strip() for node in root.iter())
+    assert any(node.tag.endswith("desc") and "".join(node.itertext()).strip() for node in root.iter())
     for label in ("A100", "0.064", "numba-cuda", "147.8× faster", "0.15194", "0.21495"):
         assert label in joined
 
 
-def test_readme_local_image_links_resolve() -> None:
+def test_readme_local_image_links_resolve_and_gallery_is_embedded() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    targets = re.findall(r"!\[[^\]]*\]\(([^)]+)\)", readme)
-    assert targets, "README should show its analysis images"
+    markdown_targets = re.findall(r"!\[[^\]]*\]\(([^)]+)\)", readme)
+    html_targets = re.findall(r'<img\b[^>]*\bsrc=["\']([^"\']+)["\']', readme, flags=re.IGNORECASE)
+    targets = markdown_targets + html_targets
+    assert len(html_targets) >= 7, "README should embed the multi-plot gallery"
+    assert all(name in readme for name in GALLERY)
     for target in targets:
         if target.startswith(("http://", "https://")):
             continue
@@ -80,9 +89,10 @@ def test_readme_local_image_links_resolve() -> None:
         assert (ROOT / clean).is_file(), f"missing README image: {target}"
 
 
-def test_obsolete_main_png_and_duplicate_license_files_are_absent() -> None:
+def test_obsolete_main_png_and_single_plot_are_removed() -> None:
     assert not (ROOT / "main.png").exists()
     assert not (ROOT / "assets" / "main.png").exists()
+    assert not (ROOT / "assets" / "figures" / "benchmark_summary.svg").exists()
     license_like = [
         path for path in ROOT.rglob("*")
         if path.is_file()
