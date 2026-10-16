@@ -12,9 +12,9 @@ SUMMARY_PLOT = ROOT / "assets" / "figures" / "benchmark_summary.svg"
 def test_simple_summary_plot_is_valid_and_uses_measured_values() -> None:
     root = ET.parse(SUMMARY_PLOT).getroot()
     assert root.tag.endswith("svg")
-    assert root.attrib["width"] == "1400"
-    assert root.attrib["height"] == "650"
-    assert root.attrib["viewBox"] == "0 0 1400 650"
+    assert root.attrib["width"] == "1000"
+    assert root.attrib["height"] == "600"
+    assert root.attrib["viewBox"] == "0 0 1000 600"
 
     texts = [
         "".join(node.itertext()).strip()
@@ -30,12 +30,16 @@ def test_simple_summary_plot_is_valid_and_uses_measured_values() -> None:
         "Day 8",
         "Day 9",
         "Day 10",
-        "Target = 0.064",
-        "0.151939",
-        "61.34 M/s",
-        "0.415 M/s",
-        "147.83× measured speedup",
-        "2.22 × 10",
+        "Target IC = 0.064",
+        "pooled Pearson IC = 0.151939",
+        "0.1599",
+        "0.1623",
+        "0.1405",
+        "0.1447",
+        "0.1628",
+        "0.1594",
+        "Pearson IC",
+        "Rank IC",
     ):
         assert label in joined, f"missing label from benchmark plot: {label}"
 
