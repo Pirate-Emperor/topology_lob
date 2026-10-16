@@ -57,15 +57,17 @@ The corrected CPU rerun completed in [Actions run #167](https://github.com/Spryz
 
 ![Walk-forward-selected return regression](assets/figures/fi2010_return_regression_selection.png)
 
-The chart shows training-only walk-forward selection on the left and the separate held-out return-regression score by test day on the right. These are CPU-run values; the A100 workflow is being checked separately.
+The chart shows training-only walk-forward selection on the left and the separate held-out return-regression score by test day on the right. The same corrected pipeline now passed on A100; see the GPU dashboard and full report below.
 
 Feature ablation measured pooled Focal Pearson IC of 0.16549 using microstructure alone, 0.16718 using microstructure plus topology, 0.14941 using microstructure plus FFD, and 0.15045 with the full feature stack. TDA runs and yields Betti features, but this experiment does not show that adding every feature improves every metric.
 
-FI-2010 is a licensed, preprocessed benchmark, not the original raw exchange feed. The fixed Focal result supports the numerical target on this benchmark under the stated 5% sequence-split rule; it does not by itself prove the historical raw-feed result. The corrected FI-2010 run used CPU FFD. GPU FFD passed a prior A100 kernel-parity check, but the corrected stock-split FI-2010 result must still be rerun on A100 before claiming this exact result was measured on GPU.
+FI-2010 is a licensed, preprocessed benchmark, not the original raw exchange feed. The fixed Focal result supports the numerical target on this benchmark under the stated 5% sequence-split rule; it does not by itself prove the historical raw-feed result. The corrected stock-split FI-2010 benchmark has now also passed on A100 with `gpu_used=true` and the `numba-cuda` backend. The A100 result is documented separately from the CPU run; FI-2010 is still a preprocessed proxy rather than the original raw exchange feed.
 
 The dataset is under **CC BY 4.0**. Credit Ntakaris et al. (2018), *Journal of Forecasting* 37(8), 852–866, [DOI 10.1002/for.2543](https://doi.org/10.1002/for.2543), and link the [official FI-2010 record](https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649) when sharing results.
 
-See the [resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 experiment details](results/FI2010_VALIDATION.md), and [boundary diagnostic](results/FI2010_BOUNDARY_DIAGNOSTICS.md). The latest completed CPU experiment JSON files and selection image are available in [Actions artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
+![A100 FI-2010 validation dashboard](assets/figures/a100_fi2010_validation_dashboard.svg)
+
+The corrected A100 workflow completed all 25 steps in [run #13](https://github.com/SpryzenHell/integrator/actions/runs/38866278328). Its full JSON, CUDA benchmark, Focal horizon sweep, regression sweep and walk-forward selection image are preserved in [artifact 12032068300](https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300). See the [A100 validation report](results/A100_VALIDATION.md), [resume-target validation record](results/RESUME_TARGET_VALIDATION.md), [FI-2010 experiment details](results/FI2010_VALIDATION.md), and [boundary diagnostic](results/FI2010_BOUNDARY_DIAGNOSTICS.md). The earlier CPU experiment files remain in [artifact 12031221876](https://github.com/SpryzenHell/topology_lob/actions/runs/38865530026/artifacts/12031221876).
 
 ## Quick start
 
