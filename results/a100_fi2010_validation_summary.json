@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "project": "Topology LOB",
+  "run": {
+    "repository": "SpryzenHell/integrator",
+    "workflow_run_number": 13,
+    "url": "https://github.com/SpryzenHell/integrator/actions/runs/38866278328",
+    "conclusion": "success",
+    "completed_steps": 25,
+    "runner": "integrator-1",
+    "gpu_label": "a100",
+    "artifact_id": 12032068300,
+    "artifact_url": "https://github.com/SpryzenHell/integrator/actions/runs/38866278328/artifacts/12032068300"
+  },
+  "dataset": {
+    "name": "FI-2010 Decimal-Precision",
+    "license": "CC BY 4.0",
+    "record_url": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+    "train_events": 254750,
+    "heldout_events_by_file": [
+      55478,
+      52172,
+      31937
+    ],
+    "total_events": 394337,
+    "boundary_rule": "fixed 5% adjacent mid-price jump; five inferred sequences per file",
+    "sequence_cuts": 16
+  },
+  "fixed_focal": {
+    "gpu_used": true,
+    "ffd_backend": "numba-cuda",
+    "tda_backend": "giotto-tda",
+    "selected_fractional_differencing_order": 0.2,
+    "topology_clouds": 403,
+    "homology_dimensions": [
+      0,
+      1
+    ],
+    "radii": [
+      0.5,
+      1,
+      1.5,
+      2,
+      2.5
+    ],
+    "horizon_events": 10,
+    "label_threshold": 0.0005,
+    "purge_events": 50,
+    "heldout_rows": 135612,
+    "pooled_pearson_ic": 0.1519394513875554,
+    "pooled_margin_pearson_ic": 0.15119923029411314,
+    "pooled_margin_rank_ic": 0.15400836867991619,
+    "daily": [
+      {
+        "day": 8,
+        "rows": 54153,
+        "pearson_ic": 0.15986065791812015,
+        "rank_ic": 0.16234840481151586,
+        "roc_auc": 0.7169586839145757
+      },
+      {
+        "day": 9,
+        "rows": 50847,
+        "pearson_ic": 0.14047582129606104,
+        "rank_ic": 0.14474533005724094,
+        "roc_auc": 0.6945726022480909
+      },
+      {
+        "day": 10,
+        "rows": 30612,
+        "pearson_ic": 0.16276799974647874,
+        "rank_ic": 0.15941186552240796,
+        "roc_auc": 0.7076030564900874
+      }
+    ],
+    "sequence_robustness": {
+      "sequences": 15,
+      "positive_pearson_sequences": 15,
+      "mean_sequence_pearson_ic": 0.2157264572507954,
+      "median_sequence_pearson_ic": 0.21806726375717905,
+      "moving_block_bootstrap_replicates": 500,
+      "moving_block_size_events": 500,
+      "pearson_ic_ci_95": [
+        0.13566324013353556,
+        0.16717901982379596
+      ],
+      "circular_shift_placebo_replicates": 499,
+      "circular_shift_two_sided_p": 0.002,
+      "null_absolute_ic_q95": 0.013228944417485218
+    }
+  },
+  "ffd_microbenchmark": {
+    "gpu_used": true,
+    "backend": "numba-cuda",
+    "events": 200000,
+    "width": 256,
+    "d": 0.45,
+    "cpu_elapsed_seconds": 0.481427688151598,
+    "cuda_median_elapsed_seconds": 0.0032565221190452576,
+    "cpu_events_per_second": 414901.35469130264,
+    "cuda_events_per_second": 61336908.73211724,
+    "speedup_vs_cpu": 147.83492036981534,
+    "warmup_calls": 1,
+    "timed_repeats": 3,
+    "timing_includes_transfers": true,
+    "max_absolute_cpu_cuda_error": 2.220446049250313e-15
+  },
+  "continuous_return_regression": {
+    "gpu_used": true,
+    "ffd_backend": "numba-cuda",
+    "tda_backend": "giotto-tda",
+    "candidate_count": 32,
+    "validation_folds": 5,
+    "validation_positive_pearson_folds": 5,
+    "selected_fractional_differencing_order": 0.3,
+    "horizon_events": 10,
+    "feature_set": "micro_plus_topology",
+    "feature_count": 20,
+    "validation_mean_pearson_ic": 0.19885620102042637,
+    "validation_std_pearson_ic": 0.0754333507395823,
+    "validation_mean_rank_ic": 0.2483133899088335,
+    "validation_std_rank_ic": 0.028287549420468492,
+    "heldout_rows": 138687,
+    "heldout_pearson_ic": 0.21495489098126477,
+    "heldout_rank_ic": 0.22810317620931223,
+    "heldout_direction_hit_rate": 0.5717406822557268,
+    "heldout_by_day": [
+      {
+        "day": 8,
+        "rows": 55178,
+        "pearson_ic": 0.2143250919671596,
+        "rank_ic": 0.23426010867849684
+      },
+      {
+        "day": 9,
+        "rows": 51872,
+        "pearson_ic": 0.20193320109808532,
+        "rank_ic": 0.22042529605824931
+      },
+      {
+        "day": 10,
+        "rows": 31637,
+        "pearson_ic": 0.24945935410343678,
+        "rank_ic": 0.2401018164132992
+      }
+    ]
+  },
+  "separate_focal_horizon_search": {
+    "selected_horizon_events": 1000,
+    "feature_set": "micro_plus_fd",
+    "heldout_rows": 120762,
+    "heldout_pearson_ic": 0.0668060082656071,
+    "heldout_rank_ic": 0.09719705620493274,
+    "day10_pearson_ic": -0.04513470933203854,
+    "day10_rank_ic": -0.0427980942906249,
+    "note": "Secondary horizon search result; fixed 10-event Focal benchmark remains the primary target check."
+  },
+  "scope_limits": [
+    "FI-2010 is preprocessed and lacks usable ticker IDs and exchange timestamps.",
+    "Five sequences per file are inferred from a fixed 5% price-jump rule; these are assumptions, not source metadata.",
+    "The IC target measures score/return association; it does not establish profitability or a live trading edge."
+  ],
+  "maintainer": "Pirate-Emperor"
+}

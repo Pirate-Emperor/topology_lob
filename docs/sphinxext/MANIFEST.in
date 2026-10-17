@@ -1,4 +1,0 @@
-recursive-tlobInclude tests *.py
-tlobInclude *.txt
-
-

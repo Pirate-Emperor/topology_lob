@@ -1,0 +1,4569 @@
+{
+  "experiment": "FI-2010 continuous return regression with walk-forward validation selection",
+  "dataset": {
+    "name": "FI-2010",
+    "record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "attribution": "Ntakaris et al., Journal of Forecasting 37(8), 852-866 (2018), DOI 10.1002/for.2543",
+    "input_sha256": {
+      "Train_Dst_NoAuction_DecPre_CF_7.txt": "11af4bbcf26f08a43a436c43619bdf772f552870d54a3b06de7b5344957279fc",
+      "Test_Dst_NoAuction_DecPre_CF_7.txt": "1acd92e13df8f499aa9475729e1d54455db1ab37894616d0c582cdd012351273",
+      "Test_Dst_NoAuction_DecPre_CF_8.txt": "950559383a3cf823fd373e6573434cc00c94b9bceac77fe5ee9f1adb38e1abb2",
+      "Test_Dst_NoAuction_DecPre_CF_9.txt": "c09785b0aed0825ad566f8fe33a3b7d8c3fbb8993856d162976cb4e1c410aca0"
+    },
+    "train_events": 254750,
+    "test_events": [
+      55478,
+      52172,
+      31937
+    ],
+    "sequence_jump_threshold_pct": 5.0,
+    "sequence_cuts": [
+      {
+        "file_index": 0,
+        "file_row": 23336,
+        "global_row": 23336,
+        "log_return": -0.7424087093386234,
+        "absolute_return_pct": 52.4033930254477
+      },
+      {
+        "file_index": 0,
+        "file_row": 68210,
+        "global_row": 68210,
+        "log_return": 0.3059878685402204,
+        "absolute_return_pct": 35.79658323400875
+      },
+      {
+        "file_index": 0,
+        "file_row": 106759,
+        "global_row": 106759,
+        "log_return": -0.3085437075218298,
+        "absolute_return_pct": 26.5484152369875
+      },
+      {
+        "file_index": 0,
+        "file_row": 161434,
+        "global_row": 161434,
+        "log_return": 1.0076341688458417,
+        "absolute_return_pct": 173.9113064322813
+      },
+      {
+        "file_index": 1,
+        "file_row": 2647,
+        "global_row": 257397,
+        "log_return": -0.7706214599056505,
+        "absolute_return_pct": 53.72745863543409
+      },
+      {
+        "file_index": 1,
+        "file_row": 11309,
+        "global_row": 266059,
+        "log_return": 0.27986614034882895,
+        "absolute_return_pct": 32.29527104959632
+      },
+      {
+        "file_index": 1,
+        "file_row": 19900,
+        "global_row": 274650,
+        "log_return": -0.3464134714384335,
+        "absolute_return_pct": 29.27799886299034
+      },
+      {
+        "file_index": 1,
+        "file_row": 33129,
+        "global_row": 287879,
+        "log_return": 1.0098640924558822,
+        "absolute_return_pct": 174.52278924814962
+      },
+      {
+        "file_index": 2,
+        "file_row": 1873,
+        "global_row": 312101,
+        "log_return": -0.6952458172168665,
+        "absolute_return_pct": 50.10482180293501
+      },
+      {
+        "file_index": 2,
+        "file_row": 11144,
+        "global_row": 321372,
+        "log_return": 0.29385815745471144,
+        "absolute_return_pct": 34.159359512009146
+      },
+      {
+        "file_index": 2,
+        "file_row": 21180,
+        "global_row": 331408,
+        "log_return": -0.31799323625554154,
+        "absolute_return_pct": 27.239229024943313
+      },
+      {
+        "file_index": 2,
+        "file_row": 34060,
+        "global_row": 344288,
+        "log_return": 1.0361667157478345,
+        "absolute_return_pct": 181.83925811437408
+      },
+      {
+        "file_index": 3,
+        "file_row": 1888,
+        "global_row": 364288,
+        "log_return": -0.6935198282258934,
+        "absolute_return_pct": 50.01862891207153
+      },
+      {
+        "file_index": 3,
+        "file_row": 7016,
+        "global_row": 369416,
+        "log_return": 0.28107647556225057,
+        "absolute_return_pct": 32.45548961424329
+      },
+      {
+        "file_index": 3,
+        "file_row": 12738,
+        "global_row": 375138,
+        "log_return": -0.3156381497183709,
+        "absolute_return_pct": 27.06766917293233
+      },
+      {
+        "file_index": 3,
+        "file_row": 18559,
+        "global_row": 380959,
+        "log_return": 1.0130633726142506,
+        "absolute_return_pct": 175.40247098464988
+      }
+    ],
+    "stock_sequences_per_file": [
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  "method": {
+    "target": "log(mid[t+10])-log(mid[t])",
+    "split": "five expanding chronological validation folds inside training file, purge >= horizon",
+    "selection_metric": "mean Pearson IC across training-only validation folds; Rank IC used only as tie-break",
+    "test_use": "selected configuration refit on training file; held-out files scored only after selection",
+    "validation_folds": [
+      {
+        "fit_fraction": 0.45,
+        "validation_start_fraction": 0.5,
+        "validation_end_fraction": 0.6
+      },
+      {
+        "fit_fraction": 0.55,
+        "validation_start_fraction": 0.6,
+        "validation_end_fraction": 0.7
+      },
+      {
+        "fit_fraction": 0.65,
+        "validation_start_fraction": 0.7,
+        "validation_end_fraction": 0.8
+      },
+      {
+        "fit_fraction": 0.75,
+        "validation_start_fraction": 0.8,
+        "validation_end_fraction": 0.9
+      },
+      {
+        "fit_fraction": 0.85,
+        "validation_start_fraction": 0.9,
+        "validation_end_fraction": 0.99
+      }
+    ],
+    "candidate_count": 32,
+    "selected_d": 0.30000000000000004,
+    "stationarity": {
+      "candidates": [
+        {
+          "d": 0.0,
+          "adf_pvalue": 0.5261301200245369,
+          "median_adf_pvalue": 0.5261301200245369,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 0,
+          "corr_with_price": 1.0,
+          "segment_adf_pvalues": [
+            0.5261301200245369,
+            0.696257008734027,
+            0.33035360171795014,
+            0.4233710027946685,
+            0.5365735267507604
+          ]
+        },
+        {
+          "d": 0.1,
+          "adf_pvalue": 0.33616634362552006,
+          "median_adf_pvalue": 0.33616634362552006,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 0,
+          "corr_with_price": 0.9990100048914209,
+          "segment_adf_pvalues": [
+            0.33616634362552006,
+            0.4119156536624457,
+            0.1942324175648802,
+            0.19422165147950926,
+            0.35009166269458886
+          ]
+        },
+        {
+          "d": 0.2,
+          "adf_pvalue": 0.0806970629361971,
+          "median_adf_pvalue": 0.0806970629361971,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 2,
+          "corr_with_price": 0.9941954205657927,
+          "segment_adf_pvalues": [
+            0.13484361053426042,
+            0.0806970629361971,
+            0.028150173366769806,
+            0.022879897988809395,
+            0.12117933584220497
+          ]
+        },
+        {
+          "d": 0.30000000000000004,
+          "adf_pvalue": 0.002452683761310075,
+          "median_adf_pvalue": 0.002452683761310075,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.9795162178301638,
+          "segment_adf_pvalues": [
+            0.016151805067298585,
+            0.002452683761310075,
+            0.0008853048742749739,
+            0.00013837224255706866,
+            0.009410558889612237
+          ]
+        },
+        {
+          "d": 0.4,
+          "adf_pvalue": 1.3136483579376646e-06,
+          "median_adf_pvalue": 1.3136483579376646e-06,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.9386685112243942,
+          "segment_adf_pvalues": [
+            0.0001001181083118795,
+            1.3136483579376646e-06,
+            3.1685283909246747e-07,
+            6.1293670798845e-09,
+            1.4394809250576672e-05
+          ]
+        },
+        {
+          "d": 0.5,
+          "adf_pvalue": 9.665093373437042e-14,
+          "median_adf_pvalue": 9.665093373437042e-14,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.8330470134263419,
+          "segment_adf_pvalues": [
+            5.356358625968855e-10,
+            9.665093373437042e-14,
+            4.475228764901824e-14,
+            1.6332874952122468e-17,
+            4.269537616042362e-12
+          ]
+        },
+        {
+          "d": 0.6000000000000001,
+          "adf_pvalue": 9.004890514720482e-24,
+          "median_adf_pvalue": 9.004890514720482e-24,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.6180396655357908,
+          "segment_adf_pvalues": [
+            3.3944268576235957e-19,
+            2.3886965174770634e-24,
+            9.004890514720482e-24,
+            7.662916441343677e-28,
+            1.1058477851074414e-23
+          ]
+        },
+        {
+          "d": 0.7000000000000001,
+          "adf_pvalue": 0.0,
+          "median_adf_pvalue": 0.0,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.34920259036650864,
+          "segment_adf_pvalues": [
+            8.258879297460874e-29,
+            0.0,
+            3.3357183542980896e-30,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "d": 0.8,
+          "adf_pvalue": 0.0,
+          "median_adf_pvalue": 0.0,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.15347290245270304,
+          "segment_adf_pvalues": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "d": 0.9,
+          "adf_pvalue": 0.0,
+          "median_adf_pvalue": 0.0,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.052400911978303384,
+          "segment_adf_pvalues": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "d": 1.0,
+          "adf_pvalue": 0.0,
+          "median_adf_pvalue": 0.0,
+          "segments_tested": 5,
+          "segments_p_below_threshold": 5,
+          "corr_with_price": 0.008022207353987277,
+          "segment_adf_pvalues": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "selected_d": 0.30000000000000004,
+      "adf_threshold": 0.05,
+      "selection_mode": "median ADF p-value across separate training-only stock prefixes",
+      "prefix_fraction_per_stock": 0.6,
+      "training_segments_tested": 5,
+      "training_prefixes": [
+        {
+          "start": 0,
+          "end": 14001,
+          "events": 14001
+        },
+        {
+          "start": 23336,
+          "end": 50260,
+          "events": 26924
+        },
+        {
+          "start": 68210,
+          "end": 91339,
+          "events": 23129
+        },
+        {
+          "start": 106759,
+          "end": 139564,
+          "events": 32805
+        },
+        {
+          "start": 161434,
+          "end": 217423,
+          "events": 55989
+        }
+      ]
+    },
+    "tda": {
+      "backend": "giotto-tda",
+      "n_clouds": 383,
+      "radii": [
+        0.5,
+        1.0,
+        1.5,
+        2.0,
+        2.5
+      ],
+      "feature_names": [
+        "betti0_r0",
+        "betti0_r1",
+        "betti0_r2",
+        "betti0_r3",
+        "betti0_r4",
+        "betti1_r0",
+        "betti1_r1",
+        "betti1_r2",
+        "betti1_r3",
+        "betti1_r4",
+        "h1_max_persistence",
+        "h1_persistence_entropy"
+      ],
+      "homology_dimensions": [
+        0,
+        1
+      ],
+      "segment_cloud_counts": [
+        23,
+        44,
+        38,
+        54,
+        93,
+        2,
+        8,
+        8,
+        13,
+        22,
+        1,
+        9,
+        9,
+        12,
+        18,
+        1,
+        5,
+        5,
+        5,
+        13
+      ]
+    },
+    "topology_clouds": 383,
+    "ffd_backend": "cpu-fallback:no-cuda",
+    "gpu_used": false,
+    "python": "3.11.17",
+    "rounds": 220,
+    "purge": 50
+  },
+  "selection": {
+    "horizon": 10,
+    "feature_set": "micro_plus_topology",
+    "feature_count": 20,
+    "feature_names": [
+      "spread_bps",
+      "imbalance",
+      "microprice_edge_bps",
+      "ofi",
+      "ret_1",
+      "rolling_vol",
+      "bid_depth",
+      "ask_depth",
+      "betti0_r0",
+      "betti0_r1",
+      "betti0_r2",
+      "betti0_r3",
+      "betti0_r4",
+      "betti1_r0",
+      "betti1_r1",
+      "betti1_r2",
+      "betti1_r3",
+      "betti1_r4",
+      "h1_max_persistence",
+      "h1_persistence_entropy"
+    ],
+    "validation": {
+      "fold_count": 5,
+      "mean_pearson_ic": 0.19885620102042637,
+      "std_pearson_ic": 0.0754333507395823,
+      "mean_rank_ic": 0.2483133899088335,
+      "std_rank_ic": 0.028287549420468492,
+      "positive_pearson_folds": 5,
+      "validation_rows_total": 123326
+    },
+    "candidate_rows": [
+      {
+        "horizon": 10,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114386,
+            "rows": 25174,
+            "metrics": {
+              "rows": 25174,
+              "pearson_ic": 0.17601656699203522,
+              "rank_ic": 0.2425844351422801,
+              "direction_hit_rate": 0.5737665845713832,
+              "prediction_std": 0.00016927334945648909,
+              "future_return_std": 0.0010590297154607603,
+              "mean_prediction_bps": 0.3331488187541254,
+              "mean_future_return_bps": -0.17580060175381954
+            },
+            "pearson_ic": 0.17601656699203522,
+            "rank_ic": 0.2425844351422801
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139859,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.18662875882469565,
+              "rank_ic": 0.2637298673489346,
+              "direction_hit_rate": 0.616961271102284,
+              "prediction_std": 0.00020667137869168073,
+              "future_return_std": 0.0008407689871527062,
+              "mean_prediction_bps": -0.25692928829812445,
+              "mean_future_return_bps": -0.2647230900909693
+            },
+            "pearson_ic": 0.18662875882469565,
+            "rank_ic": 0.2637298673489346
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165335,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.25632917446138387,
+              "rank_ic": 0.2672333363976313,
+              "direction_hit_rate": 0.5931281032770606,
+              "prediction_std": 0.00016936729662120342,
+              "future_return_std": 0.0007517074835466333,
+              "mean_prediction_bps": 0.01859295139183814,
+              "mean_future_return_bps": -0.20220581867269377
+            },
+            "pearson_ic": 0.25632917446138387,
+            "rank_ic": 0.2672333363976313
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190811,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.09287989450797049,
+              "rank_ic": 0.21741708038461036,
+              "direction_hit_rate": 0.5813704071499504,
+              "prediction_std": 0.00017932464834302664,
+              "future_return_std": 0.001360608672431249,
+              "mean_prediction_bps": -0.0419871639678604,
+              "mean_future_return_bps": 0.10808437973304429
+            },
+            "pearson_ic": 0.09287989450797049,
+            "rank_ic": 0.21741708038461036
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216284,
+            "rows": 22627,
+            "metrics": {
+              "rows": 22627,
+              "pearson_ic": 0.2747170812354513,
+              "rank_ic": 0.2669013330507357,
+              "direction_hit_rate": 0.5832854554293543,
+              "prediction_std": 0.00017308267706539482,
+              "future_return_std": 0.0006377533737914077,
+              "mean_prediction_bps": -0.04398697001306573,
+              "mean_future_return_bps": 0.06807588288043023
+            },
+            "pearson_ic": 0.2747170812354513,
+            "rank_ic": 0.2669013330507357
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.1973142952043073,
+          "std_pearson_ic": 0.07236757772413907,
+          "mean_rank_ic": 0.2515732104648384,
+          "std_rank_ic": 0.021653028060145327,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123326
+        }
+      },
+      {
+        "horizon": 10,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 25174,
+            "metrics": {
+              "rows": 25174,
+              "pearson_ic": 0.1566786630038428,
+              "rank_ic": 0.24086582780694216,
+              "direction_hit_rate": 0.5716215142607453,
+              "prediction_std": 0.00019080241327174008,
+              "future_return_std": 0.0010590297154607603,
+              "mean_prediction_bps": 0.46721128455828875,
+              "mean_future_return_bps": -0.17580060175381954
+            },
+            "pearson_ic": 0.1566786630038428,
+            "rank_ic": 0.24086582780694216
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.17830771630993109,
+              "rank_ic": 0.24239684026111485,
+              "direction_hit_rate": 0.5898311817279047,
+              "prediction_std": 0.00022495652956422418,
+              "future_return_std": 0.0008407689871527062,
+              "mean_prediction_bps": 0.07051509328448446,
+              "mean_future_return_bps": -0.2647230900909693
+            },
+            "pearson_ic": 0.17830771630993109,
+            "rank_ic": 0.24239684026111485
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.25119290109337933,
+              "rank_ic": 0.2623404287355466,
+              "direction_hit_rate": 0.5815690168818272,
+              "prediction_std": 0.0001873983710538596,
+              "future_return_std": 0.0007517074835466333,
+              "mean_prediction_bps": 0.19606013665907085,
+              "mean_future_return_bps": -0.20220581867269377
+            },
+            "pearson_ic": 0.25119290109337933,
+            "rank_ic": 0.2623404287355466
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.08932566977606973,
+              "rank_ic": 0.21601032992932598,
+              "direction_hit_rate": 0.5975769612711023,
+              "prediction_std": 0.00019040652841795236,
+              "future_return_std": 0.001360608672431249,
+              "mean_prediction_bps": -0.21514653781196102,
+              "mean_future_return_bps": 0.10808437973304429
+            },
+            "pearson_ic": 0.08932566977606973,
+            "rank_ic": 0.21601032992932598
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22627,
+            "metrics": {
+              "rows": 22627,
+              "pearson_ic": 0.28099317181835654,
+              "rank_ic": 0.27122197101336626,
+              "direction_hit_rate": 0.5826667255933177,
+              "prediction_std": 0.00017506589938420802,
+              "future_return_std": 0.0006377533737914077,
+              "mean_prediction_bps": -0.07181342880357988,
+              "mean_future_return_bps": 0.06807588288043023
+            },
+            "pearson_ic": 0.28099317181835654,
+            "rank_ic": 0.27122197101336626
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.19129962440031592,
+          "std_pearson_ic": 0.07648239193928406,
+          "mean_rank_ic": 0.24656707954925916,
+          "std_rank_ic": 0.02144919772476582,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123326
+        }
+      },
+      {
+        "horizon": 10,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114136,
+            "rows": 25174,
+            "metrics": {
+              "rows": 25174,
+              "pearson_ic": 0.17297234303808648,
+              "rank_ic": 0.23681996374965272,
+              "direction_hit_rate": 0.5793676014936046,
+              "prediction_std": 0.00017325524822808802,
+              "future_return_std": 0.0010590297154607603,
+              "mean_prediction_bps": 0.2948693509097211,
+              "mean_future_return_bps": -0.17580060175381954
+            },
+            "pearson_ic": 0.17297234303808648,
+            "rank_ic": 0.23681996374965272
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139609,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.19506993474506668,
+              "rank_ic": 0.2634973790691136,
+              "direction_hit_rate": 0.6089374379344588,
+              "prediction_std": 0.00019393235561437905,
+              "future_return_std": 0.0008407689871527062,
+              "mean_prediction_bps": -0.20685520212282427,
+              "mean_future_return_bps": -0.2647230900909693
+            },
+            "pearson_ic": 0.19506993474506668,
+            "rank_ic": 0.2634973790691136
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165085,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.26463826333779517,
+              "rank_ic": 0.2712367040133525,
+              "direction_hit_rate": 0.5931678252234359,
+              "prediction_std": 0.0001692526857368648,
+              "future_return_std": 0.0007517074835466333,
+              "mean_prediction_bps": 0.014646417412222945,
+              "mean_future_return_bps": -0.20220581867269377
+            },
+            "pearson_ic": 0.26463826333779517,
+            "rank_ic": 0.2712367040133525
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190561,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.08834176579926176,
+              "rank_ic": 0.20371378543943275,
+              "direction_hit_rate": 0.578987090367428,
+              "prediction_std": 0.0001800146565074101,
+              "future_return_std": 0.001360608672431249,
+              "mean_prediction_bps": -0.04826856184081407,
+              "mean_future_return_bps": 0.10808437973304429
+            },
+            "pearson_ic": 0.08834176579926176,
+            "rank_ic": 0.20371378543943275
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216034,
+            "rows": 22627,
+            "metrics": {
+              "rows": 22627,
+              "pearson_ic": 0.27325869818192167,
+              "rank_ic": 0.266299117272616,
+              "direction_hit_rate": 0.5878817342113404,
+              "prediction_std": 0.00017205445328727365,
+              "future_return_std": 0.0006377533737914077,
+              "mean_prediction_bps": -0.0895719767868286,
+              "mean_future_return_bps": 0.06807588288043023
+            },
+            "pearson_ic": 0.27325869818192167,
+            "rank_ic": 0.266299117272616
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.19885620102042637,
+          "std_pearson_ic": 0.0754333507395823,
+          "mean_rank_ic": 0.2483133899088335,
+          "std_rank_ic": 0.028287549420468492,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123326
+        }
+      },
+      {
+        "horizon": 10,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 25174,
+            "metrics": {
+              "rows": 25174,
+              "pearson_ic": 0.17073535161572548,
+              "rank_ic": 0.23417065008221669,
+              "direction_hit_rate": 0.5716215142607453,
+              "prediction_std": 0.00018009127234108746,
+              "future_return_std": 0.0010590297154607603,
+              "mean_prediction_bps": 0.4056423858855851,
+              "mean_future_return_bps": -0.17580060175381954
+            },
+            "pearson_ic": 0.17073535161572548,
+            "rank_ic": 0.23417065008221669
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.18753874924438438,
+              "rank_ic": 0.24173583425673123,
+              "direction_hit_rate": 0.581330685203575,
+              "prediction_std": 0.0002100259152939543,
+              "future_return_std": 0.0008407689871527062,
+              "mean_prediction_bps": 0.18831909983418882,
+              "mean_future_return_bps": -0.2647230900909693
+            },
+            "pearson_ic": 0.18753874924438438,
+            "rank_ic": 0.24173583425673123
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.25100757961939,
+              "rank_ic": 0.257897163119193,
+              "direction_hit_rate": 0.5756901688182721,
+              "prediction_std": 0.0001878034818219021,
+              "future_return_std": 0.0007517074835466333,
+              "mean_prediction_bps": 0.2827954085660167,
+              "mean_future_return_bps": -0.20220581867269377
+            },
+            "pearson_ic": 0.25100757961939,
+            "rank_ic": 0.257897163119193
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 25175,
+            "metrics": {
+              "rows": 25175,
+              "pearson_ic": 0.09270290273995861,
+              "rank_ic": 0.2098171134964647,
+              "direction_hit_rate": 0.5917775571002979,
+              "prediction_std": 0.00018471198563929647,
+              "future_return_std": 0.001360608672431249,
+              "mean_prediction_bps": -0.15073981558089145,
+              "mean_future_return_bps": 0.10808437973304429
+            },
+            "pearson_ic": 0.09270290273995861,
+            "rank_ic": 0.2098171134964647
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22627,
+            "metrics": {
+              "rows": 22627,
+              "pearson_ic": 0.26735096608857245,
+              "rank_ic": 0.2557396502824315,
+              "direction_hit_rate": 0.5804569761789014,
+              "prediction_std": 0.00017778275650925934,
+              "future_return_std": 0.0006377533737914077,
+              "mean_prediction_bps": -0.016005965335352812,
+              "mean_future_return_bps": 0.06807588288043023
+            },
+            "pearson_ic": 0.26735096608857245,
+            "rank_ic": 0.2557396502824315
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.19386710986160618,
+          "std_pearson_ic": 0.06977505571535708,
+          "mean_rank_ic": 0.23987208224740741,
+          "std_rank_ic": 0.019467693126608513,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123326
+        }
+      },
+      {
+        "horizon": 20,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114386,
+            "rows": 25124,
+            "metrics": {
+              "rows": 25124,
+              "pearson_ic": 0.14559784263619827,
+              "rank_ic": 0.20545012918391206,
+              "direction_hit_rate": 0.5614949848750199,
+              "prediction_std": 0.00022545560204889625,
+              "future_return_std": 0.001574211262158768,
+              "mean_prediction_bps": 0.6811515777371824,
+              "mean_future_return_bps": -0.3566964917620246
+            },
+            "pearson_ic": 0.14559784263619827,
+            "rank_ic": 0.20545012918391206
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139859,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.16682923738152317,
+              "rank_ic": 0.2302717241820164,
+              "direction_hit_rate": 0.5942288557213931,
+              "prediction_std": 0.0003609795530792326,
+              "future_return_std": 0.001240144428317768,
+              "mean_prediction_bps": -0.29538450689869933,
+              "mean_future_return_bps": -0.509669717641727
+            },
+            "pearson_ic": 0.16682923738152317,
+            "rank_ic": 0.2302717241820164
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165335,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.19322477763107718,
+              "rank_ic": 0.21081218083728243,
+              "direction_hit_rate": 0.5769552238805971,
+              "prediction_std": 0.00022681066184304655,
+              "future_return_std": 0.001124223613020722,
+              "mean_prediction_bps": 0.057249876590503845,
+              "mean_future_return_bps": -0.3900910071592584
+            },
+            "pearson_ic": 0.19322477763107718,
+            "rank_ic": 0.21081218083728243
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190811,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.06939269032006909,
+              "rank_ic": 0.17738633489661843,
+              "direction_hit_rate": 0.5692338308457712,
+              "prediction_std": 0.0002429192973067984,
+              "future_return_std": 0.0019676095080115794,
+              "mean_prediction_bps": -0.027418623176345136,
+              "mean_future_return_bps": 0.21715210067151947
+            },
+            "pearson_ic": 0.06939269032006909,
+            "rank_ic": 0.17738633489661843
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216284,
+            "rows": 22577,
+            "metrics": {
+              "rows": 22577,
+              "pearson_ic": 0.23488458744620863,
+              "rank_ic": 0.23711850815722912,
+              "direction_hit_rate": 0.5801922310315808,
+              "prediction_std": 0.0002333922020625323,
+              "future_return_std": 0.0009399394961629558,
+              "mean_prediction_bps": -0.02655692469488713,
+              "mean_future_return_bps": 0.13260024600489523
+            },
+            "pearson_ic": 0.23488458744620863,
+            "rank_ic": 0.23711850815722912
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.1619858270830153,
+          "std_pearson_ic": 0.061554071609815166,
+          "mean_rank_ic": 0.2122077754514117,
+          "std_rank_ic": 0.023489343527423438,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123076
+        }
+      },
+      {
+        "horizon": 20,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 25124,
+            "metrics": {
+              "rows": 25124,
+              "pearson_ic": 0.06918046876421403,
+              "rank_ic": 0.19797248308038792,
+              "direction_hit_rate": 0.5629278777264767,
+              "prediction_std": 0.0003207864938303828,
+              "future_return_std": 0.001574211262158768,
+              "mean_prediction_bps": 1.0083450615638867,
+              "mean_future_return_bps": -0.3566964917620246
+            },
+            "pearson_ic": 0.06918046876421403,
+            "rank_ic": 0.19797248308038792
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.16258153967422354,
+              "rank_ic": 0.18710214097541827,
+              "direction_hit_rate": 0.5600398009950249,
+              "prediction_std": 0.00037182794767431915,
+              "future_return_std": 0.001240144428317768,
+              "mean_prediction_bps": 0.5624030018225312,
+              "mean_future_return_bps": -0.509669717641727
+            },
+            "pearson_ic": 0.16258153967422354,
+            "rank_ic": 0.18710214097541827
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.18798168228927534,
+              "rank_ic": 0.20367457484865617,
+              "direction_hit_rate": 0.546865671641791,
+              "prediction_std": 0.00025459559401497245,
+              "future_return_std": 0.001124223613020722,
+              "mean_prediction_bps": 0.5899943062104285,
+              "mean_future_return_bps": -0.3900910071592584
+            },
+            "pearson_ic": 0.18798168228927534,
+            "rank_ic": 0.20367457484865617
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.06517540831933548,
+              "rank_ic": 0.1764660747278083,
+              "direction_hit_rate": 0.5733731343283582,
+              "prediction_std": 0.00025345516041852534,
+              "future_return_std": 0.0019676095080115794,
+              "mean_prediction_bps": -0.07273534265550552,
+              "mean_future_return_bps": 0.21715210067151947
+            },
+            "pearson_ic": 0.06517540831933548,
+            "rank_ic": 0.1764660747278083
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22577,
+            "metrics": {
+              "rows": 22577,
+              "pearson_ic": 0.23940498683390593,
+              "rank_ic": 0.23828083684425483,
+              "direction_hit_rate": 0.5782876378615405,
+              "prediction_std": 0.0002319150953553617,
+              "future_return_std": 0.0009399394961629558,
+              "mean_prediction_bps": -0.0027100188049189455,
+              "mean_future_return_bps": 0.13260024600489523
+            },
+            "pearson_ic": 0.23940498683390593,
+            "rank_ic": 0.23828083684425483
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.14486481717619087,
+          "std_pearson_ic": 0.07614018727101728,
+          "mean_rank_ic": 0.20069922209530508,
+          "std_rank_ic": 0.023456297891592044,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123076
+        }
+      },
+      {
+        "horizon": 20,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114136,
+            "rows": 25124,
+            "metrics": {
+              "rows": 25124,
+              "pearson_ic": 0.10636689073652146,
+              "rank_ic": 0.18436048605246558,
+              "direction_hit_rate": 0.5595446584938704,
+              "prediction_std": 0.0002695347648113966,
+              "future_return_std": 0.001574211262158768,
+              "mean_prediction_bps": 0.43489275412866846,
+              "mean_future_return_bps": -0.3566964917620246
+            },
+            "pearson_ic": 0.10636689073652146,
+            "rank_ic": 0.18436048605246558
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139609,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.16987023878831775,
+              "rank_ic": 0.21758924073162786,
+              "direction_hit_rate": 0.5847960199004976,
+              "prediction_std": 0.00029906132840551436,
+              "future_return_std": 0.001240144428317768,
+              "mean_prediction_bps": -0.20873390894848853,
+              "mean_future_return_bps": -0.509669717641727
+            },
+            "pearson_ic": 0.16987023878831775,
+            "rank_ic": 0.21758924073162786
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165085,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.21228112815600522,
+              "rank_ic": 0.2198633315380076,
+              "direction_hit_rate": 0.5797412935323383,
+              "prediction_std": 0.00022817526769358665,
+              "future_return_std": 0.001124223613020722,
+              "mean_prediction_bps": 0.024493012915627332,
+              "mean_future_return_bps": -0.3900910071592584
+            },
+            "pearson_ic": 0.21228112815600522,
+            "rank_ic": 0.2198633315380076
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190561,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.0614208240229464,
+              "rank_ic": 0.16169362314091706,
+              "direction_hit_rate": 0.5699502487562189,
+              "prediction_std": 0.000255939899943769,
+              "future_return_std": 0.0019676095080115794,
+              "mean_prediction_bps": -0.037773595522594405,
+              "mean_future_return_bps": 0.21715210067151947
+            },
+            "pearson_ic": 0.0614208240229464,
+            "rank_ic": 0.16169362314091706
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216034,
+            "rows": 22577,
+            "metrics": {
+              "rows": 22577,
+              "pearson_ic": 0.23315941347702288,
+              "rank_ic": 0.23185514373428198,
+              "direction_hit_rate": 0.583558488727466,
+              "prediction_std": 0.00022986458498053253,
+              "future_return_std": 0.0009399394961629558,
+              "mean_prediction_bps": -0.061050000113027636,
+              "mean_future_return_bps": 0.13260024600489523
+            },
+            "pearson_ic": 0.23315941347702288,
+            "rank_ic": 0.23185514373428198
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.15661969903616274,
+          "std_pearson_ic": 0.07197268566591353,
+          "mean_rank_ic": 0.20307236503946005,
+          "std_rank_ic": 0.02908375526622403,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123076
+        }
+      },
+      {
+        "horizon": 20,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 25124,
+            "metrics": {
+              "rows": 25124,
+              "pearson_ic": 0.08245647124479191,
+              "rank_ic": 0.17605577731973732,
+              "direction_hit_rate": 0.5577137398503423,
+              "prediction_std": 0.0003171901043970138,
+              "future_return_std": 0.001574211262158768,
+              "mean_prediction_bps": 0.5513922951649874,
+              "mean_future_return_bps": -0.3566964917620246
+            },
+            "pearson_ic": 0.08245647124479191,
+            "rank_ic": 0.17605577731973732
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.15490575124862524,
+              "rank_ic": 0.17518818642053927,
+              "direction_hit_rate": 0.5550248756218905,
+              "prediction_std": 0.0003329700557515025,
+              "future_return_std": 0.001240144428317768,
+              "mean_prediction_bps": 0.76471027568914,
+              "mean_future_return_bps": -0.509669717641727
+            },
+            "pearson_ic": 0.15490575124862524,
+            "rank_ic": 0.17518818642053927
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.20414127649812366,
+              "rank_ic": 0.20706480895891738,
+              "direction_hit_rate": 0.5540298507462686,
+              "prediction_std": 0.00025320888380520046,
+              "future_return_std": 0.001124223613020722,
+              "mean_prediction_bps": 0.574062105442863,
+              "mean_future_return_bps": -0.3900910071592584
+            },
+            "pearson_ic": 0.20414127649812366,
+            "rank_ic": 0.20706480895891738
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 25125,
+            "metrics": {
+              "rows": 25125,
+              "pearson_ic": 0.06321085946192753,
+              "rank_ic": 0.16500462016078524,
+              "direction_hit_rate": 0.5731741293532339,
+              "prediction_std": 0.000260429922491312,
+              "future_return_std": 0.0019676095080115794,
+              "mean_prediction_bps": -0.08655824785819277,
+              "mean_future_return_bps": 0.21715210067151947
+            },
+            "pearson_ic": 0.06321085946192753,
+            "rank_ic": 0.16500462016078524
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22577,
+            "metrics": {
+              "rows": 22577,
+              "pearson_ic": 0.2354901000934757,
+              "rank_ic": 0.23202918746510356,
+              "direction_hit_rate": 0.582008238472782,
+              "prediction_std": 0.000232288904953748,
+              "future_return_std": 0.0009399394961629558,
+              "mean_prediction_bps": -0.11963167708017863,
+              "mean_future_return_bps": 0.13260024600489523
+            },
+            "pearson_ic": 0.2354901000934757,
+            "rank_ic": 0.23202918746510356
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.1480408917093888,
+          "std_pearson_ic": 0.07473150957883055,
+          "mean_rank_ic": 0.19106851606501657,
+          "std_rank_ic": 0.027796366002821513,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 123076
+        }
+      },
+      {
+        "horizon": 30,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114386,
+            "rows": 25074,
+            "metrics": {
+              "rows": 25074,
+              "pearson_ic": 0.12781438417018334,
+              "rank_ic": 0.18572269586209708,
+              "direction_hit_rate": 0.5541596873255165,
+              "prediction_std": 0.00027068157214671373,
+              "future_return_std": 0.001999913732675553,
+              "mean_prediction_bps": 1.00804514659103,
+              "mean_future_return_bps": -0.5491864797578291
+            },
+            "pearson_ic": 0.12781438417018334,
+            "rank_ic": 0.18572269586209708
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139859,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.16686235916523573,
+              "rank_ic": 0.19248740246428495,
+              "direction_hit_rate": 0.5711665004985045,
+              "prediction_std": 0.00041718772263266146,
+              "future_return_std": 0.0015704003669318005,
+              "mean_prediction_bps": -0.2843216498149559,
+              "mean_future_return_bps": -0.761852944553175
+            },
+            "pearson_ic": 0.16686235916523573,
+            "rank_ic": 0.19248740246428495
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165335,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.12748690205191973,
+              "rank_ic": 0.14623838958767224,
+              "direction_hit_rate": 0.548035892323031,
+              "prediction_std": 0.0002778720227070153,
+              "future_return_std": 0.0014244645900019382,
+              "mean_prediction_bps": 0.19235430954722688,
+              "mean_future_return_bps": -0.5749628550273008
+            },
+            "pearson_ic": 0.12748690205191973,
+            "rank_ic": 0.14623838958767224
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190811,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.05989147026283377,
+              "rank_ic": 0.1556306616199807,
+              "direction_hit_rate": 0.5604785643070788,
+              "prediction_std": 0.0002901766274590045,
+              "future_return_std": 0.002432077652059184,
+              "mean_prediction_bps": -0.017903139450936578,
+              "mean_future_return_bps": 0.31851751063039035
+            },
+            "pearson_ic": 0.05989147026283377,
+            "rank_ic": 0.1556306616199807
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216284,
+            "rows": 22527,
+            "metrics": {
+              "rows": 22527,
+              "pearson_ic": 0.1971276509543171,
+              "rank_ic": 0.20042593756582608,
+              "direction_hit_rate": 0.5667865228392596,
+              "prediction_std": 0.0002628244983498007,
+              "future_return_std": 0.0011807076897326113,
+              "mean_prediction_bps": -0.008482119255859288,
+              "mean_future_return_bps": 0.20120610240913975
+            },
+            "pearson_ic": 0.1971276509543171,
+            "rank_ic": 0.20042593756582608
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.13583655332089792,
+          "std_pearson_ic": 0.05152894039346326,
+          "mean_rank_ic": 0.17610101741997222,
+          "std_rank_ic": 0.023788674083453015,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122826
+        }
+      },
+      {
+        "horizon": 30,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 25074,
+            "metrics": {
+              "rows": 25074,
+              "pearson_ic": 0.10187193549244043,
+              "rank_ic": 0.1665614783675588,
+              "direction_hit_rate": 0.5508096035734227,
+              "prediction_std": 0.00030991758103482425,
+              "future_return_std": 0.001999913732675553,
+              "mean_prediction_bps": 1.3937109906692058,
+              "mean_future_return_bps": -0.5491864797578291
+            },
+            "pearson_ic": 0.10187193549244043,
+            "rank_ic": 0.1665614783675588
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.16909298139153553,
+              "rank_ic": 0.1729556287529599,
+              "direction_hit_rate": 0.551864406779661,
+              "prediction_std": 0.0004494450113270432,
+              "future_return_std": 0.0015704003669318005,
+              "mean_prediction_bps": 0.9430630598217249,
+              "mean_future_return_bps": -0.761852944553175
+            },
+            "pearson_ic": 0.16909298139153553,
+            "rank_ic": 0.1729556287529599
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.12966846158835224,
+              "rank_ic": 0.1422715165996422,
+              "direction_hit_rate": 0.5302891326021935,
+              "prediction_std": 0.00031854459666647017,
+              "future_return_std": 0.0014244645900019382,
+              "mean_prediction_bps": 1.028104015858844,
+              "mean_future_return_bps": -0.5749628550273008
+            },
+            "pearson_ic": 0.12966846158835224,
+            "rank_ic": 0.1422715165996422
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.05654740430098871,
+              "rank_ic": 0.15242978065364526,
+              "direction_hit_rate": 0.5590029910269192,
+              "prediction_std": 0.0003006567421834916,
+              "future_return_std": 0.002432077652059184,
+              "mean_prediction_bps": 0.07570291927549988,
+              "mean_future_return_bps": 0.31851751063039035
+            },
+            "pearson_ic": 0.05654740430098871,
+            "rank_ic": 0.15242978065364526
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22527,
+            "metrics": {
+              "rows": 22527,
+              "pearson_ic": 0.19316885203816622,
+              "rank_ic": 0.1974626987174888,
+              "direction_hit_rate": 0.5647889199627114,
+              "prediction_std": 0.0002722942444961518,
+              "future_return_std": 0.0011807076897326113,
+              "mean_prediction_bps": 0.1179261198558379,
+              "mean_future_return_bps": 0.20120610240913975
+            },
+            "pearson_ic": 0.19316885203816622,
+            "rank_ic": 0.1974626987174888
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.13006992696229663,
+          "std_pearson_ic": 0.05409510689189144,
+          "mean_rank_ic": 0.16633622061825898,
+          "std_rank_ic": 0.02112595557579724,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122826
+        }
+      },
+      {
+        "horizon": 30,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114136,
+            "rows": 25074,
+            "metrics": {
+              "rows": 25074,
+              "pearson_ic": 0.07259892541511441,
+              "rank_ic": 0.1573351530348751,
+              "direction_hit_rate": 0.5508096035734227,
+              "prediction_std": 0.0003480211307760328,
+              "future_return_std": 0.001999913732675553,
+              "mean_prediction_bps": 0.49135716835735366,
+              "mean_future_return_bps": -0.5491864797578291
+            },
+            "pearson_ic": 0.07259892541511441,
+            "rank_ic": 0.1573351530348751
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139609,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.1607764534902518,
+              "rank_ic": 0.18472441827354297,
+              "direction_hit_rate": 0.5621136590229312,
+              "prediction_std": 0.0003730037424247712,
+              "future_return_std": 0.0015704003669318005,
+              "mean_prediction_bps": -0.04944038209941937,
+              "mean_future_return_bps": -0.761852944553175
+            },
+            "pearson_ic": 0.1607764534902518,
+            "rank_ic": 0.18472441827354297
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165085,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.15558076129177864,
+              "rank_ic": 0.1723097596857692,
+              "direction_hit_rate": 0.5680558325024925,
+              "prediction_std": 0.00027711864095181227,
+              "future_return_std": 0.0014244645900019382,
+              "mean_prediction_bps": 0.15911648006294854,
+              "mean_future_return_bps": -0.5749628550273008
+            },
+            "pearson_ic": 0.15558076129177864,
+            "rank_ic": 0.1723097596857692
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190561,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.048181317016996225,
+              "rank_ic": 0.1364574540575054,
+              "direction_hit_rate": 0.5561316051844467,
+              "prediction_std": 0.0003123327624052763,
+              "future_return_std": 0.002432077652059184,
+              "mean_prediction_bps": 0.05614223482552916,
+              "mean_future_return_bps": 0.31851751063039035
+            },
+            "pearson_ic": 0.048181317016996225,
+            "rank_ic": 0.1364574540575054
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216034,
+            "rows": 22527,
+            "metrics": {
+              "rows": 22527,
+              "pearson_ic": 0.18950741827833964,
+              "rank_ic": 0.19224717055964613,
+              "direction_hit_rate": 0.5690060815909798,
+              "prediction_std": 0.0002677231386769563,
+              "future_return_std": 0.0011807076897326113,
+              "mean_prediction_bps": -0.09151134690910112,
+              "mean_future_return_bps": 0.20120610240913975
+            },
+            "pearson_ic": 0.18950741827833964,
+            "rank_ic": 0.19224717055964613
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.12532897509849614,
+          "std_pearson_ic": 0.06128373794955393,
+          "mean_rank_ic": 0.16861479112226777,
+          "std_rank_ic": 0.022321440365654553,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122826
+        }
+      },
+      {
+        "horizon": 30,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 25074,
+            "metrics": {
+              "rows": 25074,
+              "pearson_ic": 0.04546336757165669,
+              "rank_ic": 0.14228867697382308,
+              "direction_hit_rate": 0.5430725053840632,
+              "prediction_std": 0.00048104810412041843,
+              "future_return_std": 0.001999913732675553,
+              "mean_prediction_bps": 0.862116867210716,
+              "mean_future_return_bps": -0.5491864797578291
+            },
+            "pearson_ic": 0.04546336757165669,
+            "rank_ic": 0.14228867697382308
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.15387518339650433,
+              "rank_ic": 0.1544156753868658,
+              "direction_hit_rate": 0.5453240279162512,
+              "prediction_std": 0.0004418035096023232,
+              "future_return_std": 0.0015704003669318005,
+              "mean_prediction_bps": 1.2736751523334533,
+              "mean_future_return_bps": -0.761852944553175
+            },
+            "pearson_ic": 0.15387518339650433,
+            "rank_ic": 0.1544156753868658
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.1521747336445263,
+              "rank_ic": 0.1526273566794496,
+              "direction_hit_rate": 0.5344366899302093,
+              "prediction_std": 0.0003268370346631855,
+              "future_return_std": 0.0014244645900019382,
+              "mean_prediction_bps": 1.1801398068200797,
+              "mean_future_return_bps": -0.5749628550273008
+            },
+            "pearson_ic": 0.1521747336445263,
+            "rank_ic": 0.1526273566794496
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 25075,
+            "metrics": {
+              "rows": 25075,
+              "pearson_ic": 0.06348526265046434,
+              "rank_ic": 0.13433502024650726,
+              "direction_hit_rate": 0.5491525423728814,
+              "prediction_std": 0.0003113108978141099,
+              "future_return_std": 0.002432077652059184,
+              "mean_prediction_bps": 0.3928046135115437,
+              "mean_future_return_bps": 0.31851751063039035
+            },
+            "pearson_ic": 0.06348526265046434,
+            "rank_ic": 0.13433502024650726
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22527,
+            "metrics": {
+              "rows": 22527,
+              "pearson_ic": 0.18809619823342494,
+              "rank_ic": 0.18888741806558895,
+              "direction_hit_rate": 0.5656767434633995,
+              "prediction_std": 0.0002608952927403152,
+              "future_return_std": 0.0011807076897326113,
+              "mean_prediction_bps": -0.11448881195974536,
+              "mean_future_return_bps": 0.20120610240913975
+            },
+            "pearson_ic": 0.18809619823342494,
+            "rank_ic": 0.18888741806558895
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.12061894909931532,
+          "std_pearson_ic": 0.06238498090605656,
+          "mean_rank_ic": 0.15451082947044695,
+          "std_rank_ic": 0.020867143174050178,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122826
+        }
+      },
+      {
+        "horizon": 50,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114386,
+            "rows": 24974,
+            "metrics": {
+              "rows": 24974,
+              "pearson_ic": 0.0765295799063415,
+              "rank_ic": 0.14582187257579582,
+              "direction_hit_rate": 0.5479698886842316,
+              "prediction_std": 0.00034268019953742623,
+              "future_return_std": 0.002654632171716516,
+              "mean_prediction_bps": 1.7079873941838741,
+              "mean_future_return_bps": -0.9409243321174846
+            },
+            "pearson_ic": 0.0765295799063415,
+            "rank_ic": 0.14582187257579582
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139859,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.13424431847316556,
+              "rank_ic": 0.15601326257495346,
+              "direction_hit_rate": 0.5405805805805806,
+              "prediction_std": 0.0004720838915091008,
+              "future_return_std": 0.0020929580693872987,
+              "mean_prediction_bps": 0.00249914108962912,
+              "mean_future_return_bps": -1.285057350317518
+            },
+            "pearson_ic": 0.13424431847316556,
+            "rank_ic": 0.15601326257495346
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165335,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.06745746919731468,
+              "rank_ic": 0.09350859607078375,
+              "direction_hit_rate": 0.527007007007007,
+              "prediction_std": 0.00033029651967808604,
+              "future_return_std": 0.0018902192645418286,
+              "mean_prediction_bps": 0.3301887045381591,
+              "mean_future_return_bps": -0.9431045488455866
+            },
+            "pearson_ic": 0.06745746919731468,
+            "rank_ic": 0.09350859607078375
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190811,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.028741609542912876,
+              "rank_ic": 0.11423517380526281,
+              "direction_hit_rate": 0.545985985985986,
+              "prediction_std": 0.00033970671938732266,
+              "future_return_std": 0.0031490654757565053,
+              "mean_prediction_bps": -0.1082264043361647,
+              "mean_future_return_bps": 0.5183493017775833
+            },
+            "pearson_ic": 0.028741609542912876,
+            "rank_ic": 0.11423517380526281
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216284,
+            "rows": 22427,
+            "metrics": {
+              "rows": 22427,
+              "pearson_ic": 0.1531703566362873,
+              "rank_ic": 0.15863891721477322,
+              "direction_hit_rate": 0.5580327284077229,
+              "prediction_std": 0.00030423246789723635,
+              "future_return_std": 0.0015668723293786914,
+              "mean_prediction_bps": -0.02555929768277565,
+              "mean_future_return_bps": 0.3673927022974917
+            },
+            "pearson_ic": 0.1531703566362873,
+            "rank_ic": 0.15863891721477322
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.09202866675120439,
+          "std_pearson_ic": 0.050915824025188905,
+          "mean_rank_ic": 0.1336435644483138,
+          "std_rank_ic": 0.0285525110851184,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122326
+        }
+      },
+      {
+        "horizon": 50,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 24974,
+            "metrics": {
+              "rows": 24974,
+              "pearson_ic": 0.07516914222447425,
+              "rank_ic": 0.14073739394191512,
+              "direction_hit_rate": 0.5503323456394651,
+              "prediction_std": 0.0003992894198745489,
+              "future_return_std": 0.002654632171716516,
+              "mean_prediction_bps": 2.3658097779843956,
+              "mean_future_return_bps": -0.9409243321174846
+            },
+            "pearson_ic": 0.07516914222447425,
+            "rank_ic": 0.14073739394191512
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.12167276188735948,
+              "rank_ic": 0.11878355499992416,
+              "direction_hit_rate": 0.5143143143143143,
+              "prediction_std": 0.0006195917376317084,
+              "future_return_std": 0.0020929580693872987,
+              "mean_prediction_bps": 2.489762846380472,
+              "mean_future_return_bps": -1.285057350317518
+            },
+            "pearson_ic": 0.12167276188735948,
+            "rank_ic": 0.11878355499992416
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.07545223472861065,
+              "rank_ic": 0.07517268803093877,
+              "direction_hit_rate": 0.5061861861861862,
+              "prediction_std": 0.0004317159182392061,
+              "future_return_std": 0.0018902192645418286,
+              "mean_prediction_bps": 2.2201662068255246,
+              "mean_future_return_bps": -0.9431045488455866
+            },
+            "pearson_ic": 0.07545223472861065,
+            "rank_ic": 0.07517268803093877
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.012799333950550884,
+              "rank_ic": 0.10708327439281444,
+              "direction_hit_rate": 0.5443043043043043,
+              "prediction_std": 0.00033955369144678116,
+              "future_return_std": 0.0031490654757565053,
+              "mean_prediction_bps": 0.1304577563132625,
+              "mean_future_return_bps": 0.5183493017775833
+            },
+            "pearson_ic": 0.012799333950550884,
+            "rank_ic": 0.10708327439281444
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22427,
+            "metrics": {
+              "rows": 22427,
+              "pearson_ic": 0.14789721179180726,
+              "rank_ic": 0.14945421597823796,
+              "direction_hit_rate": 0.5495162081419718,
+              "prediction_std": 0.00031099861371330917,
+              "future_return_std": 0.0015668723293786914,
+              "mean_prediction_bps": 0.2569273055996746,
+              "mean_future_return_bps": 0.3673927022974917
+            },
+            "pearson_ic": 0.14789721179180726,
+            "rank_ic": 0.14945421597823796
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.08659813691656051,
+          "std_pearson_ic": 0.051693622120804944,
+          "mean_rank_ic": 0.1182462254687661,
+          "std_rank_ic": 0.029410972264122433,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122326
+        }
+      },
+      {
+        "horizon": 50,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114136,
+            "rows": 24974,
+            "metrics": {
+              "rows": 24974,
+              "pearson_ic": 0.035352369749882,
+              "rank_ic": 0.1046878877009859,
+              "direction_hit_rate": 0.5333546888764314,
+              "prediction_std": 0.0004930562572553754,
+              "future_return_std": 0.002654632171716516,
+              "mean_prediction_bps": 0.929112356971018,
+              "mean_future_return_bps": -0.9409243321174846
+            },
+            "pearson_ic": 0.035352369749882,
+            "rank_ic": 0.1046878877009859
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139609,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.08792769310327565,
+              "rank_ic": 0.1428803221820696,
+              "direction_hit_rate": 0.5368968968968969,
+              "prediction_std": 0.0005904738209210336,
+              "future_return_std": 0.0020929580693872987,
+              "mean_prediction_bps": 0.8547896140953526,
+              "mean_future_return_bps": -1.285057350317518
+            },
+            "pearson_ic": 0.08792769310327565,
+            "rank_ic": 0.1428803221820696
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165085,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.11022704858239761,
+              "rank_ic": 0.1312940040014009,
+              "direction_hit_rate": 0.5458658658658658,
+              "prediction_std": 0.0003155030426569283,
+              "future_return_std": 0.0018902192645418286,
+              "mean_prediction_bps": 0.1906275429064408,
+              "mean_future_return_bps": -0.9431045488455866
+            },
+            "pearson_ic": 0.11022704858239761,
+            "rank_ic": 0.1312940040014009
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190561,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.03465090927906829,
+              "rank_ic": 0.10225079539160492,
+              "direction_hit_rate": 0.5505905905905906,
+              "prediction_std": 0.00037150701973587275,
+              "future_return_std": 0.0031490654757565053,
+              "mean_prediction_bps": -0.016649671579216374,
+              "mean_future_return_bps": 0.5183493017775833
+            },
+            "pearson_ic": 0.03465090927906829,
+            "rank_ic": 0.10225079539160492
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216034,
+            "rows": 22427,
+            "metrics": {
+              "rows": 22427,
+              "pearson_ic": 0.14398180566542296,
+              "rank_ic": 0.1355502365730118,
+              "direction_hit_rate": 0.5513443617068712,
+              "prediction_std": 0.00032474525505676866,
+              "future_return_std": 0.0015668723293786914,
+              "mean_prediction_bps": -0.06952091098355595,
+              "mean_future_return_bps": 0.3673927022974917
+            },
+            "pearson_ic": 0.14398180566542296,
+            "rank_ic": 0.1355502365730118
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.08242796527600929,
+          "std_pearson_ic": 0.04767250276472096,
+          "mean_rank_ic": 0.12333264916981461,
+          "std_rank_ic": 0.018620122326790455,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122326
+        }
+      },
+      {
+        "horizon": 50,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113111,
+            "rows": 24974,
+            "metrics": {
+              "rows": 24974,
+              "pearson_ic": 0.029518849924363245,
+              "rank_ic": 0.09593331008458272,
+              "direction_hit_rate": 0.5344358132457756,
+              "prediction_std": 0.0006864244933240116,
+              "future_return_std": 0.002654632171716516,
+              "mean_prediction_bps": 1.8616515444591641,
+              "mean_future_return_bps": -0.9409243321174846
+            },
+            "pearson_ic": 0.029518849924363245,
+            "rank_ic": 0.09593331008458272
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138584,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.11725873590286236,
+              "rank_ic": 0.1215301976349684,
+              "direction_hit_rate": 0.5184784784784785,
+              "prediction_std": 0.000704944774042815,
+              "future_return_std": 0.0020929580693872987,
+              "mean_prediction_bps": 3.7177716149017215,
+              "mean_future_return_bps": -1.285057350317518
+            },
+            "pearson_ic": 0.11725873590286236,
+            "rank_ic": 0.1215301976349684
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164060,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.1284487674968066,
+              "rank_ic": 0.10052771151598018,
+              "direction_hit_rate": 0.5136336336336337,
+              "prediction_std": 0.00047927279956638813,
+              "future_return_std": 0.0018902192645418286,
+              "mean_prediction_bps": 2.441578544676304,
+              "mean_future_return_bps": -0.9431045488455866
+            },
+            "pearson_ic": 0.1284487674968066,
+            "rank_ic": 0.10052771151598018
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189536,
+            "rows": 24975,
+            "metrics": {
+              "rows": 24975,
+              "pearson_ic": 0.05582612047653576,
+              "rank_ic": 0.0896807151474291,
+              "direction_hit_rate": 0.5318918918918919,
+              "prediction_std": 0.0004145160783082247,
+              "future_return_std": 0.0031490654757565053,
+              "mean_prediction_bps": 1.0822913463925943,
+              "mean_future_return_bps": 0.5183493017775833
+            },
+            "pearson_ic": 0.05582612047653576,
+            "rank_ic": 0.0896807151474291
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215009,
+            "rows": 22427,
+            "metrics": {
+              "rows": 22427,
+              "pearson_ic": 0.15115817485431995,
+              "rank_ic": 0.15510424120095712,
+              "direction_hit_rate": 0.5616444464261827,
+              "prediction_std": 0.0003302237018942833,
+              "future_return_std": 0.0015668723293786914,
+              "mean_prediction_bps": 0.14885874406900257,
+              "mean_future_return_bps": 0.3673927022974917
+            },
+            "pearson_ic": 0.15115817485431995,
+            "rank_ic": 0.15510424120095712
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.09644212973097759,
+          "std_pearson_ic": 0.051429532214864834,
+          "mean_rank_ic": 0.11255523511678352,
+          "std_rank_ic": 0.026623116133006688,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 122326
+        }
+      },
+      {
+        "horizon": 100,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 114136,
+            "rows": 24474,
+            "metrics": {
+              "rows": 24474,
+              "pearson_ic": 0.048895296933252695,
+              "rank_ic": 0.07831959505929983,
+              "direction_hit_rate": 0.5326468905777559,
+              "prediction_std": 0.000539989210665226,
+              "future_return_std": 0.003363269082883809,
+              "mean_prediction_bps": 2.7892881189472973,
+              "mean_future_return_bps": -1.2969192480341878
+            },
+            "pearson_ic": 0.048895296933252695,
+            "rank_ic": 0.07831959505929983
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139609,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.02724293661426494,
+              "rank_ic": 0.0723209222246569,
+              "direction_hit_rate": 0.5167313585291113,
+              "prediction_std": 0.000371879490558058,
+              "future_return_std": 0.0030257476810065707,
+              "mean_prediction_bps": 0.9779013635125011,
+              "mean_future_return_bps": -2.4142883709246643
+            },
+            "pearson_ic": 0.02724293661426494,
+            "rank_ic": 0.0723209222246569
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 165085,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.03778531130843061,
+              "rank_ic": 0.058101825995046825,
+              "direction_hit_rate": 0.5148110316649642,
+              "prediction_std": 0.00038989324821159244,
+              "future_return_std": 0.0026483628380642088,
+              "mean_prediction_bps": 0.8274747960967943,
+              "mean_future_return_bps": -1.81145298548988
+            },
+            "pearson_ic": 0.03778531130843061,
+            "rank_ic": 0.058101825995046825
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190561,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": -0.017892658821197203,
+              "rank_ic": 0.022244728981125846,
+              "direction_hit_rate": 0.514729315628192,
+              "prediction_std": 0.00041474757017567754,
+              "future_return_std": 0.004413910052734534,
+              "mean_prediction_bps": -0.24249629859696142,
+              "mean_future_return_bps": 1.659875217915089
+            },
+            "pearson_ic": -0.017892658821197203,
+            "rank_ic": 0.022244728981125846
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 216034,
+            "rows": 21927,
+            "metrics": {
+              "rows": 21927,
+              "pearson_ic": 0.03709629673753046,
+              "rank_ic": 0.04567151853062632,
+              "direction_hit_rate": 0.523281798695672,
+              "prediction_std": 0.00040869074291549623,
+              "future_return_std": 0.002202394477659213,
+              "mean_prediction_bps": -0.14704511158925015,
+              "mean_future_return_bps": 0.6897946516711775
+            },
+            "pearson_ic": 0.03709629673753046,
+            "rank_ic": 0.04567151853062632
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.0266254365544563,
+          "std_pearson_ic": 0.026040211793438874,
+          "mean_rank_ic": 0.05533171815815115,
+          "std_rank_ic": 0.022432216488278593,
+          "positive_pearson_folds": 4,
+          "validation_rows_total": 119826
+        }
+      },
+      {
+        "horizon": 100,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 112861,
+            "rows": 24474,
+            "metrics": {
+              "rows": 24474,
+              "pearson_ic": 0.033735883496449834,
+              "rank_ic": 0.05603999600732604,
+              "direction_hit_rate": 0.5311759418158045,
+              "prediction_std": 0.0005783716915175319,
+              "future_return_std": 0.003363269082883809,
+              "mean_prediction_bps": 4.142012039665133,
+              "mean_future_return_bps": -1.2969192480341878
+            },
+            "pearson_ic": 0.033735883496449834,
+            "rank_ic": 0.05603999600732604
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138334,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.05291368527280191,
+              "rank_ic": 0.0647203235959275,
+              "direction_hit_rate": 0.5069662921348315,
+              "prediction_std": 0.0008666171925142407,
+              "future_return_std": 0.0030257476810065707,
+              "mean_prediction_bps": 6.158419419080019,
+              "mean_future_return_bps": -2.4142883709246643
+            },
+            "pearson_ic": 0.05291368527280191,
+            "rank_ic": 0.0647203235959275
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 163810,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.06985134883490884,
+              "rank_ic": 0.053531521975735095,
+              "direction_hit_rate": 0.48996935648621043,
+              "prediction_std": 0.0006366492016240954,
+              "future_return_std": 0.0026483628380642088,
+              "mean_prediction_bps": 4.915955360047519,
+              "mean_future_return_bps": -1.81145298548988
+            },
+            "pearson_ic": 0.06985134883490884,
+            "rank_ic": 0.053531521975735095
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189286,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": -0.046896695003937824,
+              "rank_ic": 0.034138208103216675,
+              "direction_hit_rate": 0.5204902962206333,
+              "prediction_std": 0.000567242968827486,
+              "future_return_std": 0.004413910052734534,
+              "mean_prediction_bps": 0.546538140042685,
+              "mean_future_return_bps": 1.659875217915089
+            },
+            "pearson_ic": -0.046896695003937824,
+            "rank_ic": 0.034138208103216675
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 214759,
+            "rows": 21927,
+            "metrics": {
+              "rows": 21927,
+              "pearson_ic": 0.033415032836576,
+              "rank_ic": 0.03691843143197978,
+              "direction_hit_rate": 0.5153463766133078,
+              "prediction_std": 0.0004283609159756452,
+              "future_return_std": 0.002202394477659213,
+              "mean_prediction_bps": 0.361402053385973,
+              "mean_future_return_bps": 0.6897946516711775
+            },
+            "pearson_ic": 0.033415032836576,
+            "rank_ic": 0.03691843143197978
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.02860385108735975,
+          "std_pearson_ic": 0.04483899473425406,
+          "mean_rank_ic": 0.049069696222837016,
+          "std_rank_ic": 0.01307705699679874,
+          "positive_pearson_folds": 4,
+          "validation_rows_total": 119826
+        }
+      },
+      {
+        "horizon": 100,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113886,
+            "rows": 24474,
+            "metrics": {
+              "rows": 24474,
+              "pearson_ic": 0.0034009299380693414,
+              "rank_ic": 0.026764462664613443,
+              "direction_hit_rate": 0.508049358502901,
+              "prediction_std": 0.000774765620008111,
+              "future_return_std": 0.003363269082883809,
+              "mean_prediction_bps": 0.9390265040565282,
+              "mean_future_return_bps": -1.2969192480341878
+            },
+            "pearson_ic": 0.0034009299380693414,
+            "rank_ic": 0.026764462664613443
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139359,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.02891788875208807,
+              "rank_ic": 0.07326331556357508,
+              "direction_hit_rate": 0.5096220633299285,
+              "prediction_std": 0.0006078078877180815,
+              "future_return_std": 0.0030257476810065707,
+              "mean_prediction_bps": 2.151282678823918,
+              "mean_future_return_bps": -2.4142883709246643
+            },
+            "pearson_ic": 0.02891788875208807,
+            "rank_ic": 0.07326331556357508
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164835,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.16058747326906408,
+              "rank_ic": 0.17468424056780135,
+              "direction_hit_rate": 0.5428396322778345,
+              "prediction_std": 0.00034742490970529616,
+              "future_return_std": 0.0026483628380642088,
+              "mean_prediction_bps": 0.18877281036111526,
+              "mean_future_return_bps": -1.81145298548988
+            },
+            "pearson_ic": 0.16058747326906408,
+            "rank_ic": 0.17468424056780135
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190311,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.0271094483636628,
+              "rank_ic": 0.049902705939488735,
+              "direction_hit_rate": 0.5176710929519919,
+              "prediction_std": 0.0005105478339828551,
+              "future_return_std": 0.004413910052734534,
+              "mean_prediction_bps": -0.6742517143720761,
+              "mean_future_return_bps": 1.659875217915089
+            },
+            "pearson_ic": 0.0271094483636628,
+            "rank_ic": 0.049902705939488735
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215784,
+            "rows": 21927,
+            "metrics": {
+              "rows": 21927,
+              "pearson_ic": 0.010569893306937169,
+              "rank_ic": 0.021001627862073022,
+              "direction_hit_rate": 0.5015277967802253,
+              "prediction_std": 0.0007196985534392297,
+              "future_return_std": 0.002202394477659213,
+              "mean_prediction_bps": 1.7082825070247054,
+              "mean_future_return_bps": 0.6897946516711775
+            },
+            "pearson_ic": 0.010569893306937169,
+            "rank_ic": 0.021001627862073022
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.04611712672596429,
+          "std_pearson_ic": 0.06490155070002768,
+          "mean_rank_ic": 0.06912327051951034,
+          "std_rank_ic": 0.06252929227213438,
+          "positive_pearson_folds": 5,
+          "validation_rows_total": 119826
+        }
+      },
+      {
+        "horizon": 100,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 112861,
+            "rows": 24474,
+            "metrics": {
+              "rows": 24474,
+              "pearson_ic": -0.00518585021007393,
+              "rank_ic": 0.02893095931983288,
+              "direction_hit_rate": 0.5098471847675083,
+              "prediction_std": 0.001183660002425313,
+              "future_return_std": 0.003363269082883809,
+              "mean_prediction_bps": 1.0510154243092984,
+              "mean_future_return_bps": -1.2969192480341878
+            },
+            "pearson_ic": -0.00518585021007393,
+            "rank_ic": 0.02893095931983288
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138334,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.029844541259074354,
+              "rank_ic": 0.055999872821901796,
+              "direction_hit_rate": 0.4993667007150153,
+              "prediction_std": 0.0010972874006256461,
+              "future_return_std": 0.0030257476810065707,
+              "mean_prediction_bps": 6.91802182700485,
+              "mean_future_return_bps": -2.4142883709246643
+            },
+            "pearson_ic": 0.029844541259074354,
+            "rank_ic": 0.055999872821901796
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 163810,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.16748428171213173,
+              "rank_ic": 0.11210335609003336,
+              "direction_hit_rate": 0.49507660878447396,
+              "prediction_std": 0.000659692392218858,
+              "future_return_std": 0.0026483628380642088,
+              "mean_prediction_bps": 5.1489402540028095,
+              "mean_future_return_bps": -1.81145298548988
+            },
+            "pearson_ic": 0.16748428171213173,
+            "rank_ic": 0.11210335609003336
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189286,
+            "rows": 24475,
+            "metrics": {
+              "rows": 24475,
+              "pearson_ic": 0.09163280701858897,
+              "rank_ic": 0.06365831611111845,
+              "direction_hit_rate": 0.49303370786516854,
+              "prediction_std": 0.0006109288078732789,
+              "future_return_std": 0.004413910052734534,
+              "mean_prediction_bps": 2.2890293621458113,
+              "mean_future_return_bps": 1.659875217915089
+            },
+            "pearson_ic": 0.09163280701858897,
+            "rank_ic": 0.06365831611111845
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 214759,
+            "rows": 21927,
+            "metrics": {
+              "rows": 21927,
+              "pearson_ic": 0.06933130666544333,
+              "rank_ic": 0.03767347758313618,
+              "direction_hit_rate": 0.5121083595567109,
+              "prediction_std": 0.00046169341658242047,
+              "future_return_std": 0.002202394477659213,
+              "mean_prediction_bps": 1.3150721497368068,
+              "mean_future_return_bps": 0.6897946516711775
+            },
+            "pearson_ic": 0.06933130666544333,
+            "rank_ic": 0.03767347758313618
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.0706214172890329,
+          "std_pearson_ic": 0.06564117003161919,
+          "mean_rank_ic": 0.05967319638520453,
+          "std_rank_ic": 0.03243211717980353,
+          "positive_pearson_folds": 4,
+          "validation_rows_total": 119826
+        }
+      },
+      {
+        "horizon": 200,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113636,
+            "rows": 23474,
+            "metrics": {
+              "rows": 23474,
+              "pearson_ic": -0.018854933717063302,
+              "rank_ic": 0.0032559410182159926,
+              "direction_hit_rate": 0.4934821504643435,
+              "prediction_std": 0.000772150931879878,
+              "future_return_std": 0.004668403477487141,
+              "mean_prediction_bps": 5.160235450603068,
+              "mean_future_return_bps": -3.2436196200216423
+            },
+            "pearson_ic": -0.018854933717063302,
+            "rank_ic": 0.0032559410182159926
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 139109,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.008707909020038717,
+              "rank_ic": 0.05016350302503632,
+              "direction_hit_rate": 0.5151863684771033,
+              "prediction_std": 0.0005333590088412166,
+              "future_return_std": 0.004232220815667785,
+              "mean_prediction_bps": 2.1702382946386933,
+              "mean_future_return_bps": -4.850521917652737
+            },
+            "pearson_ic": 0.008707909020038717,
+            "rank_ic": 0.05016350302503632
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164585,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.04599959251508854,
+              "rank_ic": 0.031982377310726534,
+              "direction_hit_rate": 0.49806176783812567,
+              "prediction_std": 0.0005276683368720114,
+              "future_return_std": 0.003455509785289527,
+              "mean_prediction_bps": 1.9369862275198102,
+              "mean_future_return_bps": -4.3649119795872755
+            },
+            "pearson_ic": 0.04599959251508854,
+            "rank_ic": 0.031982377310726534
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 190061,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": -0.03792970929302404,
+              "rank_ic": 0.0035973813115866933,
+              "direction_hit_rate": 0.5009584664536741,
+              "prediction_std": 0.0006633075536228716,
+              "future_return_std": 0.006143673562687147,
+              "mean_prediction_bps": -0.515507381351199,
+              "mean_future_return_bps": 3.647679719488202
+            },
+            "pearson_ic": -0.03792970929302404,
+            "rank_ic": 0.0035973813115866933
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215534,
+            "rows": 20927,
+            "metrics": {
+              "rows": 20927,
+              "pearson_ic": -0.009915789666638027,
+              "rank_ic": -0.02318698680526309,
+              "direction_hit_rate": 0.4852582787786114,
+              "prediction_std": 0.0005912063643336296,
+              "future_return_std": 0.002806062851559814,
+              "mean_prediction_bps": -0.06031644261383917,
+              "mean_future_return_bps": 1.5257861375204622
+            },
+            "pearson_ic": -0.009915789666638027,
+            "rank_ic": -0.02318698680526309
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": -0.0023985862283196235,
+          "std_pearson_ic": 0.03184147597404684,
+          "mean_rank_ic": 0.01316244317206049,
+          "std_rank_ic": 0.02843491957181519,
+          "positive_pearson_folds": 2,
+          "validation_rows_total": 114826
+        }
+      },
+      {
+        "horizon": 200,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 112361,
+            "rows": 23474,
+            "metrics": {
+              "rows": 23474,
+              "pearson_ic": -0.03560869110300233,
+              "rank_ic": 0.02325746793290483,
+              "direction_hit_rate": 0.5037062281673341,
+              "prediction_std": 0.0009475939441472292,
+              "future_return_std": 0.004668403477487141,
+              "mean_prediction_bps": 8.102874271571636,
+              "mean_future_return_bps": -3.2436196200216423
+            },
+            "pearson_ic": -0.03560869110300233,
+            "rank_ic": 0.02325746793290483
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 137834,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.06668672455954029,
+              "rank_ic": 0.06802923243795912,
+              "direction_hit_rate": 0.5046219382321618,
+              "prediction_std": 0.0009862049482762814,
+              "future_return_std": 0.004232220815667785,
+              "mean_prediction_bps": 7.693648221902549,
+              "mean_future_return_bps": -4.850521917652737
+            },
+            "pearson_ic": 0.06668672455954029,
+            "rank_ic": 0.06802923243795912
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 163310,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.025775940184547964,
+              "rank_ic": 0.013268705930633347,
+              "direction_hit_rate": 0.4757827476038339,
+              "prediction_std": 0.0007201072876341641,
+              "future_return_std": 0.003455509785289527,
+              "mean_prediction_bps": 7.504028035327792,
+              "mean_future_return_bps": -4.3649119795872755
+            },
+            "pearson_ic": 0.025775940184547964,
+            "rank_ic": 0.013268705930633347
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 188786,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": -0.07798308571041387,
+              "rank_ic": 0.00456095585069743,
+              "direction_hit_rate": 0.49503727369542067,
+              "prediction_std": 0.0008215320413000882,
+              "future_return_std": 0.006143673562687147,
+              "mean_prediction_bps": 1.12209003418684,
+              "mean_future_return_bps": 3.647679719488202
+            },
+            "pearson_ic": -0.07798308571041387,
+            "rank_ic": 0.00456095585069743
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 214259,
+            "rows": 20927,
+            "metrics": {
+              "rows": 20927,
+              "pearson_ic": -0.043830626975741124,
+              "rank_ic": -0.07738742705900335,
+              "direction_hit_rate": 0.45486691833516507,
+              "prediction_std": 0.000573001685552299,
+              "future_return_std": 0.002806062851559814,
+              "mean_prediction_bps": 0.772518033045344,
+              "mean_future_return_bps": 1.5257861375204622
+            },
+            "pearson_ic": -0.043830626975741124,
+            "rank_ic": -0.07738742705900335
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": -0.012991947809013814,
+          "std_pearson_ic": 0.05817651842794921,
+          "mean_rank_ic": 0.006345787018638274,
+          "std_rank_ic": 0.05280439365828514,
+          "positive_pearson_folds": 2,
+          "validation_rows_total": 114826
+        }
+      },
+      {
+        "horizon": 200,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 113386,
+            "rows": 23474,
+            "metrics": {
+              "rows": 23474,
+              "pearson_ic": -0.03676070842960575,
+              "rank_ic": -0.024112128428794618,
+              "direction_hit_rate": 0.49003152423958424,
+              "prediction_std": 0.0011165302712470293,
+              "future_return_std": 0.004668403477487141,
+              "mean_prediction_bps": 2.4398502137046307,
+              "mean_future_return_bps": -3.2436196200216423
+            },
+            "pearson_ic": -0.03676070842960575,
+            "rank_ic": -0.024112128428794618
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 138859,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.004534379965468167,
+              "rank_ic": 0.07041630817578726,
+              "direction_hit_rate": 0.5552715654952076,
+              "prediction_std": 0.0011464570416137576,
+              "future_return_std": 0.004232220815667785,
+              "mean_prediction_bps": 4.508728452492505,
+              "mean_future_return_bps": -4.850521917652737
+            },
+            "pearson_ic": 0.004534379965468167,
+            "rank_ic": 0.07041630817578726
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 164335,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.21633078098390957,
+              "rank_ic": 0.18327930812333856,
+              "direction_hit_rate": 0.5403194888178914,
+              "prediction_std": 0.0005484618013724685,
+              "future_return_std": 0.003455509785289527,
+              "mean_prediction_bps": -0.12265754776308313,
+              "mean_future_return_bps": -4.3649119795872755
+            },
+            "pearson_ic": 0.21633078098390957,
+            "rank_ic": 0.18327930812333856
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 189811,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": -0.0009417298436348981,
+              "rank_ic": 0.0019553463764850057,
+              "direction_hit_rate": 0.48144834930777425,
+              "prediction_std": 0.0009898137068375945,
+              "future_return_std": 0.006143673562687147,
+              "mean_prediction_bps": -1.143114423030056,
+              "mean_future_return_bps": 3.647679719488202
+            },
+            "pearson_ic": -0.0009417298436348981,
+            "rank_ic": 0.0019553463764850057
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 215284,
+            "rows": 20927,
+            "metrics": {
+              "rows": 20927,
+              "pearson_ic": -0.045256129386703176,
+              "rank_ic": -0.06604904061761979,
+              "direction_hit_rate": 0.46499737181631384,
+              "prediction_std": 0.0009220247738994658,
+              "future_return_std": 0.002806062851559814,
+              "mean_prediction_bps": 1.6333669191226363,
+              "mean_future_return_bps": 1.5257861375204622
+            },
+            "pearson_ic": -0.045256129386703176,
+            "rank_ic": -0.06604904061761979
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.027581318657886784,
+          "std_pearson_ic": 0.10772218375832682,
+          "mean_rank_ic": 0.03309795872583928,
+          "std_rank_ic": 0.09749369308770314,
+          "positive_pearson_folds": 2,
+          "validation_rows_total": 114826
+        }
+      },
+      {
+        "horizon": 200,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 112361,
+            "rows": 23474,
+            "metrics": {
+              "rows": 23474,
+              "pearson_ic": -0.057535640649062865,
+              "rank_ic": -0.0027932497952107742,
+              "direction_hit_rate": 0.49045752747720883,
+              "prediction_std": 0.0020962757989764214,
+              "future_return_std": 0.004668403477487141,
+              "mean_prediction_bps": 1.4128931798040867,
+              "mean_future_return_bps": -3.2436196200216423
+            },
+            "pearson_ic": -0.057535640649062865,
+            "rank_ic": -0.0027932497952107742
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 137834,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.05271561952677088,
+              "rank_ic": 0.07618563319300063,
+              "direction_hit_rate": 0.5328647497337593,
+              "prediction_std": 0.0012845530873164535,
+              "future_return_std": 0.004232220815667785,
+              "mean_prediction_bps": 9.553644922561944,
+              "mean_future_return_bps": -4.850521917652737
+            },
+            "pearson_ic": 0.05271561952677088,
+            "rank_ic": 0.07618563319300063
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 163310,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.17400044798380337,
+              "rank_ic": 0.1411659175560234,
+              "direction_hit_rate": 0.5248136315228967,
+              "prediction_std": 0.001020963885821402,
+              "future_return_std": 0.003455509785289527,
+              "mean_prediction_bps": 7.382202311418951,
+              "mean_future_return_bps": -4.3649119795872755
+            },
+            "pearson_ic": 0.17400044798380337,
+            "rank_ic": 0.1411659175560234
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 188786,
+            "rows": 23475,
+            "metrics": {
+              "rows": 23475,
+              "pearson_ic": 0.10463119774295516,
+              "rank_ic": 0.07695410423397761,
+              "direction_hit_rate": 0.48617678381256657,
+              "prediction_std": 0.0010399764869362116,
+              "future_return_std": 0.006143673562687147,
+              "mean_prediction_bps": 3.4382336889393628,
+              "mean_future_return_bps": 3.647679719488202
+            },
+            "pearson_ic": 0.10463119774295516,
+            "rank_ic": 0.07695410423397761
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 214259,
+            "rows": 20927,
+            "metrics": {
+              "rows": 20927,
+              "pearson_ic": -0.03619327906711525,
+              "rank_ic": -0.05815408131624225,
+              "direction_hit_rate": 0.4608878482343384,
+              "prediction_std": 0.000796453095972538,
+              "future_return_std": 0.002806062851559814,
+              "mean_prediction_bps": 1.7752146231941879,
+              "mean_future_return_bps": 1.5257861375204622
+            },
+            "pearson_ic": -0.03619327906711525,
+            "rank_ic": -0.05815408131624225
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.04752366910747026,
+          "std_pearson_ic": 0.0966056258055496,
+          "mean_rank_ic": 0.04667166477430972,
+          "std_rank_ic": 0.07770533941923356,
+          "positive_pearson_folds": 3,
+          "validation_rows_total": 114826
+        }
+      },
+      {
+        "horizon": 500,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 112136,
+            "rows": 20474,
+            "metrics": {
+              "rows": 20474,
+              "pearson_ic": -0.13354469693020737,
+              "rank_ic": -0.09717394101294566,
+              "direction_hit_rate": 0.4886685552407932,
+              "prediction_std": 0.0013639897806569934,
+              "future_return_std": 0.00758831239310539,
+              "mean_prediction_bps": 14.675016282126307,
+              "mean_future_return_bps": -9.901926037128133
+            },
+            "pearson_ic": -0.13354469693020737,
+            "rank_ic": -0.09717394101294566
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 137609,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": -0.05766293854119422,
+              "rank_ic": 0.001641774596327786,
+              "direction_hit_rate": 0.50002442002442,
+              "prediction_std": 0.0008793140877969563,
+              "future_return_std": 0.005238840985774151,
+              "mean_prediction_bps": 2.8144181123934686,
+              "mean_future_return_bps": -8.575056685734207
+            },
+            "pearson_ic": -0.05766293854119422,
+            "rank_ic": 0.001641774596327786
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 163085,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": -0.13802929936984953,
+              "rank_ic": -0.12953992853611768,
+              "direction_hit_rate": 0.46422466422466424,
+              "prediction_std": 0.0007462521898560226,
+              "future_return_std": 0.005327145012328817,
+              "mean_prediction_bps": 5.649189697578549,
+              "mean_future_return_bps": -11.167545519798173
+            },
+            "pearson_ic": -0.13802929936984953,
+            "rank_ic": -0.12953992853611768
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 188561,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.04633551085620203,
+              "rank_ic": 0.010706822113833992,
+              "direction_hit_rate": 0.514041514041514,
+              "prediction_std": 0.0009900066070258617,
+              "future_return_std": 0.009474042915097245,
+              "mean_prediction_bps": 0.25650890165707096,
+              "mean_future_return_bps": 8.750017667766976
+            },
+            "pearson_ic": 0.04633551085620203,
+            "rank_ic": 0.010706822113833992
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 214034,
+            "rows": 17927,
+            "metrics": {
+              "rows": 17927,
+              "pearson_ic": -0.012711931122625357,
+              "rank_ic": -0.018283084957419222,
+              "direction_hit_rate": 0.48630557259998886,
+              "prediction_std": 0.0008431896567344666,
+              "future_return_std": 0.0032229565185541015,
+              "mean_prediction_bps": -0.432531232945621,
+              "mean_future_return_bps": 4.130796137241466
+            },
+            "pearson_ic": -0.012711931122625357,
+            "rank_ic": -0.018283084957419222
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": -0.0591226710215349,
+          "std_pearson_ic": 0.07912396864965508,
+          "mean_rank_ic": -0.04652967155926416,
+          "std_rank_ic": 0.06294823047399263,
+          "positive_pearson_folds": 1,
+          "validation_rows_total": 99826
+        }
+      },
+      {
+        "horizon": 500,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 110861,
+            "rows": 20474,
+            "metrics": {
+              "rows": 20474,
+              "pearson_ic": -0.22460785819219642,
+              "rank_ic": -0.13852904790489579,
+              "direction_hit_rate": 0.4996092605255446,
+              "prediction_std": 0.0017702211625874043,
+              "future_return_std": 0.00758831239310539,
+              "mean_prediction_bps": 20.275514107197523,
+              "mean_future_return_bps": -9.901926037128133
+            },
+            "pearson_ic": -0.22460785819219642,
+            "rank_ic": -0.13852904790489579
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 136334,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.056529442168204,
+              "rank_ic": 0.06501879033282972,
+              "direction_hit_rate": 0.4625641025641026,
+              "prediction_std": 0.000977225136011839,
+              "future_return_std": 0.005238840985774151,
+              "mean_prediction_bps": 11.726084630936384,
+              "mean_future_return_bps": -8.575056685734207
+            },
+            "pearson_ic": 0.056529442168204,
+            "rank_ic": 0.06501879033282972
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 161810,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": -0.01574379699838941,
+              "rank_ic": -0.018525760383243384,
+              "direction_hit_rate": 0.4768253968253968,
+              "prediction_std": 0.0014754908625036478,
+              "future_return_std": 0.005327145012328817,
+              "mean_prediction_bps": 19.13994550704956,
+              "mean_future_return_bps": -11.167545519798173
+            },
+            "pearson_ic": -0.01574379699838941,
+            "rank_ic": -0.018525760383243384
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 187286,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.013185054787031721,
+              "rank_ic": 0.06565609244165238,
+              "direction_hit_rate": 0.4935775335775336,
+              "prediction_std": 0.0014257809380069375,
+              "future_return_std": 0.009474042915097245,
+              "mean_prediction_bps": 4.7784202615730464,
+              "mean_future_return_bps": 8.750017667766976
+            },
+            "pearson_ic": 0.013185054787031721,
+            "rank_ic": 0.06565609244165238
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 212759,
+            "rows": 17927,
+            "metrics": {
+              "rows": 17927,
+              "pearson_ic": -0.09220455568220777,
+              "rank_ic": -0.09134164367682844,
+              "direction_hit_rate": 0.4588609360182964,
+              "prediction_std": 0.000982504105195403,
+              "future_return_std": 0.0032229565185541015,
+              "mean_prediction_bps": 1.605828438187018,
+              "mean_future_return_bps": 4.130796137241466
+            },
+            "pearson_ic": -0.09220455568220777,
+            "rank_ic": -0.09134164367682844
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": -0.05256834278351158,
+          "std_pearson_ic": 0.11039758532314818,
+          "mean_rank_ic": -0.023544313838097103,
+          "std_rank_ic": 0.09171053481105126,
+          "positive_pearson_folds": 2,
+          "validation_rows_total": 99826
+        }
+      },
+      {
+        "horizon": 500,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 111886,
+            "rows": 20474,
+            "metrics": {
+              "rows": 20474,
+              "pearson_ic": -0.06176969499853044,
+              "rank_ic": -0.06711796699935665,
+              "direction_hit_rate": 0.44935039562371787,
+              "prediction_std": 0.0018805030267685652,
+              "future_return_std": 0.00758831239310539,
+              "mean_prediction_bps": 7.869300898164511,
+              "mean_future_return_bps": -9.901926037128133
+            },
+            "pearson_ic": -0.06176969499853044,
+            "rank_ic": -0.06711796699935665
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 137359,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.04473179029207179,
+              "rank_ic": 0.2050509476980869,
+              "direction_hit_rate": 0.4948962148962149,
+              "prediction_std": 0.0017054297495633364,
+              "future_return_std": 0.005238840985774151,
+              "mean_prediction_bps": 13.449745019897819,
+              "mean_future_return_bps": -8.575056685734207
+            },
+            "pearson_ic": 0.04473179029207179,
+            "rank_ic": 0.2050509476980869
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 162835,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.21648983168624178,
+              "rank_ic": 0.23205552942017477,
+              "direction_hit_rate": 0.5821245421245421,
+              "prediction_std": 0.0010771171655505896,
+              "future_return_std": 0.005327145012328817,
+              "mean_prediction_bps": 1.7172434309031814,
+              "mean_future_return_bps": -11.167545519798173
+            },
+            "pearson_ic": 0.21648983168624178,
+            "rank_ic": 0.23205552942017477
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 188311,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": -0.02566972631141385,
+              "rank_ic": -0.12431715703947956,
+              "direction_hit_rate": 0.4453235653235653,
+              "prediction_std": 0.002247115597128868,
+              "future_return_std": 0.009474042915097245,
+              "mean_prediction_bps": -0.5738939580623992,
+              "mean_future_return_bps": 8.750017667766976
+            },
+            "pearson_ic": -0.02566972631141385,
+            "rank_ic": -0.12431715703947956
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 213784,
+            "rows": 17927,
+            "metrics": {
+              "rows": 17927,
+              "pearson_ic": -0.07809602739974768,
+              "rank_ic": -0.07458663551234596,
+              "direction_hit_rate": 0.4927204774920511,
+              "prediction_std": 0.001519134733825922,
+              "future_return_std": 0.0032229565185541015,
+              "mean_prediction_bps": 2.2638606606051326,
+              "mean_future_return_bps": 4.130796137241466
+            },
+            "pearson_ic": -0.07809602739974768,
+            "rank_ic": -0.07458663551234596
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.019137234653724324,
+          "std_pearson_ic": 0.12001149017911697,
+          "mean_rank_ic": 0.0342169435134159,
+          "std_rank_ic": 0.16997382665789798,
+          "positive_pearson_folds": 2,
+          "validation_rows_total": 99826
+        }
+      },
+      {
+        "horizon": 500,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 110861,
+            "rows": 20474,
+            "metrics": {
+              "rows": 20474,
+              "pearson_ic": -0.058877564903453486,
+              "rank_ic": -0.048617658592390395,
+              "direction_hit_rate": 0.48681254273713004,
+              "prediction_std": 0.0018595001893118024,
+              "future_return_std": 0.00758831239310539,
+              "mean_prediction_bps": 10.831927647814155,
+              "mean_future_return_bps": -9.901926037128133
+            },
+            "pearson_ic": -0.058877564903453486,
+            "rank_ic": -0.048617658592390395
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 136334,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.06852182926672663,
+              "rank_ic": 0.22788713571311361,
+              "direction_hit_rate": 0.5343101343101343,
+              "prediction_std": 0.0019361210288479924,
+              "future_return_std": 0.005238840985774151,
+              "mean_prediction_bps": 18.124658381566405,
+              "mean_future_return_bps": -8.575056685734207
+            },
+            "pearson_ic": 0.06852182926672663,
+            "rank_ic": 0.22788713571311361
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 161810,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.21584729123288382,
+              "rank_ic": 0.19819306081351215,
+              "direction_hit_rate": 0.5523321123321123,
+              "prediction_std": 0.0022678375244140625,
+              "future_return_std": 0.005327145012328817,
+              "mean_prediction_bps": 18.194024451076984,
+              "mean_future_return_bps": -11.167545519798173
+            },
+            "pearson_ic": 0.21584729123288382,
+            "rank_ic": 0.19819306081351215
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 187286,
+            "rows": 20475,
+            "metrics": {
+              "rows": 20475,
+              "pearson_ic": 0.1986370676785769,
+              "rank_ic": 0.07925622937993224,
+              "direction_hit_rate": 0.48556776556776554,
+              "prediction_std": 0.002434584079310298,
+              "future_return_std": 0.009474042915097245,
+              "mean_prediction_bps": 9.749721502885222,
+              "mean_future_return_bps": 8.750017667766976
+            },
+            "pearson_ic": 0.1986370676785769,
+            "rank_ic": 0.07925622937993224
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 212759,
+            "rows": 17927,
+            "metrics": {
+              "rows": 17927,
+              "pearson_ic": -0.07438061603147847,
+              "rank_ic": -0.0705661381048749,
+              "direction_hit_rate": 0.472248563619122,
+              "prediction_std": 0.0012028672499582171,
+              "future_return_std": 0.0032229565185541015,
+              "mean_prediction_bps": 3.290775930508971,
+              "mean_future_return_bps": 4.130796137241466
+            },
+            "pearson_ic": -0.07438061603147847,
+            "rank_ic": -0.0705661381048749
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.06994960144865107,
+          "std_pearson_ic": 0.13718262358133437,
+          "mean_rank_ic": 0.07723052584185855,
+          "std_rank_ic": 0.1369443973285076,
+          "positive_pearson_folds": 3,
+          "validation_rows_total": 99826
+        }
+      },
+      {
+        "horizon": 1000,
+        "feature_set": "micro_only",
+        "feature_count": 8,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 109636,
+            "rows": 15474,
+            "metrics": {
+              "rows": 15474,
+              "pearson_ic": -0.2933615827403218,
+              "rank_ic": -0.23142903683079602,
+              "direction_hit_rate": 0.5717332299340829,
+              "prediction_std": 0.0025860583409667015,
+              "future_return_std": 0.010881466635315806,
+              "mean_prediction_bps": 30.394571367651224,
+              "mean_future_return_bps": -20.556210978402778
+            },
+            "pearson_ic": -0.2933615827403218,
+            "rank_ic": -0.23142903683079602
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 135109,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.10759033612621391,
+              "rank_ic": 0.11043125293903902,
+              "direction_hit_rate": 0.45369951534733444,
+              "prediction_std": 0.001090843928977847,
+              "future_return_std": 0.00600537832977094,
+              "mean_prediction_bps": 7.90773774497211,
+              "mean_future_return_bps": -14.154323977499713
+            },
+            "pearson_ic": 0.10759033612621391,
+            "rank_ic": 0.11043125293903902
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 160585,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": -0.051849103366343206,
+              "rank_ic": -0.07466934979867712,
+              "direction_hit_rate": 0.514248788368336,
+              "prediction_std": 0.0011329532135277987,
+              "future_return_std": 0.006430542910182348,
+              "mean_prediction_bps": 12.276089983060956,
+              "mean_future_return_bps": -5.33680679916209
+            },
+            "pearson_ic": -0.051849103366343206,
+            "rank_ic": -0.07466934979867712
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 186061,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": -0.05324216081822157,
+              "rank_ic": 0.06799238096557658,
+              "direction_hit_rate": 0.452859450726979,
+              "prediction_std": 0.0014730197144672275,
+              "future_return_std": 0.013485967148075593,
+              "mean_prediction_bps": 3.299324307590723,
+              "mean_future_return_bps": 20.60909981096992
+            },
+            "pearson_ic": -0.05324216081822157,
+            "rank_ic": 0.06799238096557658
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 211534,
+            "rows": 12927,
+            "metrics": {
+              "rows": 12927,
+              "pearson_ic": -0.18347239250051617,
+              "rank_ic": -0.18468925275041284,
+              "direction_hit_rate": 0.4452695907789897,
+              "prediction_std": 0.001211677910760045,
+              "future_return_std": 0.004055044286032679,
+              "mean_prediction_bps": 1.236728421645239,
+              "mean_future_return_bps": 11.101146832390695
+            },
+            "pearson_ic": -0.18347239250051617,
+            "rank_ic": -0.18468925275041284
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": -0.09486698065983777,
+          "std_pearson_ic": 0.1515116782433278,
+          "mean_rank_ic": -0.06247280109505408,
+          "std_rank_ic": 0.1504566400005631,
+          "positive_pearson_folds": 1,
+          "validation_rows_total": 74826
+        }
+      },
+      {
+        "horizon": 1000,
+        "feature_set": "micro_plus_fd",
+        "feature_count": 9,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 108361,
+            "rows": 15474,
+            "metrics": {
+              "rows": 15474,
+              "pearson_ic": -0.4117460754091777,
+              "rank_ic": -0.2829470319231056,
+              "direction_hit_rate": 0.5823962776269872,
+              "prediction_std": 0.004343791864812374,
+              "future_return_std": 0.010881466635315806,
+              "mean_prediction_bps": 42.32706967741251,
+              "mean_future_return_bps": -20.556210978402778
+            },
+            "pearson_ic": -0.4117460754091777,
+            "rank_ic": -0.2829470319231056
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 133834,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.1485688571334119,
+              "rank_ic": 0.06597395256498208,
+              "direction_hit_rate": 0.4397415185783522,
+              "prediction_std": 0.0012604627991095185,
+              "future_return_std": 0.00600537832977094,
+              "mean_prediction_bps": 16.186170978471637,
+              "mean_future_return_bps": -14.154323977499713
+            },
+            "pearson_ic": 0.1485688571334119,
+            "rank_ic": 0.06597395256498208
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 159310,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": -0.03396715020252108,
+              "rank_ic": 0.043908294798261936,
+              "direction_hit_rate": 0.5375121163166398,
+              "prediction_std": 0.00273295515216887,
+              "future_return_std": 0.006430542910182348,
+              "mean_prediction_bps": 36.11527616158128,
+              "mean_future_return_bps": -5.33680679916209
+            },
+            "pearson_ic": -0.03396715020252108,
+            "rank_ic": 0.043908294798261936
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 184786,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.25544683538126267,
+              "rank_ic": 0.31919316189500063,
+              "direction_hit_rate": 0.48336025848142167,
+              "prediction_std": 0.0019367641070857644,
+              "future_return_std": 0.013485967148075593,
+              "mean_prediction_bps": 11.398217175155878,
+              "mean_future_return_bps": 20.60909981096992
+            },
+            "pearson_ic": 0.25544683538126267,
+            "rank_ic": 0.31919316189500063
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 210259,
+            "rows": 12927,
+            "metrics": {
+              "rows": 12927,
+              "pearson_ic": -0.23125121632044812,
+              "rank_ic": -0.15858335561429454,
+              "direction_hit_rate": 0.474433356540574,
+              "prediction_std": 0.001767558977007866,
+              "future_return_std": 0.004055044286032679,
+              "mean_prediction_bps": 3.624107630457729,
+              "mean_future_return_bps": 11.101146832390695
+            },
+            "pearson_ic": -0.23125121632044812,
+            "rank_ic": -0.15858335561429454
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": -0.05458974988349445,
+          "std_pearson_ic": 0.2723009869666034,
+          "mean_rank_ic": -0.002490995655831102,
+          "std_rank_ic": 0.23094450287074572,
+          "positive_pearson_folds": 2,
+          "validation_rows_total": 74826
+        }
+      },
+      {
+        "horizon": 1000,
+        "feature_set": "micro_plus_topology",
+        "feature_count": 20,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 109386,
+            "rows": 15474,
+            "metrics": {
+              "rows": 15474,
+              "pearson_ic": -0.4311907253386853,
+              "rank_ic": -0.42369435901316543,
+              "direction_hit_rate": 0.4372495799405454,
+              "prediction_std": 0.004669276997447014,
+              "future_return_std": 0.010881466635315806,
+              "mean_prediction_bps": 13.074937742203474,
+              "mean_future_return_bps": -20.556210978402778
+            },
+            "pearson_ic": -0.4311907253386853,
+            "rank_ic": -0.42369435901316543
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 134859,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.20374887866238275,
+              "rank_ic": 0.2458838224247508,
+              "direction_hit_rate": 0.5382229402261712,
+              "prediction_std": 0.0024768949951976538,
+              "future_return_std": 0.00600537832977094,
+              "mean_prediction_bps": 21.010623313486576,
+              "mean_future_return_bps": -14.154323977499713
+            },
+            "pearson_ic": 0.20374887866238275,
+            "rank_ic": 0.2458838224247508
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 160335,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.13221089049148133,
+              "rank_ic": 0.10849368490853648,
+              "direction_hit_rate": 0.529886914378029,
+              "prediction_std": 0.0033519563730806112,
+              "future_return_std": 0.006430542910182348,
+              "mean_prediction_bps": 3.2253112294711173,
+              "mean_future_return_bps": -5.33680679916209
+            },
+            "pearson_ic": 0.13221089049148133,
+            "rank_ic": 0.10849368490853648
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 185811,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.01420569259109625,
+              "rank_ic": 0.04286239020568041,
+              "direction_hit_rate": 0.5266558966074314,
+              "prediction_std": 0.0038554444909095764,
+              "future_return_std": 0.013485967148075593,
+              "mean_prediction_bps": 0.2681613477761857,
+              "mean_future_return_bps": 20.60909981096992
+            },
+            "pearson_ic": 0.01420569259109625,
+            "rank_ic": 0.04286239020568041
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 211284,
+            "rows": 12927,
+            "metrics": {
+              "rows": 12927,
+              "pearson_ic": -0.2523287071164496,
+              "rank_ic": -0.25723755913951724,
+              "direction_hit_rate": 0.4138624584203605,
+              "prediction_std": 0.002356593031436205,
+              "future_return_std": 0.004055044286032679,
+              "mean_prediction_bps": 12.051921803504229,
+              "mean_future_return_bps": 11.101146832390695
+            },
+            "pearson_ic": -0.2523287071164496,
+            "rank_ic": -0.25723755913951724
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": -0.06667079414203492,
+          "std_pearson_ic": 0.26765900457402614,
+          "mean_rank_ic": -0.056738404122743,
+          "std_rank_ic": 0.2755262045019668,
+          "positive_pearson_folds": 3,
+          "validation_rows_total": 74826
+        }
+      },
+      {
+        "horizon": 1000,
+        "feature_set": "full",
+        "feature_count": 21,
+        "validation_folds": [
+          {
+            "fold": 1,
+            "fit_fraction": 0.45,
+            "validation_fraction_range": [
+              0.5,
+              0.6
+            ],
+            "fit_rows": 108361,
+            "rows": 15474,
+            "metrics": {
+              "rows": 15474,
+              "pearson_ic": -0.41033368513055685,
+              "rank_ic": -0.428834708369147,
+              "direction_hit_rate": 0.4653612511309293,
+              "prediction_std": 0.006110250949859619,
+              "future_return_std": 0.010881466635315806,
+              "mean_prediction_bps": 17.164770979434252,
+              "mean_future_return_bps": -20.556210978402778
+            },
+            "pearson_ic": -0.41033368513055685,
+            "rank_ic": -0.428834708369147
+          },
+          {
+            "fold": 2,
+            "fit_fraction": 0.55,
+            "validation_fraction_range": [
+              0.6,
+              0.7
+            ],
+            "fit_rows": 133834,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.35762682505220295,
+              "rank_ic": 0.3444737697797547,
+              "direction_hit_rate": 0.4935702746365105,
+              "prediction_std": 0.002091826405376196,
+              "future_return_std": 0.00600537832977094,
+              "mean_prediction_bps": 24.451448116451502,
+              "mean_future_return_bps": -14.154323977499713
+            },
+            "pearson_ic": 0.35762682505220295,
+            "rank_ic": 0.3444737697797547
+          },
+          {
+            "fold": 3,
+            "fit_fraction": 0.65,
+            "validation_fraction_range": [
+              0.7,
+              0.8
+            ],
+            "fit_rows": 159310,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.12058749770893612,
+              "rank_ic": 0.10957825832731825,
+              "direction_hit_rate": 0.5848788368336025,
+              "prediction_std": 0.003185039386153221,
+              "future_return_std": 0.006430542910182348,
+              "mean_prediction_bps": 28.993261512368917,
+              "mean_future_return_bps": -5.33680679916209
+            },
+            "pearson_ic": 0.12058749770893612,
+            "rank_ic": 0.10957825832731825
+          },
+          {
+            "fold": 4,
+            "fit_fraction": 0.75,
+            "validation_fraction_range": [
+              0.8,
+              0.9
+            ],
+            "fit_rows": 184786,
+            "rows": 15475,
+            "metrics": {
+              "rows": 15475,
+              "pearson_ic": 0.3181928632883186,
+              "rank_ic": 0.33571383841685376,
+              "direction_hit_rate": 0.5740226171243942,
+              "prediction_std": 0.002959868172183633,
+              "future_return_std": 0.013485967148075593,
+              "mean_prediction_bps": 14.259478775784373,
+              "mean_future_return_bps": 20.60909981096992
+            },
+            "pearson_ic": 0.3181928632883186,
+            "rank_ic": 0.33571383841685376
+          },
+          {
+            "fold": 5,
+            "fit_fraction": 0.85,
+            "validation_fraction_range": [
+              0.9,
+              0.99
+            ],
+            "fit_rows": 210259,
+            "rows": 12927,
+            "metrics": {
+              "rows": 12927,
+              "pearson_ic": -0.26757781869289726,
+              "rank_ic": -0.2854278840049819,
+              "direction_hit_rate": 0.36682911735128026,
+              "prediction_std": 0.004436092916876078,
+              "future_return_std": 0.004055044286032679,
+              "mean_prediction_bps": 20.886226557195187,
+              "mean_future_return_bps": 11.101146832390695
+            },
+            "pearson_ic": -0.26757781869289726,
+            "rank_ic": -0.2854278840049819
+          }
+        ],
+        "validation": {
+          "fold_count": 5,
+          "mean_pearson_ic": 0.02369913644520071,
+          "std_pearson_ic": 0.3467161539776706,
+          "mean_rank_ic": 0.01510065482995956,
+          "std_rank_ic": 0.35623078518603857,
+          "positive_pearson_folds": 3,
+          "validation_rows_total": 74826
+        }
+      }
+    ]
+  },
+  "heldout_days": [
+    {
+      "day": 8,
+      "events": 55478,
+      "rows": 55178,
+      "metrics": {
+        "rows": 55178,
+        "pearson_ic": 0.2143250919671596,
+        "rank_ic": 0.23426010867849684,
+        "direction_hit_rate": 0.5596795824422777,
+        "prediction_std": 0.00016494600276928395,
+        "future_return_std": 0.0005232468577080498,
+        "mean_prediction_bps": 0.03003989149874542,
+        "mean_future_return_bps": 0.24005672839407546
+      }
+    },
+    {
+      "day": 9,
+      "events": 52172,
+      "rows": 51872,
+      "metrics": {
+        "rows": 51872,
+        "pearson_ic": 0.20193320109808532,
+        "rank_ic": 0.22042529605824931,
+        "direction_hit_rate": 0.5584322948797039,
+        "prediction_std": 0.0001753868127707392,
+        "future_return_std": 0.0005492648043966694,
+        "mean_prediction_bps": -0.028039803510182537,
+        "mean_future_return_bps": -0.029086218529315592
+      }
+    },
+    {
+      "day": 10,
+      "events": 31937,
+      "rows": 31637,
+      "metrics": {
+        "rows": 31637,
+        "pearson_ic": 0.24945935410343678,
+        "rank_ic": 0.2401018164132992,
+        "direction_hit_rate": 0.6145968328223282,
+        "prediction_std": 0.00015797294327057898,
+        "future_return_std": 0.0005282307732220033,
+        "mean_prediction_bps": -0.4553898179437965,
+        "mean_future_return_bps": 0.1804782584526411
+      }
+    }
+  ],
+  "heldout_pooled": {
+    "rows": 138687,
+    "pearson_ic": 0.21495489098126477,
+    "rank_ic": 0.22810317620931223,
+    "direction_hit_rate": 0.5717406822557269,
+    "prediction_std": 0.00016851485997904092,
+    "future_return_std": 0.0005343857456636993,
+    "mean_prediction_bps": -0.10241845302516595,
+    "mean_future_return_bps": 0.12580040302581963
+  },
+  "target_pearson_ic": 0.064,
+  "target_status": {
+    "pearson_ic_at_least_target": true,
+    "rank_ic_at_least_target": true
+  },
+  "elapsed_seconds": 121.09493321299999,
+  "dashboard_path": "assets/figures/fi2010_return_regression_selection.png"
+}

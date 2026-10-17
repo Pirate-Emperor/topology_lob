@@ -1,0 +1,294 @@
+name: topology-lob-fi2010
+
+concurrency:
+  group: topology-lob-fi2010-${{ github.ref }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/topology-lob-fi2010.yml"
+      - "scripts/run_fi2010_benchmark.py"
+      - "scripts/run_fi2010_ablation.py"
+      - "scripts/run_fi2010_ic_sweep.py"
+      - "scripts/run_fi2010_return_regression.py"
+      - "scripts/run_fi2010_return_regression_selection.py"
+      - "scripts/run_fi2010_focal_horizon_selection.py"
+      - "scripts/fi2010_feature_helpers.py"
+      - "fi2010.py"
+      - "topology_lob.py"
+      - "tests/**"
+
+permissions:
+  contents: write
+
+jobs:
+  fi2010:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned research environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -c constraints.txt -e ".[tda,dev]"
+      - name: Run unit tests
+        run: python -m pytest -q
+      - name: Download and verify FI-2010 Decimal-Precision benchmark
+        run: |
+          python scripts/fetch_fi2010.py \
+            --out /tmp/fi2010/data.zip \
+            --extract \
+            --extract-dir /tmp/fi2010 \
+            --chunk-size 4194304 \
+            --retries 8 \
+            --timeout 120
+          find /tmp/fi2010 -maxdepth 1 -type f -name '*DecPre*' -print
+      - name: Record licensed dataset hashes
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          archive = Path("/tmp/fi2010/data.zip")
+          names = [
+              "/tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt",
+              "/tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt",
+              "/tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt",
+              "/tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt",
+          ]
+          def sha(path):
+              digest = hashlib.sha256()
+              with path.open("rb") as f:
+                  for block in iter(lambda: f.read(1024 * 1024), b""):
+                      digest.update(block)
+              return digest.hexdigest()
+          files = {}
+          for value in names:
+              p = Path(value)
+              assert p.is_file(), f"missing required FI-2010 file: {p}"
+              files[p.name] = {"sha256": sha(p), "bytes": p.stat().st_size}
+          manifest = {
+              "dataset": "FI-2010 limit order book benchmark",
+              "landing_page": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+              "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+              "attribution": "Ntakaris et al., Journal of Forecasting 37(8), 852-866 (2018), DOI 10.1002/for.2543",
+              "download_source": "https://raw.githubusercontent.com/zcakhaa/DeepLOB-Deep-Convolutional-Neural-Networks-for-Limit-Order-Books/master/data/data.zip",
+              "archive_sha256": sha(archive),
+              "files": files,
+              "raw_data_committed": False
+          }
+          out = Path("results/fi2010_data_manifest.json")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(manifest, indent=2))
+          print(json.dumps(manifest, indent=2))
+          PY
+      - name: Diagnose large adjacent price jumps and horizon sensitivity
+        run: |
+          python scripts/diagnose_fi2010_boundaries.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --out results/fi2010_boundary_diagnostics.json
+      - name: Run real-data TDA benchmark
+        run: |
+          python scripts/run_fi2010_benchmark.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_benchmark.json
+      - name: Run real-data feature ablation
+        run: |
+          python scripts/run_fi2010_ablation.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_ablation.json
+      - name: Run threshold/objective sweep with internal validation
+        run: |
+          python scripts/run_fi2010_ic_sweep.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_ic_sweep.json
+      - name: Validate measured target status and save summary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("results/fi2010_ic_sweep.json")
+          r = json.loads(p.read_text())
+          selected = r["heldout_pooled"]["validation_selected"]
+          reference = r["heldout_pooled"]["fixed_reference"]
+          assert r["internal_validation"]["selected"]["threshold"] in [0.0, 0.0001, 0.00025, 0.0005, 0.001]
+          assert selected["rows"] > 0 and reference["rows"] > 0
+          assert r["target_metric_status"]["pearson_ic_at_least_0_064"] == (selected["pearson_ic"] >= 0.064)
+          assert r["target_metric_status"]["rank_ic_at_least_0_064"] == (selected["rank_ic"] >= 0.064)
+          print(json.dumps({
+              "selected_config": r["internal_validation"]["selected"],
+              "heldout_selected": selected,
+              "heldout_fixed_reference": reference,
+              "target_metric_status": r["target_metric_status"],
+          }, indent=2))
+          PY
+      - name: Run fixed multi-horizon continuous-return regression
+        run: |
+          python scripts/run_fi2010_return_regression.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --horizons 10 20 30 50 100 200 500 1000 \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_regression_sweep.json
+      - name: Validate regression coverage without selecting on test
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path("results/fi2010_regression_sweep.json").read_text())
+          assert r["tda"]["backend"] == "giotto-tda", r["tda"]
+          assert len(r["results"]) == 32, len(r["results"])
+          assert set(x["horizon"] for x in r["results"]) == {10, 20, 30, 50, 100, 200, 500, 1000}
+          assert set(x["feature_set"] for x in r["results"]) == {"micro_only", "micro_plus_fd", "micro_plus_topology", "full"}
+          assert all(x["heldout"]["pooled"]["rows"] > 0 for x in r["results"])
+          print(json.dumps({
+              "selected_d": r["selected_d"],
+              "gpu_used": r["gpu_used"],
+              "top_5_heldout_pearson_ic_descriptive_only": r["top_5_heldout_pearson_ic_descriptive_only"],
+              "target_pearson_ic_0_064_reached_by_any_fixed_config": r["target_pearson_ic_0_064_reached_by_any_fixed_config"],
+              "target_rank_ic_0_064_reached_by_any_fixed_config": r["target_rank_ic_0_064_reached_by_any_fixed_config"],
+          }, indent=2))
+          PY
+      - name: Select Focal Loss horizon on training-only validation
+        run: |
+          python scripts/run_fi2010_focal_horizon_selection.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --horizons 10 20 30 50 100 200 500 1000 \
+            --require-gtda --tda-stride 1000 \
+            --out results/fi2010_focal_horizon_selection.json
+      - name: Validate selected Focal model without test-based selection
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path("results/fi2010_focal_horizon_selection.json").read_text())
+          assert r["candidate_count"] == 32, r["candidate_count"]
+          assert r["selected"]["horizon"] in {10, 20, 30, 50, 100, 200, 500, 1000}
+          assert r["selected"]["feature_set"] in {"micro_only", "micro_plus_fd", "micro_plus_topology", "full"}
+          assert r["selected"]["test_rows"] > 0
+          assert r["selected"]["final_train_rows"] > 0
+          assert r["selected_test"]["focal"]["pearson_ic"] is not None
+          assert r["selected_test"]["logloss_control"]["pearson_ic"] is not None
+          assert r["selected_test_target_status"]["focal_pearson_ic_at_least_0_064"] == (r["selected_test"]["focal"]["pearson_ic"] >= 0.064)
+          assert r["selected_test_target_status"]["focal_rank_ic_at_least_0_064"] == (r["selected_test"]["focal"]["rank_ic"] >= 0.064)
+          print(json.dumps({
+              "selected": r["selected"],
+              "selected_test_focal": r["selected_test"]["focal"],
+              "selected_test_logloss_control": r["selected_test"]["logloss_control"],
+              "target_status": r["selected_test_target_status"],
+          }, indent=2))
+          PY
+      - name: Select continuous-return model by five walk-forward folds
+        run: |
+          python scripts/run_fi2010_return_regression_selection.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --horizons 10 20 30 50 100 200 500 1000 \
+            --require-gtda --tda-stride 1000 --nthread 4 \
+            --out results/fi2010_return_regression_selection.json \
+            --dashboard assets/figures/fi2010_return_regression_selection.png
+      - name: Validate training-only regression selection and final scores
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path("results/fi2010_return_regression_selection.json").read_text())
+          assert r["method"]["tda"]["backend"] == "giotto-tda", r["method"]["tda"]
+          assert r["method"]["candidate_count"] == 32
+          assert len(r["selection"]["candidate_rows"]) == 32
+          assert r["selection"]["validation"]["fold_count"] == 5
+          assert r["method"]["gpu_used"] is False or r["method"]["ffd_backend"] == "numba-cuda"
+          assert len(r["heldout_days"]) == 3
+          assert r["heldout_pooled"]["rows"] > 0
+          assert (Path("assets/figures/fi2010_return_regression_selection.png")).is_file()
+          status = r["target_status"]
+          assert status["pearson_ic_at_least_target"] == (r["heldout_pooled"]["pearson_ic"] >= r["target_pearson_ic"])
+          assert status["rank_ic_at_least_target"] == (r["heldout_pooled"]["rank_ic"] >= r["target_pearson_ic"])
+          print(json.dumps({
+              "selected": {
+                  "horizon": r["selection"]["horizon"],
+                  "feature_set": r["selection"]["feature_set"],
+                  "validation": r["selection"]["validation"],
+              },
+              "heldout_pooled": r["heldout_pooled"],
+              "target_status": r["target_status"],
+              "gpu_used": r["method"]["gpu_used"],
+              "ffd_backend": r["method"]["ffd_backend"],
+          }, indent=2))
+          PY
+      - name: Upload benchmark outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topology-lob-fi2010-results
+          if-no-files-found: warn
+          path: |
+            results/fi2010_benchmark.json
+            results/fi2010_ablation.json
+            results/fi2010_ic_sweep.json
+            results/fi2010_regression_sweep.json
+            results/fi2010_focal_horizon_selection.json
+            results/fi2010_data_manifest.json
+            results/fi2010_boundary_diagnostics.json
+            results/fi2010_return_regression_selection.json
+            assets/figures/fi2010_return_regression_selection.png
+
+      - name: Publish metrics and measured analysis image
+        if: success()
+        run: |
+          git config user.name "Pirate-Emperor"
+          git config user.email "Pirate-Emperor@users.noreply.github.com"
+          # Stage and commit local output before rebasing: the ignored result
+          # files make a pre-commit rebase fail with "unstaged changes".
+          git add -f \
+            results/fi2010_data_manifest.json \
+            results/fi2010_boundary_diagnostics.json \
+            results/fi2010_benchmark.json \
+            results/fi2010_ablation.json \
+            results/fi2010_ic_sweep.json \
+            results/fi2010_regression_sweep.json \
+            results/fi2010_focal_horizon_selection.json \
+            results/fi2010_return_regression_selection.json
+          git add assets/figures/fi2010_return_regression_selection.png
+          if git diff --cached --quiet; then
+            echo "No new FI-2010 evidence"
+            exit 0
+          fi
+          git commit -m "data: record verified FI-2010 experiment results [skip ci]"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main

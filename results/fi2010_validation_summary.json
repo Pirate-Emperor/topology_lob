@@ -1,0 +1,165 @@
+{
+  "workflow_run": 121,
+  "workflow_run_id": 38760696730,
+  "artifact_id": 11986421250,
+  "artifact_digest": "sha256:02a15aca8ec840b2ad02a393d378a18334e9737f7b115f9b6f4c9af8106dadee",
+  "data_source": "FI-2010 Decimal-Precision public benchmark with input-only 5% price-jump sequence splitting",
+  "train_events": 254750,
+  "test_events": [
+    55478,
+    52172,
+    31937
+  ],
+  "combined_events": 394337,
+  "selected_d": 0.2,
+  "topology_clouds": 403,
+  "horizon": 10,
+  "purge_events": 50,
+  "label_threshold": 0.0005,
+  "tda_backend": "giotto-tda",
+  "ffd_backend": "cpu-fallback:no-cuda",
+  "gpu_used": false,
+  "days": [
+    {
+      "day": 8,
+      "pearson_ic": 0.15986056211342878,
+      "rank_ic": 0.16249996889730578,
+      "roc_auc": 0.7169583781147294,
+      "pr_auc": 0.2422478138645956,
+      "logloss": 0.6317631200168552
+    },
+    {
+      "day": 9,
+      "pearson_ic": 0.14047635012394308,
+      "rank_ic": 0.14500618342461347,
+      "roc_auc": 0.6945721018480445,
+      "pr_auc": 0.224194095893752,
+      "logloss": 0.6433477028390422
+    },
+    {
+      "day": 10,
+      "pearson_ic": 0.16276843989613762,
+      "rank_ic": 0.15955953086433394,
+      "roc_auc": 0.707602520918236,
+      "pr_auc": 0.24982202356348487,
+      "logloss": 0.6341419021036685
+    }
+  ],
+  "aggregate": {
+    "focal_mean_pearson_ic": 0.1543684507111698,
+    "focal_std_pearson_ic": 0.012118448017135373,
+    "focal_mean_rank_ic": 0.1556885610620844,
+    "focal_std_rank_ic": 0.009367306867429459,
+    "focal_pooled_probability_pearson_ic": 0.15193970237543225,
+    "focal_pooled_margin_pearson_ic": 0.15119948641954012,
+    "focal_pooled_margin_rank_ic": 0.15420023408943864,
+    "target_pearson_ic": 0.064,
+    "target_pearson_reached": true,
+    "target_rank_reached": true
+  },
+  "ablation": {
+    "micro_only": {
+      "pearson_ic": 0.1654931339830204,
+      "rank_ic": 0.17051135029657633,
+      "roc_auc": 0.7047637372613501
+    },
+    "micro_plus_fd": {
+      "pearson_ic": 0.14940863915282482,
+      "rank_ic": 0.15183648699165544,
+      "roc_auc": 0.7066686168112062
+    },
+    "micro_plus_topology": {
+      "pearson_ic": 0.1671840591670583,
+      "rank_ic": 0.172098113582912,
+      "roc_auc": 0.7027085171728836
+    },
+    "full": {
+      "pearson_ic": 0.15044706168683658,
+      "rank_ic": 0.1529924597584596,
+      "roc_auc": 0.706916529337988
+    }
+  },
+  "source_commit": "f149ca996f2706f20ba98e3a0da86a99e7ceb374",
+  "data_license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+  "attribution": "Ntakaris et al. (2018), Journal of Forecasting 37(8), 852–866, DOI 10.1002/for.2543",
+  "dataset_record": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+  "ic_sweep": {
+    "selected": {
+      "threshold": 0,
+      "objective": "logloss",
+      "validation_pearson_ic": 0.13509423329727943,
+      "validation_rank_ic": 0.21739853628894737,
+      "validation_rows": 63389
+    },
+    "heldout_pooled": {
+      "fixed_reference_focal_threshold_0_0005": {
+        "rows": 135612,
+        "pearson_ic": 0.1533218727119523,
+        "rank_ic": 0.1554654715612514
+      },
+      "validation_selected_logloss_threshold_0": {
+        "rows": 135612,
+        "pearson_ic": 0.19590330899625047,
+        "rank_ic": 0.20229012040938724
+      }
+    },
+    "heldout_days": [
+      {
+        "segment": 8,
+        "fixed_reference": {
+          "pearson_ic": 0.16063294172952405,
+          "rank_ic": 0.16309420473216493
+        },
+        "validation_selected": {
+          "pearson_ic": 0.202319541246337,
+          "rank_ic": 0.21169294778352302
+        }
+      },
+      {
+        "segment": 9,
+        "fixed_reference": {
+          "pearson_ic": 0.14052133298866598,
+          "rank_ic": 0.14504388706031077
+        },
+        "validation_selected": {
+          "pearson_ic": 0.183438949565084,
+          "rank_ic": 0.19106162290595524
+        }
+      },
+      {
+        "segment": 10,
+        "fixed_reference": {
+          "pearson_ic": 0.16694690785208735,
+          "rank_ic": 0.16341701028115796
+        },
+        "validation_selected": {
+          "pearson_ic": 0.21634762581706543,
+          "rank_ic": 0.21634496788098104
+        }
+      }
+    ],
+    "target_metric_status": {
+      "pearson_ic_at_least_0_064": true,
+      "rank_ic_at_least_0_064": true
+    }
+  },
+  "sequence_splitting": {
+    "threshold_pct": 5,
+    "inferred_sequences_per_file": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "total_cuts": 16,
+    "rule_uses_labels": false,
+    "note": "Price-only heuristic because FI-2010 does not expose usable ticker IDs; see FI2010_BOUNDARY_DIAGNOSTICS.md."
+  },
+  "corrected_run": {
+    "run_url": "https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730",
+    "artifact_url": "https://github.com/SpryzenHell/topology_lob/actions/runs/38760696730/artifacts/11986421250",
+    "source_commit": "14818f8b81040232f6368654ed7d9491a89d6655",
+    "status": "all tests and experiment steps passed; only the automatic result-publish step failed because origin/main advanced before rebase",
+    "sequence_boundary_fix": true
+  }
+}

@@ -1,0 +1,56 @@
+name: topology-lob-fi2010-boundary-diagnostics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/diagnose_fi2010_boundaries.py"
+      - "tests/test_fi2010_boundary_diagnostics.py"
+      - ".github/workflows/topology-lob-fi2010-diagnostics.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: topology-lob-fi2010-boundaries-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -c constraints.txt -e ".[tda,dev]"
+      - name: Test the diagnostic
+        run: python -m pytest -q tests/test_fi2010_boundary_diagnostics.py tests/test_fi2010.py
+      - name: Download and verify the licensed FI-2010 benchmark
+        run: |
+          python scripts/fetch_fi2010.py \
+            --out /tmp/fi2010/data.zip \
+            --extract \
+            --extract-dir /tmp/fi2010 \
+            --chunk-size 4194304 \
+            --retries 8 \
+            --timeout 120
+      - name: Diagnose adjacent price jumps and return sensitivity
+        run: |
+          python scripts/diagnose_fi2010_boundaries.py \
+            --train /tmp/fi2010/Train_Dst_NoAuction_DecPre_CF_7.txt \
+            --test \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_7.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_8.txt \
+              /tmp/fi2010/Test_Dst_NoAuction_DecPre_CF_9.txt \
+            --out /tmp/fi2010_boundary_diagnostics.json
+      - name: Upload boundary diagnostic report
+        uses: actions/upload-artifact@v4
+        with:
+          name: topology-lob-fi2010-boundary-diagnostics
+          path: /tmp/fi2010_boundary_diagnostics.json

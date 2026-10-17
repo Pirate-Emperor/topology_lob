@@ -1,0 +1,27 @@
+{
+  "dataset": "FI-2010 limit order book benchmark",
+  "landing_page": "https://etsin.fairdata.fi/dataset/73eb48d7-4dbc-4a10-a52a-da745b47a649",
+  "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+  "attribution": "Ntakaris et al., Journal of Forecasting 37(8), 852-866 (2018), DOI 10.1002/for.2543",
+  "download_source": "https://raw.githubusercontent.com/zcakhaa/DeepLOB-Deep-Convolutional-Neural-Networks-for-Limit-Order-Books/master/data/data.zip",
+  "archive_sha256": "7a5564290a504bdc104dccaf44aa6c0b3857bf1db6b0517b9b88577c2def3e5f",
+  "files": {
+    "Train_Dst_NoAuction_DecPre_CF_7.txt": {
+      "sha256": "11af4bbcf26f08a43a436c43619bdf772f552870d54a3b06de7b5344957279fc",
+      "bytes": 607324298
+    },
+    "Test_Dst_NoAuction_DecPre_CF_7.txt": {
+      "sha256": "1acd92e13df8f499aa9475729e1d54455db1ab37894616d0c582cdd012351273",
+      "bytes": 132259850
+    },
+    "Test_Dst_NoAuction_DecPre_CF_8.txt": {
+      "sha256": "950559383a3cf823fd373e6573434cc00c94b9bceac77fe5ee9f1adb38e1abb2",
+      "bytes": 124378346
+    },
+    "Test_Dst_NoAuction_DecPre_CF_9.txt": {
+      "sha256": "c09785b0aed0825ad566f8fe33a3b7d8c3fbb8993856d162976cb4e1c410aca0",
+      "bytes": 76138106
+    }
+  },
+  "raw_data_committed": false
+}
